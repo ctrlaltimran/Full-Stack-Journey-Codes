@@ -1,0 +1,407 @@
+<!-- CtrlAltImran Forem-style Sidebar (Fixed & Working Version) -->
+<style>
+#ctrl-forem-rail {
+  all: initial;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --rail-w: 56px;
+  --rail-bg: #ffffff;
+  --rail-border: #e7e8ea;
+  --icon-w: 40px;
+  --icon-r: 10px;
+  --icon-bg: #ffffff;
+  --icon-hover: #f2f4f7;
+  --icon-ring: #dbe3ea;
+  --scroll-thumb: #c7cdd4;
+  --scroll-track: #f1f3f5;
+  --card-w: 300px;
+  --card-bg: #ffffff;
+  --card-border: #e6e8eb;
+  --card-shadow: 0 10px 24px rgba(0, 0, 0, .12);
+  --text: #111;
+  --muted: #555;
+  --shade-color: rgba(0,0,0,0.08);
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 9900;
+}
+
+/* Dark mode */
+#ctrl-forem-rail[data-scheme="dark"] {
+  --rail-bg: #262626;
+  --rail-border: #262626;
+  --icon-bg: #262626;
+  --icon-hover: #262626;
+  --icon-ring: #26303b;
+  --scroll-thumb: #737373;
+  --scroll-track: #0e1319;
+  --card-bg: #262626;
+  --card-border: #1f2832;
+  --card-shadow: 0 10px 28px rgba(0, 0, 0, .4);
+  --text: #e6e8ea;
+  --muted: #a6acb2;
+  --shade-color: rgba(255,255,255,0.1);
+}
+
+/* Layout */
+#ctrl-forem-rail .rail {
+  width: var(--rail-w);
+  background: var(--rail-bg);
+  border-right: 1px solid var(--rail-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+#ctrl-forem-rail .rail-scroll {
+  flex: 1 1 auto;
+  width: 100%;
+  overflow-y: auto;
+  padding: 8px 0;
+  scrollbar-gutter: stable both-edges;
+}
+#ctrl-forem-rail .rail-scroll::-webkit-scrollbar { width: 4px }
+#ctrl-forem-rail .rail-scroll::-webkit-scrollbar-thumb { background: transparent; border-radius: 6px }
+#ctrl-forem-rail .rail-scroll::-webkit-scrollbar-track { background: transparent }
+#ctrl-forem-rail .rail:hover .rail-scroll::-webkit-scrollbar-thumb { background: var(--scroll-thumb) }
+#ctrl-forem-rail .rail:hover .rail-scroll::-webkit-scrollbar-track { background: var(--scroll-track) }
+
+#ctrl-forem-rail .icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+#ctrl-forem-rail .ico {
+  width: var(--icon-w);
+  height: var(--icon-w);
+  border-radius: var(--icon-r);
+  background: var(--icon-bg);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .05) inset, 0 1px 2px rgba(0, 0, 0, .04);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background .15s ease, box-shadow .15s ease;
+}
+#ctrl-forem-rail .ico:hover {
+  background: var(--icon-hover);
+  box-shadow: 0 0 0 1px var(--icon-ring) inset, 0 1px 2px rgba(0, 0, 0, .05);
+}
+#ctrl-forem-rail .ico img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  border-radius: 6px;
+  display: block;
+}
+
+/* Top and Bottom Shading */
+#ctrl-forem-rail .shade-top,
+#ctrl-forem-rail .shade-bottom {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 28px;
+  pointer-events: none;
+  z-index: 10;
+}
+#ctrl-forem-rail .shade-top {
+  top: 0;
+  background: linear-gradient(to bottom, var(--shade-color), transparent);
+}
+#ctrl-forem-rail .shade-bottom {
+  bottom: 0;
+  background: linear-gradient(to top, var(--shade-color), transparent);
+}
+
+/* Hover card */
+#ctrl-forem-rail .card {
+  position: fixed;
+  left: calc(var(--rail-w) - 1px);
+  top: 0;
+  width: var(--card-w);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%) scale(.985);
+  transform-origin: left center;
+  transition: opacity .12s ease, transform .12s ease;
+  z-index: 9999;
+  color: var(--text);
+}
+#ctrl-forem-rail .card.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) scale(1);
+}
+#ctrl-forem-rail .banner {
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+}
+#ctrl-forem-rail .banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#ctrl-forem-rail .app {
+  position: absolute;
+  left: 18px;
+  top: 96px;
+  width: 88px;
+  height: 88px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--icon-bg);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, .28), 0 0 0 4px var(--card-bg);
+}
+#ctrl-forem-rail .app img { width: 100%; height: 100%; object-fit: cover; }
+#ctrl-forem-rail .body { padding: 38px 18px 18px; }
+#ctrl-forem-rail .title { margin: 0 0 10px; font-weight: 600; font-size: 22px; }
+#ctrl-forem-rail .desc { margin: 12px 0 2px; font-size: 15px; color: var(--muted); line-height: 1.5; }
+
+#ctrl-forem-rail + .ctrl-spacer { margin-left: var(--rail-w); }
+</style>
+
+<div id="ctrl-forem-rail">
+  <aside class="rail" role="navigation">
+    <div class="shade-top"></div>
+    <div class="rail-scroll">
+      <div class="icons" id="ctrl-icons"></div>
+    </div>
+    <div class="shade-bottom"></div>
+  </aside>
+
+  <div class="card" id="ctrl-card">
+    <div class="banner"><img id="ctrl-card-banner" alt=""></div>
+    <div class="app"><img id="ctrl-card-app" alt=""></div>
+    <div class="body">
+      <h3 class="title" id="ctrl-card-title">Community</h3>
+      <p class="desc" id="ctrl-card-desc">Short description goes here.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const ROOT   = document.getElementById('ctrl-forem-rail');
+  const list   = document.getElementById('ctrl-icons');
+  const card   = document.getElementById('ctrl-card');
+  const title  = document.getElementById('ctrl-card-title');
+  const desc   = document.getElementById('ctrl-card-desc');
+  const banner = document.getElementById('ctrl-card-banner');
+  const app    = document.getElementById('ctrl-card-app');
+  
+  // Define fallback icons to prevent ReferenceError
+const ICON = "https://pbs.twimg.com/profile_images/1737904327128489984/Zm_aHco5_400x400.jpg";
+const BANNER = "https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-020254.png";
+
+
+ const items = [
+  {
+    name:"Imam & Science",
+    desc:"I created Imam and Science's Website, an educational website that unites Islamic wisdom with modern science. It features AI-powered Q&A, dark-light mode, and a clean, student-friendly design for better learning.",
+    icon:ICON,
+    banner:BANNER,
+    link:"https://ctrlaltimran.com/working-on-writings"   // <— updated
+  },
+  {
+    name:"Solora.ai",
+    desc:"I built Solora, an AI-powered healthcare marketing website that helps clinics automate bookings and fill schedules. The modern gradient design, clean layout, and strong CTAs make it both professional and conversion-focused.",
+    icon:"https://ctrlaltimran.com/wp-content/uploads/2025/06/Asset-5.png",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-023412.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Tenney Internal Medicine",
+    desc:"Created this website using Elementor Pro.",
+    icon:"https://ctrlaltimran.com/wp-content/uploads/2025/06/images-1__1_-removebg-preview.png",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-024418.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Denali Funding Group",
+    desc:"The main focus is to build a complete survey system.",
+    icon:"https://denalifundinggroup.com/wp-content/uploads/2025/01/5-1.svg",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-033143.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Fotros Hotel Karbala",
+    desc:"Created beautiful Karbala's hotel management website.",
+    icon:"https://fotroshotelkarbala.com/wp-content/uploads/2023/04/IMG_6533.png",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-033551.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Shia Online Academy",
+    desc:"Perfect website for the online learning academy.",
+    icon:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-034022.png",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-034036.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"SL Endodontics",
+    desc:"Beautiful portfolio website for dental clinic.",
+    icon:"https://ctrlaltimran.com/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-20-at-1.45.49-PM.jpeg",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-034155.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Go Strips",
+    desc:"Crafted fully responsive medical product Woo-commerce website",
+    icon:"https://gostrips.com/wp-content/uploads/2021/11/1000149822_imgupscaler.ai_General_4K.jpg-1-1-e1757768657872.png",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-035241.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Wrappin chicken",
+    desc:"Created fully Restuarant Management System with online tracking.",
+    icon:"https://s3-media0.fl.yelpcdn.com/bphoto/Z9zvNWA2IRrPdCLT07waqg/348s.jpg",
+    banner:"https://lh3.googleusercontent.com/gps-cs-s/AC9h4npYG5Bkh89j4ZkAa95IbKChzMvbb8F6kC-2y5ptNI5GTGNXqnzH9f8Zf8svniFfDRatquLesoaVzO_H6ci4eVDYfYD977Ruh_rlHbjdIlaZgZpzvJFNF1I22UpLdJbJxj459GU=s1360-w1360-h1020-rw",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Mir Amir Ali",
+    desc:"Created fully responsive portfolio website",
+    icon:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-044504.png",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-043458.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Islamic Institute of America",
+    desc:"Fully Religious website with active prayers timings and other sections.",
+    icon:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-044228.png",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-044215.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Revive Joint & Spine",
+    desc:"Responsive medical site for Joint and Spine treatments.",
+    icon:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMx3YplS5OZAq1OO6qS5qO96QmRxBPSzuxEg&s",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-045748.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Armstrong Sales Coaching",
+    desc:"Perfect blogs website I have ever created!",
+    icon:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-044957.png",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-044251.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Amina Code This",
+    desc:"Wow! Sites created with framer would never disappoints me.",
+    icon:"https://ctrlaltimran.com/wp-content/uploads/2025/09/pink-flower-icon-free-png.webp",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-045524.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Injurease",
+    desc:"Created this website using Elementor Pro.",
+    icon:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-050940-1.png",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-050921.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Debug With Rahul",
+    desc:"Perfect Responsive website for students.",
+    icon:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-051212.png",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/06/WhatsApp-Image-2024-06-07-at-8.22.08-AM.jpeg",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Akash Code This",
+    desc:"Perfect Responsive website for students.",
+    icon:"https://ctrlaltimran.com/wp-content/uploads/2025/08/WhatsApp-Image-2025-04-02-at-12.35.59-AM-scaled-1.webp",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-051236.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  },
+  {
+    name:"Pulse Intech",
+    desc:"Simple wordpress created agency's website",
+    icon:"https://ctrlaltimran.com/wp-content/uploads/2025/09/logo-2048x402-1.webp",
+    banner:"https://ctrlaltimran.com/wp-content/uploads/2025/09/Screenshot-2025-09-17-051717.png",
+    link:"https://ctrlaltimran.com/working-on-writings"
+  }
+];
+
+
+  // Build icon list dynamically
+  for (const it of items) {
+    const d = document.createElement('div');
+    d.className = 'ico';
+    d.innerHTML = `<img src="${it.icon}" alt="${it.name}">`;
+    d.dataset.name = it.name;
+    d.dataset.desc = it.desc;
+    d.dataset.banner = it.banner;
+    d.dataset.icon = it.icon;
+    list.appendChild(d);
+  }
+
+  let overIcon=false, overCard=false, current=null;
+  const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+
+  function openCardFor(el){
+    current = el;
+    title.textContent  = el.dataset.name || '';
+    desc.textContent   = el.dataset.desc || '';
+    banner.src         = el.dataset.banner || '';
+    app.src            = el.dataset.icon || '';
+    card.classList.add('show');
+    positionToIcon(el);
+  }
+
+  function positionToIcon(el){
+    const r = el.getBoundingClientRect();
+    const ch = card.offsetHeight;
+    const center = r.top + r.height/2;
+    const safe = 12;
+    const top = clamp(center, safe + ch/2, window.innerHeight - safe - ch/2);
+    card.style.top = top + 'px';
+  }
+
+  function closeCard(){
+    card.classList.remove('show');
+    current=null;
+  }
+
+  list.addEventListener('mouseover', e=>{
+    const el = e.target.closest('.ico');
+    if(!el) return;
+    overIcon = true;
+    openCardFor(el);
+  });
+  list.addEventListener('mouseleave', ()=>{
+    overIcon = false;
+    setTimeout(()=>{ if(!overCard) closeCard(); }, 60);
+  });
+  card.addEventListener('mouseenter', ()=>{ overCard=true; });
+  card.addEventListener('mouseleave', ()=>{ overCard=false; if(!overIcon) closeCard(); });
+
+  // Sync with Elementor dark/light theme
+  function applySchemeAttr(){
+    const host = document.querySelector('.cs-offcanvas');
+    const scheme = host?.getAttribute('data-scheme');
+    ROOT.setAttribute('data-scheme', scheme === 'dark' ? 'dark' : 'light');
+  }
+  setTimeout(applySchemeAttr, 300);
+
+  const target = document.querySelector('.cs-offcanvas');
+  if(target){
+    const obs = new MutationObserver(list=>{
+      for(const m of list){
+        if(m.attributeName === 'data-scheme') applySchemeAttr();
+      }
+    });
+    obs.observe(target, {attributes:true});
+  }
+})();
+</script>
+
+<div class="ctrl-spacer"></div>
