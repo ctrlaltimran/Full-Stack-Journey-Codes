@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Advanced 3D Circular Gallery</title>
+
+<style>
+:root {
+  --radius: 260;
+  --item-size: 60;
+  --bg: #f6f4e8;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.gallery {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.left-panel {
+  position: absolute;
+  left: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.left-panel h1 {
+  font-size: 64px;
+  line-height: 1;
+  margin: 0;
+}
+
+.right-panel {
+  position: absolute;
+  right: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 300px;
+}
+
+.right-panel button {
+  margin-top: 20px;
+  padding: 14px 26px;
+  border-radius: 30px;
+  border: none;
+  background: black;
+  color: white;
+  cursor: pointer;
+}
+
+.center-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 320px;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10;
+}
+
+.center-card img {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.15);
+}
+
+.circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.circle img {
+  position: absolute;
+  width: var(--item-size);
+  height: var(--item-size);
+  border-radius: 8px;
+  object-fit: cover;
+  transform:
+    translate(calc(var(--x) * 1px), calc(var(--y) * 1px))
+    scale(var(--s))
+    rotate(var(--r));
+  opacity: var(--o);
+  transition: transform .5s ease, opacity .5s ease;
+}
+
+.controls {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  text-align: center;
+}
+
+.controls button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 0 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="gallery">
+
+  <div class="left-panel">
+    <h1>Featured<br>Work</h1>
+  </div>
+
+  <div class="center-card">
+    <h2 id="title"></h2>
+    <img id="mainImage">
+    <p id="subtitle"></p>
+  </div>
+
+  <div class="right-panel">
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Ut elit tellus, luctus nec ullamcorper mattis.
+    </p>
+    <button>Hire Me</button>
+  </div>
+
+  <div class="circle" id="circle"></div>
+
+  <div class="controls">
+    <button id="prev">PREV</button>
+    <button id="next">NEXT</button>
+  </div>
+
+</div>
+
+<script>
+const items = [
+  { title:"Sanya Zinmao Farm Lab", sub:"Education", img:"https://picsum.photos/id/1011/600" },
+  { title:"Summer Collection", sub:"Clothing", img:"https://picsum.photos/id/1012/600" },
+  { title:"Super City", sub:"Workspace", img:"https://picsum.photos/id/1013/600" },
+  { title:"Xiazi Box", sub:"Hospitality", img:"https://picsum.photos/id/1015/600" },
+  { title:"Dark Floral", sub:"Colours", img:"https://picsum.photos/id/1016/600" },
+  { title:"Raffles City", sub:"Retail", img:"https://picsum.photos/id/1018/600" },
+  { title:"Save The Future", sub:"Finance", img:"https://picsum.photos/id/1020/600" },
+  { title:"Playful Toys", sub:"Art", img:"https://picsum.photos/id/1024/600" }
+];
+
+const circle = document.getElementById("circle");
+const title = document.getElementById("title");
+const subtitle = document.getElementById("subtitle");
+const mainImage = document.getElementById("mainImage");
+
+let angle = 0;
+let velocity = 0;
+let activeIndex = 0;
+let autoRotate = true;
+
+items.forEach(i => {
+  const img = document.createElement("img");
+  img.src = i.img;
+  circle.appendChild(img);
+});
+
+const imgs = [...circle.children];
+
+function update() {
+  const step = 360 / imgs.length;
+
+  imgs.forEach((img, i) => {
+    const a = (i * step + angle) * Math.PI / 180;
+    const x = Math.cos(a) * 260;
+    const y = Math.sin(a) * 260;
+    const depth = (Math.sin(a) + 1) / 2;
+
+    img.style.setProperty("--x", x);
+    img.style.setProperty("--y", y);
+    img.style.setProperty("--s", 0.4 + depth * 0.6);
+    img.style.setProperty("--o", 0.3 + depth * 0.7);
+    img.style.setProperty("--r", `${a}rad`);
+  });
+
+  activeIndex = Math.round(((360 - angle) % 360) / step) % imgs.length;
+  const active = items[activeIndex];
+
+  title.textContent = active.title;
+  subtitle.textContent = active.sub;
+  mainImage.src = active.img;
+}
+
+function animate() {
+  if (autoRotate) {
+    velocity *= 0.95;
+    angle += velocity;
+    update();
+  }
+  requestAnimationFrame(animate);
+}
+
+document.getElementById("prev").onclick = () => velocity -= 4;
+document.getElementById("next").onclick = () => velocity += 4;
+
+let dragging = false;
+let lastX = 0;
+
+window.addEventListener("mousedown", e => {
+  dragging = true;
+  lastX = e.clientX;
+  autoRotate = false;
+});
+
+window.addEventListener("mousemove", e => {
+  if (!dragging) return;
+  const dx = e.clientX - lastX;
+  angle += dx * 0.3;
+  lastX = e.clientX;
+  update();
+});
+
+window.addEventListener("mouseup", () => {
+  dragging = false;
+  autoRotate = true;
+});
+
+window.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft") velocity -= 4;
+  if (e.key === "ArrowRight") velocity += 4;
+});
+
+update();
+animate();
+</script>
+
+</body>
+</html>

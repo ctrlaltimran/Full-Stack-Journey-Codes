@@ -1,0 +1,253 @@
+<style>
+
+.mdw-image-hover-119 > *{
+    opacity: 0.01;
+}
+.mdw-image-hover-119.loaded > *,
+html.elementor-html .mdw-image-hover-119 > *{
+    opacity: 1;
+}
+.mdw-image-hover-119-icon {
+    pointer-events: none;
+    transform: translate(calc(50vw - 50%), -100%);
+}
+
+.mdw-image-hover-119-icon.moving{
+    transition: all 0.1s linear;
+}
+.mdw-image-hover-119-icon > *{
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.05s linear !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.mdw-image-hover-119-icon.show > *{
+    opacity: 1;
+    transform: scale(1);
+}
+.mdw-image-hover-119.loaded .mdw-image-hover-119-main,
+html.elementor-html .mdw-image-hover-119 .mdw-image-hover-119-main{
+    flex-direction: row;
+    justify-content: center;
+}
+.mdw-image-hover-119-main img{
+    transition: all 0.3s linear;
+}
+.mdw-image-hover-119-text-1 .elementor-widget-heading.cloned,
+.mdw-image-hover-119-text-2 .elementor-widget-heading.cloned{
+    position: absolute;
+    transform: translateY(110%);
+}
+
+.mdw-image-hover-119-text-1 .elementor-widget-heading span.letter{
+    display: inline-block;
+    transition: all 0.3s ease-in-out calc(0.05s*var(--delay,0));
+}
+.mdw-image-hover-119-text-1 .elementor-widget-heading.active span.letter{
+    transform: translateY(-110%);
+}
+html:not(.elementor-html) .mdw-image-hover-119-text-2 .elementor-widget-heading:not(.cloned){
+    opacity: 0;
+}
+.mdw-image-hover-119-text-2 .elementor-widget-heading > *{
+    transition: all 0.3s ease-in-out;
+}
+.mdw-image-hover-119-text-2 .elementor-widget-heading.active > *{
+    transform: translateY(-110%);
+}
+.mdw-image-hover-119-icon {
+    opacity: 0;
+    pointer-events: none;
+}
+.mdw-image-hover-119-main > *:hover ~ .mdw-image-hover-119-icon,
+.mdw-image-hover-119-main > *:hover + .mdw-image-hover-119-icon {
+    opacity: 1;
+}
+
+@media (min-width: 768px){
+.mdw-image-hover-119-main{
+    --image-hover-size: var(--min-height, 150px);
+}
+.mdw-image-hover-119-main > *.hover img{
+    width: var(--image-hover-size, 150px) !important;
+    height: var(--image-hover-size, 150px) !important;
+}
+}
+</style>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script>
+if(!MDWNonce119){
+var MDWNonce119 = true
+;(function($){
+var selector = '.mdw-image-hover-119'
+$(document).ready(function(){
+$(selector).each(function(){
+    
+    var $this = $(this),
+    items = $this.find('.mdw-image-hover-119-main > *'),
+    headings1, headings2,
+    isActive = false
+    
+    function cloneHeading(from, to, i){
+        var text = from.text(),
+        cloned = to.find('.elementor-widget-heading').eq(0).clone()
+        
+        to.append(cloned)
+        to.find('.elementor-widget-heading').eq(i+1).addClass('cloned').find('.elementor-heading-title').html(text)
+    }
+    
+    function cloneHeadings(){
+        items.each(function(i){
+            cloneHeading($(this).find('.elementor-widget-heading').eq(0), $this.find('.mdw-image-hover-119-text-1'), i)
+            cloneHeading($(this).find('.elementor-widget-heading').eq(1), $this.find('.mdw-image-hover-119-text-2'), i)
+        })
+    }
+    
+    function splitLetters(){
+        headings1 = $this.find('.mdw-image-hover-119-text-1 .elementor-widget-heading')
+        headings1.each(function(){
+            var heading = $(this).find('.elementor-heading-title'),
+            words = heading.text().trim().split(/\s+/),
+            count = heading.text().trim().replace(/\s/g, '').length,
+            wrappedHTML,
+            index = -1
+            
+            wrappedHTML = words.map(function(word){
+                var letters = word.split('').map(function(letter){
+                    index++
+                    var delay = Math.floor(Math.abs(index - (count-1)/2))
+                    
+                    return `<span style="--delay: ${delay}" class="letter">${letter}</span>`
+                }).join('')
+                return `<span class="word">${letters}</span>`
+            }).join(' ')
+            
+            heading.html(wrappedHTML)
+            
+        })
+    }
+    
+    function init(){
+        cloneHeadings()
+        splitLetters()   
+    }
+    
+    init()
+    
+    function layoutFix(){
+        $this.removeClass('loaded')
+        setTimeout(function(){
+            $this.addClass('loaded')
+        },100)
+    }
+    
+    $(window).on('load', layoutFix)
+    $(document).on('visibilitychange', layoutFix)
+    
+    var position = {},
+    scrollamount = 0,
+    icon = $this.find('.mdw-image-hover-119-icon')
+    
+    function moveIcon(){
+        if(!icon.hasClass('moving')){
+            setTimeout(function(){
+                icon.addClass('moving')
+            },100)
+        }
+        icon.css('transform', 'translate(' + position.x + 'px, ' + position.y + 'px)')
+    }
+    
+    function showText(e){
+        var targetItem = $(e.target).closest('.mdw-image-hover-119-main > *'),
+        index = targetItem.index()
+        
+        headings2 = $this.find('.mdw-image-hover-119-text-2 .elementor-widget-heading')
+        
+        items.removeClass('hover')
+        icon.removeClass('show')
+        headings1.eq(0).removeClass('active')
+        headings1.filter('.cloned').removeClass('active')
+        headings2.eq(0).removeClass('active')
+        headings2.filter('.cloned').removeClass('active')
+        isActive = false
+        
+        if(targetItem.length){
+            targetItem.addClass('hover')
+            icon.addClass('show')
+            headings1.eq(0).addClass('active')
+            headings1.filter('.cloned').eq(index).addClass('active')
+            headings2.eq(0).addClass('active')
+            headings2.filter('.cloned').eq(index).addClass('active')
+            isActive = true
+        }
+    }
+    
+    $(window).on('mousemove', function(e){
+
+    var isOverImage = $(e.target).closest('.mdw-image-hover-119-main > *').length > 0;
+
+    if(!isOverImage){
+        icon.removeClass('show');
+        items.removeClass('hover');
+
+        // NEW: reset headings back to default when not hovering any image
+        headings2 = $this.find('.mdw-image-hover-119-text-2 .elementor-widget-heading');
+        if (headings1) headings1.removeClass('active');
+        if (headings2) headings2.removeClass('active');
+        isActive = false;
+
+        return;
+    }
+
+    position = {
+        x: e.clientX - $this.offset().left,
+        y: e.clientY - $this.offset().top + $(window).scrollTop()
+    };
+
+    scrollamount = $(window).scrollTop();
+    moveIcon();
+    showText(e);
+});
+
+    
+    $(window).on('scroll', function(){
+        
+        var currentY = $(window).scrollTop() - scrollamount + position.y,
+        len = items.length
+        
+        icon.css('transform', 'translate(' + position.x + 'px, ' + currentY + 'px)')
+        
+        if(isActive){
+            var topRangeBig = items.filter('.hover').offset().top - $this.offset().top,
+            bottomRangeBig = topRangeBig + items.filter('.hover').height()
+            if(currentY < topRangeBig || currentY > bottomRangeBig){
+                items.removeClass('hover')
+                icon.removeClass('show')
+                isActive = false
+            }
+        }else{
+            var leftRangeSmall = items.eq(0).offset().left,
+            rightRangeSmall = items.eq(len-1).offset().left + items.eq(len-1).outerWidth(),
+            topRangeSmall = items.not('.hover').find('img').offset().top - $this.offset().top,
+            bottomRangeSmall = topRangeSmall + items.not('.hover').find('img').height()
+            
+            if(currentY >= topRangeSmall && currentY <= bottomRangeSmall && position.x >= leftRangeSmall && position.x <= rightRangeSmall){
+                items.each(function(i){
+                    var imageLeft = $(this).offset().left - $this.offset().left,
+                    imageRight = imageLeft + $(this).outerWidth()
+                    if(position.x >= imageLeft && position.x <= imageRight ){
+                        items.eq(i).addClass('hover')
+                    }
+                })
+                icon.addClass('show')
+                isActive = true
+            }
+        }
+    })
+})
+})
+})(jQuery)
+}
+</script>
