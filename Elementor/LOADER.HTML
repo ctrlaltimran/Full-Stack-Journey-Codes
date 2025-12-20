@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SMZ Studio</title>
+
+<style>
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0b0b0b;
+}
+
+canvas {
+  position: fixed;
+  inset: 0;
+}
+
+#text {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+  font-family: "Georgia", "Times New Roman", serif;
+  letter-spacing: 4px;
+  color: #f2f2f2;
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(20px);
+  animation: reveal 2.5s ease forwards;
+  animation-delay: 1.2s;
+}
+
+@keyframes reveal {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="paint"></canvas>
+
+<div id="text">SMZ STUDIO OFFICIAL</div>
+
+<script>
+const canvas = document.getElementById("paint");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+let blobs = [];
+
+function createBlob() {
+  return {
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: 50 + Math.random() * 120,
+    dx: (Math.random() - 0.5) * 0.6,
+    dy: (Math.random() - 0.5) * 0.6,
+    alpha: 0.05 + Math.random() * 0.08
+  };
+}
+
+for (let i = 0; i < 12; i++) {
+  blobs.push(createBlob());
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  blobs.forEach(b => {
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${b.alpha})`;
+    ctx.fill();
+
+    b.x += b.dx;
+    b.y += b.dy;
+
+    if (b.x < -b.r || b.x > canvas.width + b.r) b.dx *= -1;
+    if (b.y < -b.r || b.y > canvas.height + b.r) b.dy *= -1;
+  });
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+
+</body>
+</html>
