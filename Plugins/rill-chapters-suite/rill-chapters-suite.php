@@ -3,7 +3,7 @@
  * Plugin Name: RILL Chapters Suite (TOC + Chapter Products)
  * Description: Per-book TOC Builder (Parts + Chapters) + chapter product sync + downloads + citations (guest-friendly).
  * Version: 1.0.0
- * Author: RILL
+ * Author: ctrlaltimran.com
  */
 
 if (!defined('ABSPATH')) exit;
