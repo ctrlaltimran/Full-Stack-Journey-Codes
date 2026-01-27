@@ -1,0 +1,64 @@
+.rill-imgopt-wrap .rill-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:16px;
+  max-width: 1200px;
+}
+.rill-imgopt-wrap .rill-span-2{ grid-column: 1 / -1; }
+.rill-imgopt-wrap .rill-card{
+  background:#fff;
+  border:1px solid #dcdcde;
+  border-radius:10px;
+  padding:16px;
+}
+.rill-kpis{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:12px;
+  margin-top:12px;
+}
+.rill-kpi{
+  border:1px solid #e2e4e7;
+  border-radius:10px;
+  padding:12px;
+  background:#fafafa;
+}
+.rill-kpi-label{
+  font-size:12px;
+  color:#50575e;
+  margin-bottom:6px;
+}
+.rill-kpi-value{
+  font-size:20px;
+  font-weight:700;
+}
+.rill-actions{
+  margin-top:14px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.rill-progress{
+  margin-top:14px;
+}
+.rill-progress-bar{
+  height:10px;
+  background:#e2e4e7;
+  border-radius:999px;
+  overflow:hidden;
+}
+.rill-progress-bar span{
+  display:block;
+  height:100%;
+  background:#2271b1;
+  width:0%;
+}
+.rill-progress-text{
+  margin-top:8px;
+  color:#50575e;
+  font-size:13px;
+}
+@media (max-width: 900px){
+  .rill-imgopt-wrap .rill-grid{ grid-template-columns: 1fr; }
+  .rill-kpis{ grid-template-columns: repeat(2, 1fr); }
+}
