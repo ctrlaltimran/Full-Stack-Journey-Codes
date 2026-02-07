@@ -1,0 +1,386 @@
+<style>
+    /* Import Font to match the clean look */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    /* Main Container */
+    .client-section-container {
+        font-family: 'Inter', sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 60px 20px;
+        background-color: white;
+        /* Light blueish-grey background from image */
+        box-sizing: border-box;
+    }
+
+    /* Headings */
+    .client-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .client-title {
+        font-size: 36px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 15px;
+        letter-spacing: -0.5px;
+    }
+
+    .user-info h4 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+        color: #111;
+        font-family: 'Inter', sans-serif !important;
+    }
+
+    h .client-badge {
+        background: linear-gradient(90deg, #ff6b6b 0%, #ff8e53 100%);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 8px;
+        display: inline-block;
+        margin-left: 8px;
+    }
+
+    .client-subtitle {
+        color: #666;
+        font-size: 16px;
+        line-height: 1.5;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Grid Layout */
+    .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        padding: 20px;
+        /* Padding for shadows to breathe */
+    }
+
+    /* Card Styling */
+    .t-card {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 32px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), 0 20px 40px rgba(0, 0, 0, 0.02);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.3s ease;
+        position: relative;
+        border: 1px solid rgba(0, 0, 0, 0.02);
+    }
+
+    /* The Special Tilted Card */
+    .t-card.tilted-card {
+        transform: rotate(4deg) scale(1.02);
+        box-shadow: 0px 24px 36px -12px rgba(16, 17, 19, 0.20);
+        z-index: 2;
+        border: none;
+    }
+
+    /* Header inside card (Logo + Rating) */
+    .card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .logo-placeholder {
+        background-color: #eef2f5;
+        height: 24px;
+        width: 60px;
+        border-radius: 6px;
+    }
+
+    /* Specific styling for the "green logo" look on first card */
+    .tilted-card .logo-placeholder {
+        background-color: #dcfce7;
+        /* Light green tint */
+        width: 80px;
+    }
+
+    .rating-box {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 700;
+        color: #1a1a1a;
+        font-size: 16px;
+    }
+
+    .star-icon {
+        color: #10b981;
+        /* Emerald Green */
+        font-size: 18px;
+    }
+
+    /* Testimonial Text */
+    .card-text {
+        font-size: 15px;
+        line-height: 1.6;
+        color: #4a4a4a;
+        margin-bottom: 30px;
+        font-weight: 500;
+    }
+
+    /* User Info */
+    .user-info h4 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+        color: #111;
+    }
+
+    .user-handle {
+        margin: 4px 0 0 0;
+        font-size: 13px;
+        color: #9ca3af;
+        font-weight: 500;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1024px) {
+        .testimonials-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        /* Reset tilt on tablet to avoid layout issues, or keep subtle */
+        .t-card.tilted-card {
+            transform: rotate(-2deg);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .testimonials-grid {
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+
+        .client-title {
+            font-size: 28px;
+        }
+
+        /* On mobile, remove tilt or reduce drastically for readability */
+        .t-card.tilted-card {
+            transform: rotate(0deg);
+            margin-bottom: 10px;
+        }
+    }
+
+    .other-cards {
+        background-color: #eef2f5 !important;
+        /* Light grey for other cards */
+    }
+
+    .other-cards {
+
+        box-shadow: none !important;
+        border: 1px solid #eeeeee !important;
+    }
+
+    .logo-placeholder {
+        background-color: white;
+        height: 24px;
+        width: 60px;
+        border-radius: 6px;
+        display: none;
+    }
+
+    .other-cards {
+        background-color: white !important;
+        box-shadow: 0 0 0 1px rgba(16, 24, 40, 0.06) !important;
+        border: 1px solid #EEF0F2 !important;
+    }
+
+    .t-card.tilted-card {
+        border: 1px solid #EEF0F2 !important;
+    }
+</style>
+<style>
+    .google-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .google-logo img {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* initials bubble if you ever want it */
+    .initials-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        font-weight: 800;
+        font-size: 14px;
+        color: #111;
+        background: #f3f4f6;
+        border: 1px solid #EEF0F2;
+    }
+
+    /* optional: make the subtitle line look like "Google Review, time" */
+    .user-handle {
+        margin: 6px 0 0 0;
+        font-size: 13px;
+        color: #9ca3af;
+        font-weight: 600;
+    }
+</style>
+
+<div class="client-section-container">
+
+    <div class="client-header">
+        <div class="client-title">
+            Our trusted <span class="client-badge">Clients</span>
+        </div>
+        <div class="client-subtitle">
+            Our mission is to drive progress and enhance the lives of our customers by delivering superior products and
+            services that exceed expectations.
+        </div>
+    </div>
+
+    <div class="testimonials-grid">
+
+        <!-- 1 (tilted) -->
+        <div class="t-card tilted-card">
+            <div class="card-top">
+                <div class="google-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/250px-Google_%22G%22_logo.svg.png"
+                        alt="Google" />
+                </div>
+                <div class="rating-box">5.0 <span class="star-icon">★</span></div>
+            </div>
+
+            <div class="card-text">
+                "I got the European Facial with Fay. She was GREAT, very clean and organized, and explained everything.
+                Super relaxing vibe. My face feels brand new. I’ll definitely be coming back!"
+            </div>
+
+            <div class="user-info">
+                <h4>M</h4>
+                <p class="user-handle">European Facial, refreshed</p>
+            </div>
+        </div>
+
+        <!-- 2 -->
+        <div class="t-card other-cards">
+            <div class="card-top">
+                <div class="google-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/250px-Google_%22G%22_logo.svg.png"
+                        alt="Google" />
+                </div>
+                <div class="rating-box">5.0 <span class="star-icon">★</span></div>
+            </div>
+
+            <div class="card-text">
+                "Fay is the best. She treats you like family and my sessions are always comfortable. I always look
+                forward to coming back. The whole team is friendly and welcoming!"
+            </div>
+
+            <div class="user-info">
+                <h4>SK</h4>
+                <p class="user-handle">Comfortable, welcoming care</p>
+            </div>
+        </div>
+
+        <!-- 3 -->
+        <div class="t-card other-cards">
+            <div class="card-top">
+                <div class="google-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/250px-Google_%22G%22_logo.svg.png"
+                        alt="Google" />
+                </div>
+                <div class="rating-box">5.0 <span class="star-icon">★</span></div>
+            </div>
+
+            <div class="card-text">
+                "I got a VI Peel with Fay and she was amazing. She explained everything clearly, made me feel super
+                comfortable, and created a personalized plan for my skin. Highly recommend."
+            </div>
+
+            <div class="user-info">
+                <h4>S</h4>
+                <p class="user-handle">VI Peel, clear plan</p>
+            </div>
+        </div>
+
+        <!-- 4 -->
+        <div class="t-card other-cards">
+            <div class="card-top">
+                <div class="google-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/250px-Google_%22G%22_logo.svg.png"
+                        alt="Google" />
+                </div>
+                <div class="rating-box">5.0 <span class="star-icon">★</span></div>
+            </div>
+
+            <div class="card-text">
+                "Amanda did an amazing job with my Dysport, first time ever and she made it stress-free. She answered
+                all my questions and addressed every concern. Great experience."
+            </div>
+
+            <div class="user-info">
+                <h4>FA</h4>
+                <p class="user-handle">Stress free Dysport</p>
+            </div>
+        </div>
+
+        <!-- 5 -->
+        <div class="t-card other-cards">
+            <div class="card-top">
+                <div class="google-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/250px-Google_%22G%22_logo.svg.png"
+                        alt="Google" />
+                </div>
+                <div class="rating-box">5.0 <span class="star-icon">★</span></div>
+            </div>
+
+            <div class="card-text">
+                "I had such a great experience with Nadeen. She made my lip filler look so natural, exactly how I
+                wanted. Completely painless, gentle, patient, and detail-oriented."
+            </div>
+
+            <div class="user-info">
+                <h4>BM</h4>
+                <p class="user-handle">Natural lip filler look</p>
+            </div>
+        </div>
+
+        <!-- 6 -->
+        <div class="t-card other-cards">
+            <div class="card-top">
+                <div class="google-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/250px-Google_%22G%22_logo.svg.png"
+                        alt="Google" />
+                </div>
+                <div class="rating-box">5.0 <span class="star-icon">★</span></div>
+            </div>
+
+            <div class="card-text">
+                "Fay is seriously the best, sweet, easy to talk to, and really knows her stuff. Every time I leave, my
+                skin looks amazing and I feel so relaxed. She truly cares."
+            </div>
+
+            <div class="user-info">
+                <h4>MD</h4>
+                <p class="user-handle">Relaxed, glowing skin</p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
