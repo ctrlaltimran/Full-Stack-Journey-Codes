@@ -1,0 +1,188 @@
+.omorfia-wrapper {
+    background: #ffffff;
+    padding: 80px 20px;
+    font-family: Arial, sans-serif;
+}
+
+.omorfia-container {
+    max-width: 1200px;
+    margin: auto;
+    background: #f7f7f7;
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: inset 0 0 0 1px #e2e2e2;
+}
+
+.insta-header-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f3f3f3;
+    padding: 25px 30px;
+    border-radius: 18px;
+    border: 1px solid #e5e5e5;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.insta-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.insta-logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: #eaeaea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.insta-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.insta-text h2 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 600;
+    color: #222;
+}
+
+.insta-text span {
+    color: #666;
+    font-size: 15px;
+}
+
+.profile-btn {
+    background: #1f1f1f;
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+
+.profile-btn:hover {
+    background: #000;
+}
+
+.insta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.video-card {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    border-radius: 22px;
+    overflow: hidden;
+    background: #000;
+    cursor: pointer;
+    transition: 0.4s ease;
+}
+
+.video-card:hover {
+    transform: translateY(-6px);
+}
+
+.video-card video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.15);
+    transition: 0.3s;
+}
+
+.video-card.playing .overlay {
+    background: transparent;
+}
+
+.play-btn {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.play-btn::before {
+    content: "";
+    border-style: solid;
+    border-width: 14px 0 14px 22px;
+    border-color: transparent transparent transparent #000;
+    margin-left: 5px;
+}
+
+.video-card.playing .play-btn {
+    display: none;
+}
+
+/* -------- RESPONSIVE -------- */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .insta-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .insta-text h2 {
+        font-size: 26px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+
+    .omorfia-wrapper {
+        padding: 40px 15px;
+    }
+
+    .omorfia-container {
+        padding: 25px;
+    }
+
+    .insta-header-box {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+    }
+
+    .insta-grid {
+        grid-template-columns: 1fr;   /* One video per row */
+        gap: 20px;
+    }
+
+    .video-card {
+        width: 100%;
+    }
+
+    .insta-text h2 {
+        font-size: 22px;
+    }
+
+    .profile-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
