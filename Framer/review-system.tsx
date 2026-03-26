@@ -1,17 +1,44 @@
 import * as React from "react"
 
 const PRICE_PER_REVIEW = 350
-
-// Change this when your dev gives the real endpoint.
-// This endpoint should create Stripe checkout/session and return JSON.
 const CHECKOUT_ENDPOINT = "https://checkout.solora.ai/review-removal/checkout"
-
-// This is where Stripe/backend should send the user at the end.
 const CONFIRMATION_URL = "/confirmation"
+
+const HELP_STEPS = [
+    {
+        title: "Go to the Review Platform",
+        body: "Open the platform where the review was posted. Navigate to your business listing.",
+        visual: "platforms",
+    },
+    {
+        title: "Search for Your Business",
+        body: "Type your business name in the search bar and press Enter.",
+        visual: "search",
+    },
+    {
+        title: "Open the Reviews",
+        body: "Click on your business listing, then find the reviews section.",
+        visual: "reviews",
+    },
+    {
+        title: "Find the Review",
+        body: "Scroll to the review you want removed and click the three dots (⋮) or menu icon.",
+        visual: "menu",
+    },
+    {
+        title: 'Click "Share Review"',
+        body: 'From the menu, select "Share review" or a similar sharing option.',
+        visual: "share",
+    },
+    {
+        title: "Copy the Link",
+        body: 'Click "Copy link" to copy the review URL to your clipboard. Then paste it here!',
+        visual: "copy",
+    },
+] as const
 
 export default function ReviewRemovalSection() {
     const [step, setStep] = React.useState(1)
-
     const [reviews, setReviews] = React.useState([""])
     const [businessName, setBusinessName] = React.useState("")
     const [contactName, setContactName] = React.useState("")
@@ -26,6 +53,9 @@ export default function ReviewRemovalSection() {
         terms: false,
     })
 
+    const [showHelp, setShowHelp] = React.useState(false)
+    const [helpStep, setHelpStep] = React.useState(0)
+    const [showHint, setShowHint] = React.useState(false)
     const [submitError, setSubmitError] = React.useState("")
     const [isSubmitting, setIsSubmitting] = React.useState(false)
 
@@ -63,33 +93,23 @@ export default function ReviewRemovalSection() {
     const allAgreementsChecked = Object.values(agreements).every(Boolean)
     const isStep3Valid = isStep1Valid && isStep2Valid && allAgreementsChecked
 
-    const canGoToStep2 = isStep1Valid
-    const canGoToStep3 = isStep1Valid && isStep2Valid
-
-    const canGoBackToStep = (targetStep: number) => targetStep < step
-    const canGoToStep = (targetStep: number) => {
-        if (targetStep === 1) return true
-        if (targetStep === 2) return canGoToStep2
-        if (targetStep === 3) return canGoToStep3
-        return false
-    }
-
     const navigateToStep = (targetStep: number) => {
-        if (canGoBackToStep(targetStep)) {
+        if (targetStep < step) {
             setStep(targetStep)
             setSubmitError("")
             return
         }
-
-        if (targetStep > step && canGoToStep(targetStep)) {
-            setStep(targetStep)
+        if (targetStep === 2 && isStep1Valid) {
+            setStep(2)
+            setSubmitError("")
+        }
+        if (targetStep === 3 && isStep1Valid && isStep2Valid) {
+            setStep(3)
             setSubmitError("")
         }
     }
 
-    const addReview = () => {
-        setReviews((prev) => [...prev, ""])
-    }
+    const addReview = () => setReviews((prev) => [...prev, ""])
 
     const removeReview = (index: number) => {
         setReviews((prev) => {
@@ -107,60 +127,50 @@ export default function ReviewRemovalSection() {
     }
 
     const toggleAgreement = (key: keyof typeof agreements) => {
-        setAgreements((prev) => ({
-            ...prev,
-            [key]: !prev[key],
-        }))
+        setAgreements((prev) => ({ ...prev, [key]: !prev[key] }))
     }
 
-    const getPayload = () => {
-        return {
-            customer: {
-                businessName: businessName.trim(),
-                contactName: contactName.trim(),
-                email: email.trim(),
-                phone: phone.trim(),
-            },
-            reviewLinks: cleanedReviews,
-            order: {
-                reviewCount,
-                pricePerReview: PRICE_PER_REVIEW,
-                total,
-                currency: "usd",
-            },
-            payment: {
-                type: "authorization",
-                confirmationUrl:
-                    typeof window !== "undefined"
-                        ? new URL(
-                              CONFIRMATION_URL,
-                              window.location.origin
-                          ).toString()
-                        : CONFIRMATION_URL,
-            },
-            meta: {
-                source: "framer-review-removal-form",
-                submittedAt: new Date().toISOString(),
-            },
-        }
+    const handlePhoneChange = (rawValue: string) => {
+        setPhone(formatPhoneLikeScreenshot(rawValue, phone))
     }
+
+    const getPayload = () => ({
+        customer: {
+            businessName: businessName.trim(),
+            contactName: contactName.trim(),
+            email: email.trim(),
+            phone: phone.trim(),
+        },
+        reviewLinks: cleanedReviews,
+        order: {
+            reviewCount,
+            pricePerReview: PRICE_PER_REVIEW,
+            total,
+            currency: "usd",
+        },
+        payment: {
+            type: "authorization",
+            confirmationUrl:
+                typeof window !== "undefined"
+                    ? new URL(CONFIRMATION_URL, window.location.origin).toString()
+                    : CONFIRMATION_URL,
+        },
+        meta: {
+            source: "framer-review-removal-form",
+            submittedAt: new Date().toISOString(),
+        },
+    })
 
     const handleAuthorize = async () => {
         setSubmitError("")
-
         if (!isStep3Valid || isSubmitting) return
-
-        const payload = getPayload()
 
         try {
             setIsSubmitting(true)
-
             const response = await fetch(CHECKOUT_ENDPOINT, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(getPayload()),
             })
 
             let data: any = null
@@ -172,12 +182,10 @@ export default function ReviewRemovalSection() {
 
             if (!response.ok) {
                 throw new Error(
-                    data?.message ||
-                        `Request failed with status ${response.status}`
+                    data?.message || `Request failed with status ${response.status}`
                 )
             }
 
-            // Support multiple possible response shapes from backend/dev.
             const redirectUrl =
                 data?.redirectUrl ||
                 data?.checkoutUrl ||
@@ -189,7 +197,6 @@ export default function ReviewRemovalSection() {
                 return
             }
 
-            // If backend returns success but no URL, send user to confirmation.
             if (typeof window !== "undefined") {
                 window.location.href = CONFIRMATION_URL
             }
@@ -203,436 +210,498 @@ export default function ReviewRemovalSection() {
         }
     }
 
+    const activeHelp = HELP_STEPS[helpStep]
+
     return (
-        <div style={styles.wrapper}>
-            <div style={styles.progressWrap}>
-                <StepItem
-                    number="1"
-                    label="Reviews"
-                    active={step === 1}
-                    completed={step > 1}
-                    clickable={canGoBackToStep(1)}
-                    onClick={() => navigateToStep(1)}
-                />
-                <div
-                    style={{
-                        ...styles.line,
-                        background: step > 1 ? "#E173FF" : "#E7E2EB",
-                    }}
-                />
-                <StepItem
-                    number="2"
-                    label="Your Info"
-                    active={step === 2}
-                    completed={step > 2}
-                    clickable={canGoBackToStep(2)}
-                    onClick={() => navigateToStep(2)}
-                />
-                <div
-                    style={{
-                        ...styles.line,
-                        background: step > 2 ? "#E173FF" : "#E7E2EB",
-                    }}
-                />
-                <StepItem
-                    number="3"
-                    label="Payment"
-                    active={step === 3}
-                    completed={false}
-                    clickable={canGoBackToStep(3)}
-                    onClick={() => navigateToStep(3)}
-                />
-            </div>
+        <>
+            <div style={styles.wrapper}>
+                <div style={styles.progressWrap}>
+                    <TopStep
+                        number="1"
+                        label="Reviews"
+                        active={step === 1}
+                        completed={step > 1}
+                        onClick={() => navigateToStep(1)}
+                    />
+                    <div style={{ ...styles.topLine, opacity: step > 1 ? 1 : 0.35 }} />
+                    <TopStep
+                        number="2"
+                        label="Your Info"
+                        active={step === 2}
+                        completed={step > 2}
+                        onClick={() => navigateToStep(2)}
+                    />
+                    <div style={{ ...styles.topLine, opacity: step > 2 ? 1 : 0.35 }} />
+                    <TopStep
+                        number="3"
+                        label="Payment"
+                        active={step === 3}
+                        completed={false}
+                        onClick={() => navigateToStep(3)}
+                    />
+                </div>
 
-            <div style={styles.card}>
-                {step === 1 && (
-                    <>
-                        <h2 style={styles.cardTitle}>
-                            Paste Your Review Links
-                        </h2>
-                        <p style={styles.cardSub}>
-                            Add the review link(s) you'd like removed — Google,
-                            Yelp, or other platforms.
-                            <br />
-                            <strong style={{ color: "#111111" }}>
-                                ${PRICE_PER_REVIEW} per review.
-                            </strong>
-                        </p>
+                <div style={styles.card}>
+                    {step === 1 && (
+                        <div style={styles.stepFade}>
+                            <h2 style={styles.cardTitle}>Paste Your Review Links</h2>
+                            <p style={styles.cardSub}>
+                                Paste the link to each review you&apos;d like removed.
+                            </p>
 
-                        <div style={styles.noticeBox}>
-                            <div style={styles.noticeIcon}>i</div>
-                            <div style={styles.noticeText}>
-                                Only reviews with{" "}
-                                <strong>written text or photos</strong> are
-                                eligible for removal. Star-only ratings cannot
-                                be removed.
-                            </div>
-                        </div>
-
-                        <div style={styles.helperLinks}>
-                            <a href="#" style={styles.helperLink}>
-                                How to copy a Google review link →
-                            </a>
-                            <a href="#" style={styles.helperLink}>
-                                How to copy a Yelp review link →
-                            </a>
-                        </div>
-
-                        <div style={styles.stack16}>
-                            {reviews.map((review, index) => {
-                                const error = reviewErrors[index]
-                                return (
-                                    <div key={index} style={styles.stack8}>
-                                        <InputRow
-                                            value={review}
-                                            placeholder="Paste review link (Google, Yelp, etc.)"
-                                            onChange={(e) =>
-                                                updateReview(
-                                                    index,
-                                                    e.target.value
-                                                )
-                                            }
-                                            icon={<LinkIcon />}
-                                            hasError={Boolean(error)}
-                                            rightAction={
-                                                reviews.length > 1 ? (
-                                                    <button
-                                                        type="button"
-                                                        style={
-                                                            styles.removeChip
-                                                        }
-                                                        onClick={() =>
-                                                            removeReview(index)
-                                                        }
-                                                    >
-                                                        Remove
-                                                    </button>
-                                                ) : undefined
-                                            }
-                                        />
-                                        {error ? (
-                                            <div style={styles.fieldError}>
-                                                {error}
-                                            </div>
-                                        ) : null}
-                                    </div>
-                                )
-                            })}
-                        </div>
-
-                        <button
-                            type="button"
-                            style={styles.addButton}
-                            onClick={addReview}
-                        >
-                            <span style={styles.addPlus}>+</span>
-                            <span>Add Another Review</span>
-                        </button>
-
-                        {!hasAtLeastOneReview ? (
-                            <div
-                                style={{ ...styles.fieldError, marginTop: 12 }}
-                            >
-                                Add at least one valid review link to continue.
-                            </div>
-                        ) : null}
-
-                        <div style={styles.bottomRow}>
-                            <div style={styles.reviewCount}>
-                                <strong>
-                                    {reviewCount} review
-                                    {reviewCount !== 1 ? "s" : ""}
-                                </strong>{" "}
-                                · ${total}
+                            <div style={styles.noticeBox}>
+                                <div style={styles.noticeLeftIcon}>
+                                    <InfoCircleIcon />
+                                </div>
+                                <div style={styles.noticeText}>
+                                    Only reviews with <strong>written text or photos</strong> are
+                                    eligible. Star-only ratings cannot be removed.
+                                </div>
                             </div>
 
-                            <button
-                                type="button"
-                                style={{
-                                    ...styles.primaryButton,
-                                    ...(isStep1Valid
-                                        ? styles.primaryButtonActive
-                                        : styles.primaryButtonDisabled),
-                                }}
-                                onClick={() => navigateToStep(2)}
-                                disabled={!isStep1Valid}
-                            >
-                                Continue <span style={styles.arrow}>→</span>
-                            </button>
-                        </div>
-                    </>
-                )}
+                            <div style={styles.stack16}>
+                                {reviews.map((review, index) => {
+                                    const error = reviewErrors[index]
+                                    return (
+                                        <div key={index} style={styles.stack8}>
+                                            <InputRow
+                                                value={review}
+                                                placeholder="Paste review link (Google, Yelp, etc.)"
+                                                onChange={(e) => updateReview(index, e.target.value)}
+                                                icon={<LinkIcon />}
+                                                hasError={Boolean(error)}
+                                                rightAction={
+                                                    <div style={styles.inputActions}>
+                                                        {reviews.length > 1 ? (
+                                                            <button
+                                                                type="button"
+                                                                style={styles.miniRemove}
+                                                                onClick={() => removeReview(index)}
+                                                            >
+                                                                ×
+                                                            </button>
+                                                        ) : null}
+                                                        <div
+                                                            style={styles.helpWrap}
+                                                            onMouseEnter={() => setShowHint(true)}
+                                                            onMouseLeave={() => setShowHint(false)}
+                                                        >
+                                                            <button
+                                                                type="button"
+                                                                style={styles.helpIconButton}
+                                                                onClick={() => {
+                                                                    setHelpStep(0)
+                                                                    setShowHelp(true)
+                                                                }}
+                                                            >
+                                                                <QuestionCircleIcon />
+                                                            </button>
+                                                            {showHint && index === 0 ? (
+                                                                <div style={styles.tooltip}>
+                                                                    Only reviews with written text or
+                                                                    photos are eligible. Click for help
+                                                                    finding your link.
+                                                                </div>
+                                                            ) : null}
+                                                        </div>
+                                                    </div>
+                                                }
+                                            />
+                                            {error ? <div style={styles.fieldError}>{error}</div> : null}
+                                        </div>
+                                    )
+                                })}
+                            </div>
 
-                {step === 2 && (
-                    <>
-                        <h2 style={styles.cardTitle}>Your Information</h2>
-                        <p style={styles.cardSub}>
-                            Tell us about your business so we can process the
-                            removal.
-                        </p>
-
-                        <div style={styles.formStack}>
-                            <FieldLabel label="Business Name" />
-                            <InputRow
-                                value={businessName}
-                                onChange={(e) =>
-                                    setBusinessName(e.target.value)
-                                }
-                                placeholder="Business name"
-                                icon={<BusinessIcon />}
-                                hasError={
-                                    businessName.length > 0 &&
-                                    !isBusinessNameValid
-                                }
-                            />
-                            {businessName.length > 0 && !isBusinessNameValid ? (
-                                <div style={styles.fieldError}>
-                                    Please enter a valid business name.
-                                </div>
-                            ) : null}
-
-                            <FieldLabel label="Contact Name" />
-                            <InputRow
-                                value={contactName}
-                                onChange={(e) => setContactName(e.target.value)}
-                                placeholder="Full name"
-                                icon={<PersonIcon />}
-                                hasError={
-                                    contactName.length > 0 &&
-                                    !isContactNameValid
-                                }
-                            />
-                            {contactName.length > 0 && !isContactNameValid ? (
-                                <div style={styles.fieldError}>
-                                    Please enter the contact person’s name.
-                                </div>
-                            ) : null}
-
-                            <FieldLabel label="Email" />
-                            <InputRow
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="name@company.com"
-                                icon={<MailIcon />}
-                                hasError={email.length > 0 && !isEmailValid}
-                                inputMode="email"
-                            />
-                            {email.length > 0 && !isEmailValid ? (
-                                <div style={styles.fieldError}>
-                                    Please enter a valid email address.
-                                </div>
-                            ) : null}
-
-                            <FieldLabel label="Phone" />
-                            <InputRow
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                placeholder="+1 (555) 123-4567"
-                                icon={<PhoneIcon />}
-                                hasError={phone.length > 0 && !isPhoneValid}
-                                inputMode="tel"
-                            />
-                            {phone.length > 0 && !isPhoneValid ? (
-                                <div style={styles.fieldError}>
-                                    Please enter a valid phone number.
-                                </div>
-                            ) : null}
-                        </div>
-
-                        <div style={styles.bottomRow}>
-                            <button
-                                type="button"
-                                style={styles.backButton}
-                                onClick={() => navigateToStep(1)}
-                            >
-                                ← <span style={{ marginLeft: 8 }}>Back</span>
+                            <button type="button" style={styles.addAnotherButton} onClick={addReview}>
+                                <span style={styles.addPlus}>+</span> Add another
                             </button>
 
-                            <button
-                                type="button"
-                                style={{
-                                    ...styles.primaryButton,
-                                    ...(isStep2Valid
-                                        ? styles.primaryButtonActive
-                                        : styles.primaryButtonDisabled),
-                                }}
-                                onClick={() => navigateToStep(3)}
-                                disabled={!isStep2Valid}
-                            >
-                                Continue <span style={styles.arrow}>→</span>
-                            </button>
-                        </div>
-                    </>
-                )}
-
-                {step === 3 && (
-                    <>
-                        <h2 style={styles.cardTitle}>Authorize Payment</h2>
-                        <p style={styles.cardSub}>
-                            A hold will be placed on your card. You&apos;re only
-                            charged once the review is successfully removed.
-                        </p>
-
-                        <div style={styles.summaryBox}>
-                            <div style={styles.summaryTop}>
-                                <span style={styles.summaryMuted}>
-                                    Review removal
-                                </span>
-                                <span style={styles.summaryPrice}>
-                                    {reviewCount} x ${PRICE_PER_REVIEW}
-                                </span>
-                            </div>
-                            <div style={styles.summaryDivider} />
-                            <div style={styles.summaryBottom}>
-                                <span style={styles.totalLabel}>Total</span>
-                                <span style={styles.totalPrice}>${total}</span>
+                            <div style={styles.bottomRow}>
+                                <div style={styles.priceNote}>${PRICE_PER_REVIEW} per review</div>
+                                <button
+                                    type="button"
+                                    style={{
+                                        ...styles.primaryButton,
+                                        ...(isStep1Valid
+                                            ? styles.primaryButtonEnabled
+                                            : styles.primaryButtonDisabled),
+                                    }}
+                                    onClick={() => navigateToStep(2)}
+                                    disabled={!isStep1Valid}
+                                >
+                                    Continue <ArrowRightIcon />
+                                </button>
                             </div>
                         </div>
+                    )}
 
-                        <div style={styles.checkList}>
-                            <CheckItem
-                                checked={agreements.eligibility}
-                                onChange={() => toggleAgreement("eligibility")}
-                                text="The review(s) I’ve submitted include written text and/or an image and are not star-only ratings."
-                            />
-                            <CheckItem
-                                checked={agreements.noInteraction}
-                                onChange={() =>
-                                    toggleAgreement("noInteraction")
-                                }
-                                text="I agree not to interact with the review(s) in any way while Solora is working on the removal."
-                            />
-                            <CheckItem
-                                checked={agreements.authHold}
-                                onChange={() => toggleAgreement("authHold")}
-                                text={`I understand that an authorization hold of $${total} ($${PRICE_PER_REVIEW} per review) will be placed on my card. I will only be charged once the review is successfully removed — otherwise, the hold will be released.`}
-                            />
-                            <CheckItem
-                                checked={agreements.communications}
-                                onChange={() =>
-                                    toggleAgreement("communications")
-                                }
-                                text='I agree that Solora may call, text, or email me with updates about my removal process. Msg & data rates may apply. Reply "BYE" to end communications at any time.'
-                            />
-                            <CheckItem
-                                checked={agreements.terms}
-                                onChange={() => toggleAgreement("terms")}
-                                text={
-                                    <>
-                                        I have read and agree to the{" "}
-                                        <a href="#" style={styles.inlineLink}>
-                                            Terms of Service
-                                        </a>
-                                        .
-                                    </>
-                                }
-                            />
+                    {step === 2 && (
+                        <div style={styles.stepFade}>
+                            <h2 style={styles.cardTitle}>Your Information</h2>
+                            <p style={styles.cardSub}>
+                                Tell us about your business so we can process the removal.
+                            </p>
+
+                            <div style={styles.formStack}>
+                                <FieldLabel label="Business Name" />
+                                <InputRow
+                                    value={businessName}
+                                    onChange={(e) => setBusinessName(e.target.value)}
+                                    placeholder="Acme Inc."
+                                    icon={<BusinessIcon />}
+                                    hasError={businessName.length > 0 && !isBusinessNameValid}
+                                />
+
+                                <FieldLabel label="Contact Name" />
+                                <InputRow
+                                    value={contactName}
+                                    onChange={(e) => setContactName(e.target.value)}
+                                    placeholder="John Doe"
+                                    icon={<PersonIcon />}
+                                    hasError={contactName.length > 0 && !isContactNameValid}
+                                />
+
+                                <FieldLabel label="Email" />
+                                <InputRow
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="john@acme.com"
+                                    icon={<MailIcon />}
+                                    inputMode="email"
+                                    hasError={email.length > 0 && !isEmailValid}
+                                />
+
+                                <FieldLabel label="Phone" />
+                                <InputRow
+                                    value={phone}
+                                    onChange={(e) => handlePhoneChange(e.target.value)}
+                                    placeholder="(312) 398-7124"
+                                    icon={<PhoneIcon />}
+                                    inputMode="tel"
+                                    hasError={phone.length > 0 && !isPhoneValid}
+                                    focusedBorder
+                                />
+                            </div>
+
+                            <div style={styles.bottomRow}>
+                                <button type="button" style={styles.backButton} onClick={() => navigateToStep(1)}>
+                                    <ArrowLeftIcon /> <span style={{ marginLeft: 10 }}>Back</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    style={{
+                                        ...styles.primaryButton,
+                                        ...(isStep2Valid
+                                            ? styles.primaryButtonEnabled
+                                            : styles.primaryButtonDisabled),
+                                    }}
+                                    onClick={() => navigateToStep(3)}
+                                    disabled={!isStep2Valid}
+                                >
+                                    Continue <ArrowRightIcon />
+                                </button>
+                            </div>
                         </div>
+                    )}
 
-                        <div style={styles.trustPoints}>
-                            <TrustItem
-                                icon={<ShieldIcon />}
-                                text={
-                                    <>
-                                        <strong>No-risk guarantee</strong> —
-                                        only charged upon successful removal
-                                    </>
-                                }
-                            />
-                            <TrustItem
-                                icon={<ClockIcon />}
-                                text={
-                                    <>
-                                        Removal typically takes{" "}
-                                        <strong>1–3 weeks</strong>
-                                    </>
-                                }
-                            />
-                            <TrustItem
-                                icon={<CardIcon />}
-                                text={<>Secure payment processing via Stripe</>}
-                            />
-                        </div>
+                    {step === 3 && (
+                        <div style={styles.stepFade}>
+                            <h2 style={styles.cardTitle}>Authorize Payment</h2>
+                            <p style={styles.cardSub}>
+                                A hold will be placed on your card. You&apos;re only charged once the review is
+                                successfully removed.
+                            </p>
 
-                        {submitError ? (
-                            <div style={styles.submitError}>{submitError}</div>
-                        ) : null}
+                            <div style={styles.summaryBox}>
+                                <div style={styles.summaryTop}>
+                                    <span style={styles.summaryMuted}>Review removal</span>
+                                    <span style={styles.summaryPrice}>{reviewCount} × ${PRICE_PER_REVIEW}</span>
+                                </div>
+                                <div style={styles.summaryDivider} />
+                                <div style={styles.summaryBottom}>
+                                    <span style={styles.totalLabel}>Total</span>
+                                    <span style={styles.totalPrice}>${total}</span>
+                                </div>
+                            </div>
 
-                        <div style={styles.bottomRow}>
-                            <button
-                                type="button"
-                                style={styles.backButton}
-                                onClick={() => navigateToStep(2)}
-                                disabled={isSubmitting}
-                            >
-                                ← <span style={{ marginLeft: 8 }}>Back</span>
-                            </button>
+                            <div style={styles.checkList}>
+                                <CheckItem
+                                    checked={agreements.eligibility}
+                                    onChange={() => toggleAgreement("eligibility")}
+                                    text="The review(s) I’ve submitted include written text and/or an image and are not star-only ratings."
+                                />
+                                <CheckItem
+                                    checked={agreements.noInteraction}
+                                    onChange={() => toggleAgreement("noInteraction")}
+                                    text="I agree not to interact with the review(s) in any way while Solora is working on the removal."
+                                />
+                                <CheckItem
+                                    checked={agreements.authHold}
+                                    onChange={() => toggleAgreement("authHold")}
+                                    text={`I understand that an authorization hold of $${total} ($${PRICE_PER_REVIEW} per review) will be placed on my card. I will only be charged once the review is successfully removed — otherwise, the hold will be released.`}
+                                />
+                                <CheckItem
+                                    checked={agreements.communications}
+                                    onChange={() => toggleAgreement("communications")}
+                                    text='I agree that Solora may call, text, or email me with updates about my removal process. Msg & data rates may apply. Reply "BYE" to end communications at any time.'
+                                />
+                                <CheckItem
+                                    checked={agreements.terms}
+                                    onChange={() => toggleAgreement("terms")}
+                                    text={
+                                        <>
+                                            I have read and agree to the <a href="#" style={styles.inlineLink}>Terms of Service</a>.
+                                        </>
+                                    }
+                                />
+                            </div>
 
-                            <button
-                                type="button"
-                                style={{
-                                    ...styles.primaryButton,
-                                    ...(isStep3Valid && !isSubmitting
-                                        ? styles.primaryButtonActive
-                                        : styles.primaryButtonDisabled),
-                                }}
-                                onClick={handleAuthorize}
-                                disabled={!isStep3Valid || isSubmitting}
-                            >
-                                <span style={{ marginRight: 10 }}>
+                            <div style={styles.trustPoints}>
+                                <TrustItem icon={<ShieldIcon />} text={<><strong>No-risk guarantee</strong> — only charged upon successful removal</>} />
+                                <TrustItem icon={<ClockIcon />} text={<><span>Removal typically takes </span><strong>1–3 weeks</strong></>} />
+                                <TrustItem icon={<CardIcon />} text={<>Secure payment processing via Stripe</>} />
+                            </div>
+
+                            {submitError ? <div style={styles.submitError}>{submitError}</div> : null}
+
+                            <div style={styles.bottomRow}>
+                                <button type="button" style={styles.backButton} onClick={() => navigateToStep(2)}>
+                                    <ArrowLeftIcon /> <span style={{ marginLeft: 10 }}>Back</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    style={{
+                                        ...styles.primaryButton,
+                                        ...(isStep3Valid && !isSubmitting
+                                            ? styles.primaryButtonEnabled
+                                            : styles.primaryButtonDisabled),
+                                    }}
+                                    onClick={handleAuthorize}
+                                    disabled={!isStep3Valid || isSubmitting}
+                                >
                                     <CardMiniIcon />
-                                </span>
-                                {isSubmitting
-                                    ? "Redirecting..."
-                                    : `Authorize $${total}`}
-                            </button>
+                                    <span style={{ marginLeft: 10 }}>
+                                        {isSubmitting ? "Redirecting..." : `Authorize $${total}`}
+                                    </span>
+                                </button>
+                            </div>
                         </div>
-                    </>
-                )}
+                    )}
+                </div>
             </div>
-        </div>
+
+            {showHelp ? (
+                <HelpModal
+                    step={helpStep}
+                    title={activeHelp.title}
+                    body={activeHelp.body}
+                    visual={activeHelp.visual}
+                    onClose={() => setShowHelp(false)}
+                    onNext={() => {
+                        if (helpStep < HELP_STEPS.length - 1) setHelpStep((s) => s + 1)
+                        else setShowHelp(false)
+                    }}
+                    onBack={() => setHelpStep((s) => Math.max(0, s - 1))}
+                />
+            ) : null}
+        </>
     )
 }
 
-function StepItem({
+function TopStep({
     number,
     label,
     active,
     completed,
-    clickable,
     onClick,
 }: {
     number: string
     label: string
     active?: boolean
     completed?: boolean
-    clickable?: boolean
     onClick?: () => void
 }) {
     return (
-        <button
-            type="button"
-            onClick={onClick}
-            style={{
-                ...styles.stepItemButton,
-                cursor: clickable ? "pointer" : "default",
-            }}
-            aria-label={`Go to ${label}`}
-        >
+        <button type="button" onClick={onClick} style={styles.topStepBtn}>
             <div
                 style={{
-                    ...styles.stepCircle,
-                    background: active || completed ? "#E173FF" : "#F1EEF4",
-                    color: active || completed ? "#ffffff" : "#6D6671",
-                    boxShadow: active
-                        ? "0 10px 24px rgba(225, 115, 255, 0.28)"
-                        : "none",
+                    ...styles.topStepCircle,
+                    background: active || completed ? "#111111" : "#ECE7EF",
+                    color: active || completed ? "#FFFFFF" : "#68616C",
                 }}
             >
                 {completed ? "✓" : number}
             </div>
-            <div style={styles.stepLabel}>{label}</div>
+            <div style={styles.topStepLabel}>{label}</div>
         </button>
+    )
+}
+
+function HelpModal({
+    step,
+    title,
+    body,
+    visual,
+    onClose,
+    onNext,
+    onBack,
+}: {
+    step: number
+    title: string
+    body: string
+    visual: string
+    onClose: () => void
+    onNext: () => void
+    onBack: () => void
+}) {
+    React.useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === "Escape") onClose()
+        }
+        window.addEventListener("keydown", onKey)
+        return () => window.removeEventListener("keydown", onKey)
+    }, [onClose])
+
+    return (
+        <div style={styles.modalOverlay} onClick={onClose}>
+            <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+                <button type="button" style={styles.modalClose} onClick={onClose}>
+                    ×
+                </button>
+                <div style={styles.modalTitle}>How to Copy a Review Link</div>
+
+                <div style={styles.modalProgress}>
+                    {HELP_STEPS.map((_, i) => (
+                        <div
+                            key={i}
+                            style={{
+                                ...styles.modalProgressBar,
+                                background: i <= step ? "#111111" : "#ECE7EF",
+                                transform: i === step ? "scaleX(1)" : "scaleX(1)",
+                            }}
+                        />
+                    ))}
+                </div>
+
+                <div key={step} style={styles.modalStepWrap}>
+                    <div style={styles.modalStepTitleRow}>
+                        <div style={styles.modalStepNumber}>{step + 1}</div>
+                        <div style={styles.modalStepTitle}>{title}</div>
+                    </div>
+
+                    <div style={styles.modalVisualCard}>
+                        <StepVisual visual={visual} />
+                    </div>
+
+                    <div style={styles.modalBody}>{body}</div>
+                </div>
+
+                <div style={styles.modalFooter}>
+                    <button
+                        type="button"
+                        style={{
+                            ...styles.modalBack,
+                            opacity: step === 0 ? 0.45 : 1,
+                            pointerEvents: step === 0 ? "none" : "auto",
+                        }}
+                        onClick={onBack}
+                    >
+                        <ArrowLeftIcon /> <span style={{ marginLeft: 10 }}>Back</span>
+                    </button>
+
+                    <div style={styles.modalCount}>{step + 1}/6</div>
+
+                    <button type="button" style={styles.modalNext} onClick={onNext}>
+                        {step === HELP_STEPS.length - 1 ? "Got it!" : "Next"}
+                        {step !== HELP_STEPS.length - 1 ? <ArrowRightIcon /> : null}
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function StepVisual({ visual }: { visual: string }) {
+    if (visual === "platforms") {
+        return (
+            <div style={styles.visualStack}>
+                <VisualPill left="Google Maps" right="maps.google.com" />
+                <VisualPill left="Yelp" right="yelp.com" />
+                <VisualPill left="Trustpilot" right="trustpilot.com" />
+            </div>
+        )
+    }
+
+    if (visual === "search") {
+        return (
+            <div style={styles.visualStack}>
+                <div style={styles.visualSearch}>Your Business Name</div>
+                <div style={styles.visualResultCard}>
+                    <div style={styles.visualResultTitle}>Your Business Name</div>
+                    <div style={styles.visualResultSub}>123 Main St. 4.5 ★</div>
+                </div>
+            </div>
+        )
+    }
+
+    if (visual === "reviews") {
+        return (
+            <div style={styles.reviewPanel}>
+                <div style={styles.reviewHeader}>Your Business Name</div>
+                <div style={styles.reviewTabs}>
+                    <span>Overview</span>
+                    <span style={styles.reviewTabActive}>Reviews</span>
+                    <span>Photos</span>
+                </div>
+                <div style={styles.reviewClickHint}>Click here ↑</div>
+            </div>
+        )
+    }
+
+    if (visual === "menu") {
+        return (
+            <div style={styles.reviewMenuMock}>
+                <div style={styles.reviewMiniCard}>
+                    <div style={styles.reviewMiniHeader}>John D. ★</div>
+                    <div style={styles.reviewMiniText}>Terrible experience, would not recommend...</div>
+                </div>
+                <div style={styles.reviewDots}>⋮</div>
+                <div style={styles.reviewClickNote}>Click the three dots</div>
+            </div>
+        )
+    }
+
+    if (visual === "share") {
+        return (
+            <div style={styles.shareWrap}>
+                <div style={styles.shareReviewCard}>
+                    <div style={styles.shareTitle}>John D.</div>
+                    <div style={styles.shareText}>Terrible experience...</div>
+                </div>
+                <div style={styles.shareMenu}>
+                    <div style={styles.shareMenuTop}>Flag as inappropriate</div>
+                    <div style={styles.shareMenuBottom}>Share review</div>
+                </div>
+            </div>
+        )
+    }
+
+    return (
+        <div style={styles.copyCard}>
+            <div style={styles.copyTitle}>Share this review</div>
+            <div style={styles.copyUrl}>https://g.co/kgs/abc123...</div>
+            <div style={styles.copyButton}>Copied!</div>
+        </div>
+    )
+}
+
+function VisualPill({ left, right }: { left: string; right: string }) {
+    return (
+        <div style={styles.visualPill}>
+            <div style={styles.visualPillLeft}>{left}</div>
+            <div style={styles.visualPillRight}>{right}</div>
+        </div>
     )
 }
 
@@ -648,6 +717,7 @@ function InputRow({
     hasError,
     rightAction,
     inputMode,
+    focusedBorder,
 }: {
     value: string
     placeholder: string
@@ -656,19 +726,31 @@ function InputRow({
     hasError?: boolean
     rightAction?: React.ReactNode
     inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"]
+    focusedBorder?: boolean
 }) {
+    const [focused, setFocused] = React.useState(false)
+
     return (
         <div
             style={{
                 ...styles.inputWrap,
-                border: hasError ? "1px solid #E97B7B" : "1px solid #D9D3DB",
-                background: "#FAF8FB",
+                border: hasError
+                    ? "1px solid #E87878"
+                    : focused && focusedBorder
+                      ? "2px solid #B54DFF"
+                      : "1px solid #D8D2DB",
+                boxShadow:
+                    focused && focusedBorder
+                        ? "0 0 0 3px rgba(181, 77, 255, 0.18)"
+                        : "none",
             }}
         >
             <div style={styles.inputIcon}>{icon}</div>
             <input
                 value={value}
                 onChange={onChange}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
                 placeholder={placeholder}
                 style={styles.input}
                 autoComplete="off"
@@ -677,9 +759,7 @@ function InputRow({
                 spellCheck={false}
                 inputMode={inputMode}
             />
-            {rightAction ? (
-                <div style={styles.inputRightAction}>{rightAction}</div>
-            ) : null}
+            {rightAction ? <div style={styles.inputRightAction}>{rightAction}</div> : null}
         </div>
     )
 }
@@ -695,33 +775,16 @@ function CheckItem({
 }) {
     return (
         <label style={styles.checkItem}>
-            <input
-                type="checkbox"
-                checked={checked}
-                onChange={onChange}
-                style={styles.hiddenCheckbox}
-            />
-            <div
-                style={{
-                    ...styles.checkboxCircle,
-                    background: checked ? "#7C3AED" : "#FFFFFF",
-                    borderColor: checked ? "#7C3AED" : "#CFC7D6",
-                }}
-            >
-                {checked ? <CheckMarkIcon /> : null}
+            <input type="checkbox" checked={checked} onChange={onChange} style={styles.hiddenCheckbox} />
+            <div style={{ ...styles.checkboxCircle, borderColor: checked ? "#B54DFF" : "#B54DFF" }}>
+                {checked ? <div style={styles.checkboxInner} /> : null}
             </div>
             <div style={styles.checkText}>{text}</div>
         </label>
     )
 }
 
-function TrustItem({
-    icon,
-    text,
-}: {
-    icon: React.ReactNode
-    text: React.ReactNode
-}) {
+function TrustItem({ icon, text }: { icon: React.ReactNode; text: React.ReactNode }) {
     return (
         <div style={styles.trustItem}>
             <div style={styles.trustIcon}>{icon}</div>
@@ -744,378 +807,235 @@ function isValidEmail(value: string) {
 }
 
 function isValidPhone(value: string) {
-    const cleaned = value.replace(/[^\d+]/g, "")
-    const digits = cleaned.replace(/\D/g, "")
-    return digits.length >= 7
+    const digits = value.replace(/\D/g, "")
+    return digits.length >= 10
+}
+
+function formatPhoneLikeScreenshot(nextValue: string, prevValue: string) {
+    const digits = nextValue.replace(/\D/g, "")
+    const prevDigits = prevValue.replace(/\D/g, "")
+
+    if (digits.length === 0) return ""
+
+    if (digits.length > 10) {
+        return digits
+    }
+
+    if (digits.length <= 3) return digits
+    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`
+    if (digits.length <= 10) {
+        return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`
+    }
+
+    return prevDigits.length > 10 ? digits : nextValue
 }
 
 function LinkIcon() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path
-                d="M10 13a5 5 0 0 1 0-7l1.5-1.5a5 5 0 0 1 7 7L17 13"
-                stroke="#6F6874"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-            />
-            <path
-                d="M14 11a5 5 0 0 1 0 7L12.5 19.5a5 5 0 0 1-7-7L7 11"
-                stroke="#6F6874"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-            />
+            <path d="M10 13a5 5 0 0 1 0-7l1.5-1.5a5 5 0 0 1 7 7L17 13" stroke="#6F6874" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M14 11a5 5 0 0 1 0 7L12.5 19.5a5 5 0 0 1-7-7L7 11" stroke="#6F6874" strokeWidth="1.8" strokeLinecap="round" />
         </svg>
     )
 }
-
 function BusinessIcon() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <rect
-                x="4"
-                y="5"
-                width="10"
-                height="14"
-                rx="2"
-                stroke="#6F6874"
-                strokeWidth="1.6"
-            />
-            <path
-                d="M14 9h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-4"
-                stroke="#6F6874"
-                strokeWidth="1.6"
-            />
-            <path
-                d="M8 9h2M8 12h2M8 15h2"
-                stroke="#6F6874"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-            />
+            <rect x="4" y="5" width="10" height="14" rx="2" stroke="#6F6874" strokeWidth="1.6" />
+            <path d="M14 9h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-4" stroke="#6F6874" strokeWidth="1.6" />
+            <path d="M8 9h2M8 12h2M8 15h2" stroke="#6F6874" strokeWidth="1.6" strokeLinecap="round" />
         </svg>
     )
 }
-
 function PersonIcon() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="8" r="3.2" stroke="#6F6874" strokeWidth="1.6" />
-            <path
-                d="M6.5 18.2c1.3-2.8 3.2-4.2 5.5-4.2s4.2 1.4 5.5 4.2"
-                stroke="#6F6874"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-            />
+            <path d="M6.5 18.2c1.3-2.8 3.2-4.2 5.5-4.2s4.2 1.4 5.5 4.2" stroke="#6F6874" strokeWidth="1.6" strokeLinecap="round" />
         </svg>
     )
 }
-
 function MailIcon() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <rect
-                x="3.5"
-                y="5.5"
-                width="17"
-                height="13"
-                rx="2"
-                stroke="#6F6874"
-                strokeWidth="1.6"
-            />
-            <path
-                d="M5 8l7 5 7-5"
-                stroke="#6F6874"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
+            <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="#6F6874" strokeWidth="1.6" />
+            <path d="M5 8l7 5 7-5" stroke="#6F6874" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     )
 }
-
 function PhoneIcon() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path
-                d="M8.4 4.8l2.1 3.8c.3.5.2 1.1-.2 1.6l-1.2 1.2a14.7 14.7 0 0 0 3.5 3.5l1.2-1.2c.4-.4 1-.5 1.6-.2l3.8 2.1c.8.4 1 1.5.4 2.2l-1.1 1.4c-.5.6-1.3.9-2.1.8-3.3-.5-6.5-2.1-9.2-4.8-2.7-2.7-4.3-5.9-4.8-9.2-.1-.8.2-1.6.8-2.1L6.2 4.4c.7-.6 1.8-.4 2.2.4Z"
-                stroke="#6F6874"
-                strokeWidth="1.6"
-                strokeLinejoin="round"
-            />
+            <path d="M8.4 4.8l2.1 3.8c.3.5.2 1.1-.2 1.6l-1.2 1.2a14.7 14.7 0 0 0 3.5 3.5l1.2-1.2c.4-.4 1-.5 1.6-.2l3.8 2.1c.8.4 1 1.5.4 2.2l-1.1 1.4c-.5.6-1.3.9-2.1.8-3.3-.5-6.5-2.1-9.2-4.8-2.7-2.7-4.3-5.9-4.8-9.2-.1-.8.2-1.6.8-2.1L6.2 4.4c.7-.6 1.8-.4 2.2.4Z" stroke="#6F6874" strokeWidth="1.6" strokeLinejoin="round" />
         </svg>
     )
 }
-
+function InfoCircleIcon() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="8.5" stroke="#2E2A2F" strokeWidth="1.8" />
+            <path d="M12 10.3v5.2" stroke="#2E2A2F" strokeWidth="1.8" strokeLinecap="round" />
+            <circle cx="12" cy="7.2" r="1" fill="#2E2A2F" />
+        </svg>
+    )
+}
+function QuestionCircleIcon() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="8.5" stroke="#B54DFF" strokeWidth="1.8" />
+            <path d="M9.9 9.4a2.55 2.55 0 0 1 4.8 1.18c0 1.78-1.9 2.1-2.45 3.3" stroke="#B54DFF" strokeWidth="1.8" strokeLinecap="round" />
+            <circle cx="12" cy="17.2" r="1" fill="#B54DFF" />
+        </svg>
+    )
+}
 function ShieldIcon() {
-    return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <path
-                d="M12 3l7 3v6c0 4.4-2.8 7.7-7 9-4.2-1.3-7-4.6-7-9V6l7-3Z"
-                stroke="#7C3AED"
-                strokeWidth="1.8"
-            />
-        </svg>
-    )
+    return <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v6c0 4.4-2.8 7.7-7 9-4.2-1.3-7-4.6-7-9V6l7-3Z" stroke="#111111" strokeWidth="1.8" /></svg>
 }
-
 function ClockIcon() {
-    return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <circle
-                cx="12"
-                cy="12"
-                r="8.5"
-                stroke="#7C3AED"
-                strokeWidth="1.8"
-            />
-            <path
-                d="M12 7.8v4.7l3 1.8"
-                stroke="#7C3AED"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-            />
-        </svg>
-    )
+    return <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="#111111" strokeWidth="1.8" /><path d="M12 7.8v4.7l3 1.8" stroke="#111111" strokeWidth="1.8" strokeLinecap="round" /></svg>
 }
-
 function CardIcon() {
-    return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <rect
-                x="3"
-                y="6"
-                width="18"
-                height="12"
-                rx="2.2"
-                stroke="#7C3AED"
-                strokeWidth="1.8"
-            />
-            <path d="M3 10h18" stroke="#7C3AED" strokeWidth="1.8" />
-        </svg>
-    )
+    return <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12" rx="2.2" stroke="#111111" strokeWidth="1.8" /><path d="M3 10h18" stroke="#111111" strokeWidth="1.8" /></svg>
 }
-
 function CardMiniIcon() {
-    return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <rect
-                x="3"
-                y="6"
-                width="18"
-                height="12"
-                rx="2.2"
-                stroke="#FFFFFF"
-                strokeWidth="1.8"
-            />
-            <path d="M3 10h18" stroke="#FFFFFF" strokeWidth="1.8" />
-        </svg>
-    )
+    return <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12" rx="2.2" stroke="#FFFFFF" strokeWidth="1.8" /><path d="M3 10h18" stroke="#FFFFFF" strokeWidth="1.8" /></svg>
+}
+function ArrowRightIcon() {
+    return <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
+}
+function ArrowLeftIcon() {
+    return <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
 }
 
-function CheckMarkIcon() {
-    return (
-        <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-            <path
-                d="M2.2 6.3 4.7 8.8 9.8 3.7"
-                stroke="#FFFFFF"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-        </svg>
-    )
-}
-
-const styles: { [key: string]: React.CSSProperties } = {
+const styles: Record<string, React.CSSProperties> = {
     wrapper: {
         width: "100%",
-        maxWidth: 760,
+        maxWidth: 720,
         margin: "0 auto",
-        paddingBottom: 40,
-        fontFamily:
-            'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        padding: "0 14px 40px",
+        fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
         color: "#111111",
     },
-
     progressWrap: {
         display: "flex",
-        alignItems: "flex-start",
+        alignItems: "center",
         justifyContent: "center",
-        gap: 0,
-        marginBottom: 34,
-        paddingTop: 8,
+        gap: 18,
+        marginBottom: 22,
         flexWrap: "nowrap",
     },
-
-    stepItemButton: {
+    topStepBtn: {
+        border: "none",
+        background: "transparent",
+        padding: 0,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        minWidth: 78,
-        background: "transparent",
-        border: "none",
-        padding: 0,
+        cursor: "pointer",
+        minWidth: 82,
     },
-
-    stepCircle: {
-        width: 48,
-        height: 48,
+    topStepCircle: {
+        width: 38,
+        height: 38,
         borderRadius: 999,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        fontSize: 22,
+        fontSize: 16,
         fontWeight: 700,
-        lineHeight: 1,
-        transition: "all 0.2s ease",
+        transition: "all .25s ease",
     },
-
-    stepLabel: {
-        marginTop: 10,
+    topStepLabel: {
+        marginTop: 8,
         fontSize: 14,
-        fontWeight: 500,
         color: "#111111",
-        fontFamily:
-            'Poppins, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        fontWeight: 500,
     },
-
-    line: {
-        width: 112,
-        height: 3,
+    topLine: {
+        width: 96,
+        height: 2,
+        background: "#111111",
         borderRadius: 999,
-        marginTop: 22,
-        marginLeft: 12,
-        marginRight: 12,
-        transition: "background 0.2s ease",
+        transition: "opacity .25s ease",
     },
     card: {
-        position: "relative",
-        background: "linear-gradient(180deg, #FFFFFF 0%, #FCFCFD 100%)",
-        border: "1px solid rgba(225, 220, 230, 0.95)",
-        borderRadius: 24,
-        padding: "36px 32px 30px",
+        background: "#FFFFFF",
+        border: "1px solid #DDD7DF",
+        borderRadius: 16,
+        padding: "30px 32px",
         boxSizing: "border-box",
-        boxShadow:
-            "0 8px 20px rgba(17,17,17,0.04), 0 24px 50px rgba(17,17,17,0.05), 0 55px 90px rgba(124, 58, 237, 0.10), 0 70px 110px rgba(59, 130, 246, 0.08)",
-        overflow: "visible",
+        boxShadow: "0 8px 24px rgba(17,17,17,0.04)",
     },
-
-    inputWrap: {
-        display: "flex",
-        alignItems: "center",
-        borderRadius: 14,
-        height: 54,
-        padding: "0 14px",
-        boxSizing: "border-box",
-        transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-        boxShadow: "0 4px 14px rgba(17,17,17,0.03)",
+    stepFade: {
+        animation: "fadeSlideIn .22s ease",
     },
-    summaryBox: {
-        marginTop: 24,
-        background: "linear-gradient(180deg, #FAF7FD 0%, #F6F2FA 100%)",
-        border: "1px solid #E5DDF0",
-        borderRadius: 18,
-        padding: "18px 20px",
-        boxShadow: "0 12px 30px rgba(124, 58, 237, 0.06)",
-    },
-
     cardTitle: {
         margin: 0,
         textAlign: "center",
-        fontSize: 24,
+        fontSize: 26,
+        fontWeight: 700,
         lineHeight: 1.2,
-        fontWeight: 500,
         color: "#111111",
-        fontFamily:
-            'Poppins, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     },
-
     cardSub: {
-        margin: "14px 0 0",
+        margin: "8px 0 0",
         textAlign: "center",
         fontSize: 16,
-        lineHeight: 1.55,
-        color: "#6C6670",
+        color: "#6A6470",
+        lineHeight: 1.45,
     },
-
     noticeBox: {
-        marginTop: 22,
-        background: "#F5F1FA",
-        border: "1px solid #E7DDF5",
+        marginTop: 18,
         borderRadius: 14,
-        padding: "16px 18px",
+        background: "#F4F1F4",
+        border: "1px solid #E2DBE5",
+        padding: "14px 16px",
         display: "flex",
         alignItems: "flex-start",
         gap: 12,
     },
-
-    noticeIcon: {
-        width: 18,
-        height: 18,
+    noticeLeftIcon: {
         minWidth: 18,
-        borderRadius: 999,
-        border: "1.6px solid #7C3AED",
-        color: "#7C3AED",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        fontSize: 11,
-        fontWeight: 700,
-        marginTop: 2,
+        marginTop: 1,
     },
-
     noticeText: {
+        color: "#5F5964",
         fontSize: 15,
-        lineHeight: 1.5,
-        color: "#6C6670",
+        lineHeight: 1.45,
     },
-
-    helperLinks: {
-        display: "flex",
-        gap: 22,
-        flexWrap: "wrap",
-        marginTop: 22,
-        marginBottom: 20,
-    },
-
-    helperLink: {
-        fontSize: 14,
-        color: "#7C3AED",
-        textDecoration: "none",
-        fontWeight: 500,
-    },
-
     stack16: {
         display: "flex",
         flexDirection: "column",
-        gap: 16,
+        gap: 14,
+        marginTop: 24,
     },
-
     stack8: {
         display: "flex",
         flexDirection: "column",
         gap: 8,
     },
-
     inputWrap: {
         display: "flex",
         alignItems: "center",
-        borderRadius: 12,
-        height: 52,
+        minHeight: 48,
+        borderRadius: 14,
+        background: "#F9F7F9",
         padding: "0 14px",
-        boxSizing: "border-box",
-        transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+        transition: "all .2s ease",
     },
-
     inputIcon: {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         marginRight: 12,
-        color: "#6F6874",
+        minWidth: 18,
     },
-
     input: {
         flex: 1,
+        height: 46,
         border: "none",
         outline: "none",
         background: "transparent",
@@ -1124,247 +1044,237 @@ const styles: { [key: string]: React.CSSProperties } = {
         fontFamily: "inherit",
         minWidth: 0,
     },
-
     inputRightAction: {
-        marginLeft: 10,
+        marginLeft: 8,
     },
-
-    removeChip: {
+    inputActions: {
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+    },
+    miniRemove: {
         border: "none",
-        background: "#EFE9F8",
-        color: "#6E34D0",
-        fontSize: 12,
-        fontWeight: 700,
+        background: "#EDE7EF",
+        color: "#67606C",
+        width: 24,
+        height: 24,
         borderRadius: 999,
-        padding: "8px 10px",
         cursor: "pointer",
-    },
-
-    fieldError: {
-        fontSize: 13,
-        lineHeight: 1.45,
-        color: "#C24B4B",
-    },
-
-    submitError: {
-        marginTop: 18,
-        padding: "12px 14px",
-        background: "#FFF3F3",
-        border: "1px solid #F2C9C9",
-        borderRadius: 12,
-        color: "#B53F3F",
-        fontSize: 14,
-        lineHeight: 1.5,
-    },
-
-    addButton: {
-        width: "100%",
-        height: 50,
-        marginTop: 18,
-        borderRadius: 12,
-        border: "2px dashed #DDD7DF",
-        background: "transparent",
-        color: "#726C76",
         fontSize: 16,
-        fontWeight: 500,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 10,
-        cursor: "pointer",
-    },
-
-    addPlus: {
-        fontSize: 24,
         lineHeight: 1,
-        color: "#8A848E",
-        marginTop: -1,
     },
-
-    bottomRow: {
+    helpWrap: {
+        position: "relative",
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
-        gap: 16,
-        marginTop: 28,
-        flexWrap: "wrap",
     },
-
-    reviewCount: {
-        fontSize: 15,
-        color: "#6C6670",
-    },
-
-    primaryButton: {
-        height: 48,
-        minWidth: 170,
+    helpIconButton: {
         border: "none",
-        borderRadius: 999,
-        color: "#FFFFFF",
-        fontSize: 15,
-        fontWeight: 700,
-        padding: "0 26px",
-        cursor: "pointer",
+        background: "transparent",
+        width: 24,
+        height: 24,
+        padding: 0,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        transition: "all 0.2s ease",
+        cursor: "pointer",
     },
-
-    primaryButtonActive: {
-        background: "#00C8FF",
-        boxShadow: "0 14px 28px rgba(0, 200, 255, 0.24)",
+    tooltip: {
+        position: "absolute",
+        right: -8,
+        top: 32,
+        width: 206,
+        padding: "12px 14px",
+        borderRadius: 10,
+        background: "#FFFFFF",
+        border: "1px solid #DDD7DF",
+        boxShadow: "0 8px 20px rgba(17,17,17,0.14)",
+        color: "#4F4954",
+        fontSize: 14,
+        lineHeight: 1.35,
+        zIndex: 10,
     },
-
-    primaryButtonDisabled: {
-        background: "#A3A3A8",
-        boxShadow: "none",
-        cursor: "not-allowed",
-    },
-
-    arrow: {
-        marginLeft: 10,
-        fontSize: 18,
-        lineHeight: 1,
-    },
-
-    formStack: {
-        marginTop: 26,
-        display: "flex",
-        flexDirection: "column",
-        gap: 12,
-    },
-
-    fieldLabel: {
-        marginTop: 4,
-        marginBottom: -2,
-        fontSize: 15,
-        fontWeight: 600,
-        color: "#111111",
-    },
-
-    backButton: {
+    addAnotherButton: {
+        margin: "18px auto 0",
         border: "none",
         background: "transparent",
         color: "#6B6570",
         fontSize: 15,
         fontWeight: 500,
-        cursor: "pointer",
         display: "flex",
         alignItems: "center",
+        gap: 6,
+        cursor: "pointer",
+    },
+    addPlus: {
+        fontSize: 22,
+        lineHeight: 1,
+    },
+    priceNote: {
+        fontSize: 16,
+        color: "#7A5A32",
+    },
+    bottomRow: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginTop: 42,
+        gap: 18,
+        flexWrap: "wrap",
+    },
+    primaryButton: {
+        border: "none",
+        minWidth: 160,
+        height: 42,
+        padding: "0 24px",
+        borderRadius: 999,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 10,
+        fontWeight: 700,
+        fontSize: 15,
+        transition: "all .2s ease",
+    },
+    primaryButtonEnabled: {
+        background: "#9F9F9F",
+        color: "#FFFFFF",
+        cursor: "pointer",
+        boxShadow: "0 10px 20px rgba(0,0,0,0.08)",
+    },
+    primaryButtonDisabled: {
+        background: "#A6A6A6",
+        color: "#FFFFFF",
+        cursor: "not-allowed",
+        opacity: 0.92,
+    },
+    backButton: {
+        border: "none",
+        background: "transparent",
+        color: "#6B6570",
+        display: "inline-flex",
+        alignItems: "center",
+        fontSize: 15,
+        cursor: "pointer",
         padding: 0,
     },
-
+    formStack: {
+        marginTop: 22,
+        display: "flex",
+        flexDirection: "column",
+        gap: 12,
+    },
+    fieldLabel: {
+        fontSize: 14,
+        color: "#111111",
+        fontWeight: 600,
+        marginTop: 2,
+    },
+    fieldError: {
+        color: "#C24B4B",
+        fontSize: 13,
+        lineHeight: 1.4,
+    },
     summaryBox: {
         marginTop: 24,
-        background: "#F6F2FA",
-        border: "1px solid #E5DDF0",
+        background: "#F4F1F4",
+        border: "1px solid #DFD9E2",
         borderRadius: 14,
-        padding: "18px 20px",
+        padding: "20px",
     },
-
     summaryTop: {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        gap: 16,
+        gap: 14,
     },
-
     summaryMuted: {
-        fontSize: 16,
-        color: "#7D7681",
+        color: "#5F5964",
+        fontSize: 15,
     },
-
     summaryPrice: {
-        fontSize: 16,
         color: "#111111",
-        fontWeight: 500,
+        fontSize: 16,
     },
-
     summaryDivider: {
         height: 1,
-        background: "#E4DEE6",
-        margin: "16px 0",
+        background: "#DED7E2",
+        margin: "14px 0 16px",
     },
-
     summaryBottom: {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        gap: 16,
+        gap: 14,
     },
-
     totalLabel: {
-        fontSize: 18,
+        fontSize: 17,
         fontWeight: 700,
-        color: "#111111",
     },
-
     totalPrice: {
-        fontSize: 24,
+        fontSize: 32,
         fontWeight: 800,
-        color: "#7C3AED",
+        color: "#D95AF7",
+        lineHeight: 1,
     },
-
     checkList: {
         marginTop: 24,
         display: "flex",
-        flexDirection: "column",
-        gap: 18,
+                flexDirection: "column",
+        gap: 14,
     },
-
     checkItem: {
         display: "flex",
         alignItems: "flex-start",
         gap: 12,
         cursor: "pointer",
     },
-
     hiddenCheckbox: {
         position: "absolute",
         opacity: 0,
-        pointerEvents: "none",
         width: 0,
         height: 0,
+        pointerEvents: "none",
     },
-
     checkboxCircle: {
-        width: 18,
-        height: 18,
-        minWidth: 18,
+        width: 16,
+        height: 16,
+        minWidth: 16,
         borderRadius: 999,
-        border: "1.8px solid #CFC7D6",
-        marginTop: 2,
-        boxSizing: "border-box",
+        border: "1.6px solid #B54DFF",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        marginTop: 2,
+        boxSizing: "border-box",
+        background: "#FFFFFF",
     },
-
+    checkboxInner: {
+        width: 8,
+        height: 8,
+        borderRadius: 999,
+        background: "#B54DFF",
+    },
     checkText: {
         fontSize: 15,
-        lineHeight: 1.5,
+        lineHeight: 1.45,
         color: "#5F5964",
     },
-
     inlineLink: {
-        color: "#7C3AED",
+        color: "#111111",
         textDecoration: "underline",
     },
-
     trustPoints: {
-        marginTop: 24,
+        marginTop: 22,
         display: "flex",
         flexDirection: "column",
-        gap: 14,
+        gap: 12,
     },
-
     trustItem: {
         display: "flex",
         alignItems: "flex-start",
         gap: 10,
     },
-
     trustIcon: {
         minWidth: 16,
         marginTop: 2,
@@ -1372,10 +1282,369 @@ const styles: { [key: string]: React.CSSProperties } = {
         alignItems: "center",
         justifyContent: "center",
     },
-
     trustText: {
+        fontSize: 15,
+        lineHeight: 1.45,
+        color: "#2D2930",
+    },
+    submitError: {
+        marginTop: 18,
+        padding: "12px 14px",
+        borderRadius: 12,
+        background: "#FFF3F3",
+        border: "1px solid #F0CBCB",
+        color: "#B44848",
+        fontSize: 14,
+    },
+    modalOverlay: {
+        position: "fixed",
+        inset: 0,
+        background: "rgba(17,17,17,0.55)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 20,
+        zIndex: 9999,
+    },
+    modalCard: {
+        width: "100%",
+        maxWidth: 560,
+        background: "#F8F5F8",
+        borderRadius: 18,
+        border: "1px solid #DDD7DF",
+        boxShadow: "0 20px 60px rgba(0,0,0,0.28)",
+        position: "relative",
+        overflow: "hidden",
+    },
+    modalClose: {
+        position: "absolute",
+        top: 16,
+        right: 16,
+        border: "none",
+        background: "transparent",
+        fontSize: 28,
+        lineHeight: 1,
+        color: "#6B6570",
+        cursor: "pointer",
+        zIndex: 2,
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 700,
+        color: "#111111",
+        padding: "26px 24px 12px",
+    },
+    modalProgress: {
+        display: "grid",
+        gridTemplateColumns: "repeat(6, 1fr)",
+        gap: 6,
+        padding: "0 24px 10px",
+    },
+    modalProgressBar: {
+        height: 4,
+        borderRadius: 999,
+        transition: "all .25s ease",
+        transformOrigin: "left center",
+    },
+    modalStepWrap: {
+        padding: "4px 24px 0",
+        animation: "fadeSlideIn .22s ease",
+    },
+    modalStepTitleRow: {
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        marginBottom: 16,
+    },
+    modalStepNumber: {
+        width: 28,
+        height: 28,
+        minWidth: 28,
+        borderRadius: 999,
+        background: "#111111",
+        color: "#FFFFFF",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 14,
+        fontWeight: 700,
+    },
+    modalStepTitle: {
+        fontSize: 16,
+        fontWeight: 700,
+        color: "#111111",
+    },
+    modalVisualCard: {
+        background: "#F4F1F4",
+        border: "1px solid #DED8E1",
+        borderRadius: 14,
+        padding: 18,
+        minHeight: 160,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    modalBody: {
         fontSize: 15,
         lineHeight: 1.5,
         color: "#5F5964",
+        padding: "14px 0 20px",
+    },
+    modalFooter: {
+        borderTop: "1px solid #DED8E1",
+        padding: "14px 24px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+    },
+    modalBack: {
+        border: "none",
+        background: "transparent",
+        color: "#6B6570",
+        display: "inline-flex",
+        alignItems: "center",
+        fontSize: 15,
+        cursor: "pointer",
+        padding: 0,
+    },
+    modalCount: {
+        fontSize: 15,
+        color: "#6B6570",
+    },
+    modalNext: {
+        border: "2px solid #B54DFF",
+        background: "#111111",
+        color: "#FFFFFF",
+        height: 42,
+        padding: "0 18px",
+        borderRadius: 999,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 10,
+        fontSize: 15,
+        fontWeight: 700,
+        cursor: "pointer",
+        boxShadow: "0 8px 18px rgba(0,0,0,0.16)",
+    },
+    visualStack: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+    },
+    visualPill: {
+        width: "100%",
+        minHeight: 44,
+        borderRadius: 14,
+        border: "1px solid #DED8E1",
+        background: "#FBFAFB",
+        padding: "0 14px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+    },
+    visualPillLeft: {
+        fontSize: 15,
+        color: "#111111",
+        fontWeight: 500,
+    },
+    visualPillRight: {
+        fontSize: 12,
+        color: "#7D7781",
+    },
+    visualSearch: {
+        width: "100%",
+        minHeight: 48,
+        borderRadius: 999,
+        border: "1px solid #DED8E1",
+        background: "#FFFFFF",
+        display: "flex",
+        alignItems: "center",
+        padding: "0 18px",
+        color: "#6B6570",
+        fontSize: 15,
+    },
+    visualResultCard: {
+        width: "100%",
+        borderRadius: 14,
+        border: "1px solid #DED8E1",
+        background: "#FFFFFF",
+        padding: "14px 16px",
+    },
+    visualResultTitle: {
+        fontSize: 15,
+        fontWeight: 600,
+        color: "#111111",
+    },
+    visualResultSub: {
+        marginTop: 4,
+        fontSize: 13,
+        color: "#7B7580",
+    },
+    reviewPanel: {
+        width: "100%",
+        maxWidth: 330,
+        borderRadius: 14,
+        border: "1px solid #DED8E1",
+        background: "#FFFFFF",
+        overflow: "hidden",
+    },
+    reviewHeader: {
+        padding: "14px 14px 8px",
+        fontSize: 15,
+        fontWeight: 600,
+        color: "#111111",
+    },
+    reviewTabs: {
+        display: "flex",
+        gap: 24,
+        padding: "0 14px 0",
+        borderBottom: "1px solid #E7E1E8",
+        fontSize: 14,
+        color: "#7B7580",
+        minHeight: 32,
+        alignItems: "center",
+    },
+    reviewTabActive: {
+        color: "#111111",
+        fontWeight: 600,
+        borderBottom: "2px solid #111111",
+        paddingBottom: 8,
+    },
+    reviewClickHint: {
+        padding: "18px 14px",
+        fontSize: 12,
+        color: "#8A838F",
+    },
+    reviewMenuMock: {
+        width: "100%",
+        maxWidth: 360,
+        position: "relative",
+        minHeight: 116,
+    },
+    reviewMiniCard: {
+        width: 220,
+        borderRadius: 14,
+        border: "1px solid #DED8E1",
+        background: "#FFFFFF",
+        padding: "14px 14px 10px",
+    },
+    reviewMiniHeader: {
+        fontSize: 14,
+        fontWeight: 600,
+        color: "#111111",
+    },
+    reviewMiniText: {
+        marginTop: 8,
+        fontSize: 13,
+        color: "#7B7580",
+    },
+    reviewDots: {
+        position: "absolute",
+        top: 10,
+        right: 34,
+        width: 28,
+        height: 28,
+        borderRadius: 999,
+        background: "#F1EDF2",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#6B6570",
+        fontSize: 18,
+        lineHeight: 1,
+    },
+    reviewClickNote: {
+        position: "absolute",
+        right: 0,
+        bottom: 8,
+        fontSize: 13,
+        color: "#5F5964",
+    },
+    shareWrap: {
+        width: "100%",
+        maxWidth: 360,
+        display: "flex",
+        alignItems: "center",
+        gap: 14,
+    },
+    shareReviewCard: {
+        flex: 1,
+        minHeight: 76,
+        borderRadius: 14,
+        border: "1px solid #DED8E1",
+        background: "#FFFFFF",
+        padding: "14px",
+    },
+    shareTitle: {
+        fontSize: 14,
+        fontWeight: 600,
+        color: "#111111",
+    },
+    shareText: {
+        marginTop: 8,
+        fontSize: 13,
+        color: "#B8B2BC",
+    },
+    shareMenu: {
+        width: 160,
+        borderRadius: 12,
+        overflow: "hidden",
+        boxShadow: "0 10px 24px rgba(17,17,17,0.14)",
+        border: "1px solid #DED8E1",
+        background: "#FFFFFF",
+    },
+    shareMenuTop: {
+        padding: "12px 14px",
+        fontSize: 13,
+        color: "#6B6570",
+        borderBottom: "1px solid #EFEAF0",
+    },
+    shareMenuBottom: {
+        padding: "12px 14px",
+        fontSize: 14,
+        color: "#111111",
+        fontWeight: 500,
+    },
+    copyCard: {
+        width: "100%",
+        maxWidth: 280,
+        borderRadius: 16,
+        border: "1px solid #DED8E1",
+        background: "#FFFFFF",
+        padding: "18px",
+        boxShadow: "0 10px 24px rgba(17,17,17,0.08)",
+    },
+    copyTitle: {
+        textAlign: "center",
+        fontSize: 15,
+        fontWeight: 600,
+        color: "#111111",
+        marginBottom: 14,
+    },
+    copyUrl: {
+        minHeight: 36,
+        borderRadius: 10,
+        background: "#F3F0F4",
+        color: "#8A838F",
+        display: "flex",
+        alignItems: "center",
+        padding: "0 12px",
+        fontSize: 13,
+    },
+    copyButton: {
+        marginTop: 12,
+        minHeight: 36,
+        borderRadius: 999,
+        background: "#111111",
+        color: "#FFFFFF",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 14,
+        fontWeight: 700,
     },
 }
