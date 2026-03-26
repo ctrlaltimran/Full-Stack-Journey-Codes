@@ -1,4 +1,5 @@
 import * as React from "react"
+import { createPortal } from "react-dom"
 
 const PRICE_PER_REVIEW = 350
 const CHECKOUT_ENDPOINT = "https://checkout.solora.ai/review-removal/checkout"
@@ -55,7 +56,9 @@ export default function ReviewRemovalSection() {
 
     const [showHelp, setShowHelp] = React.useState(false)
     const [helpStep, setHelpStep] = React.useState(0)
-    const [showHint, setShowHint] = React.useState(false)
+    const [hoveredHintIndex, setHoveredHintIndex] = React.useState<
+        number | null
+    >(null)
     const [submitError, setSubmitError] = React.useState("")
     const [isSubmitting, setIsSubmitting] = React.useState(false)
 
@@ -152,7 +155,10 @@ export default function ReviewRemovalSection() {
             type: "authorization",
             confirmationUrl:
                 typeof window !== "undefined"
-                    ? new URL(CONFIRMATION_URL, window.location.origin).toString()
+                    ? new URL(
+                        CONFIRMATION_URL,
+                        window.location.origin
+                    ).toString()
                     : CONFIRMATION_URL,
         },
         meta: {
@@ -182,7 +188,8 @@ export default function ReviewRemovalSection() {
 
             if (!response.ok) {
                 throw new Error(
-                    data?.message || `Request failed with status ${response.status}`
+                    data?.message ||
+                    `Request failed with status ${response.status}`
                 )
             }
 
@@ -203,7 +210,7 @@ export default function ReviewRemovalSection() {
         } catch (error: any) {
             setSubmitError(
                 error?.message ||
-                    "Something went wrong while starting checkout. Please try again."
+                "Something went wrong while starting checkout. Please try again."
             )
         } finally {
             setIsSubmitting(false)
@@ -214,6 +221,106 @@ export default function ReviewRemovalSection() {
 
     return (
         <>
+            <style>{`
+                @keyframes fadeSlideIn {
+                    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap");
+
+                    from {
+                        opacity: 0;
+                        transform: translateY(10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                @keyframes fadeScaleIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(10px) scale(.96);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+
+                @keyframes pillReveal {
+                    0% {
+                        opacity: 0;
+                        transform: translateY(14px) scale(.96);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+
+                @keyframes shimmerMove {
+                    0% { transform: translateX(-140%); }
+                    100% { transform: translateX(160%); }
+                }
+
+                @keyframes pulseGlow {
+                    0%, 100% {
+                        transform: scale(1);
+                        box-shadow: 0 0 0 0 rgba(181,77,255,.28);
+                    }
+                    50% {
+                        transform: scale(1.08);
+                        box-shadow: 0 0 0 10px rgba(181,77,255,0);
+                    }
+                }
+
+                @keyframes typingBar {
+                    from { width: 0%; }
+                    to { width: 72%; }
+                }
+
+                @keyframes blinkCaret {
+                    0%, 49% { opacity: 1; }
+                    50%, 100% { opacity: 0; }
+                }
+
+                @keyframes slideInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(16px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                @keyframes menuDrop {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-10px) scale(.96);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+
+                @keyframes softFloat {
+                    0%, 100% { transform: translateY(0px); }
+                    50% { transform: translateY(-4px); }
+                }
+
+                @keyframes tabPulse {
+                    0%, 100% { opacity: 1; transform: scale(1); }
+                    50% { opacity: .88; transform: scale(1.04); }
+                }
+
+                @keyframes copyFlash {
+                    0% { transform: scale(.96); opacity: 0; }
+                    100% { transform: scale(1); opacity: 1; }
+                }
+            `}</style>
+
             <div style={styles.wrapper}>
                 <div style={styles.progressWrap}>
                     <TopStep
@@ -223,7 +330,12 @@ export default function ReviewRemovalSection() {
                         completed={step > 1}
                         onClick={() => navigateToStep(1)}
                     />
-                    <div style={{ ...styles.topLine, opacity: step > 1 ? 1 : 0.35 }} />
+                    <div
+                        style={{
+                            ...styles.topLine,
+                            opacity: step > 1 ? 1 : 0.35,
+                        }}
+                    />
                     <TopStep
                         number="2"
                         label="Your Info"
@@ -231,7 +343,12 @@ export default function ReviewRemovalSection() {
                         completed={step > 2}
                         onClick={() => navigateToStep(2)}
                     />
-                    <div style={{ ...styles.topLine, opacity: step > 2 ? 1 : 0.35 }} />
+                    <div
+                        style={{
+                            ...styles.topLine,
+                            opacity: step > 2 ? 1 : 0.35,
+                        }}
+                    />
                     <TopStep
                         number="3"
                         label="Payment"
@@ -244,9 +361,12 @@ export default function ReviewRemovalSection() {
                 <div style={styles.card}>
                     {step === 1 && (
                         <div style={styles.stepFade}>
-                            <h2 style={styles.cardTitle}>Paste Your Review Links</h2>
+                            <h2 style={styles.cardTitle}>
+                                Paste Your Review Links
+                            </h2>
                             <p style={styles.cardSub}>
-                                Paste the link to each review you&apos;d like removed.
+                                Paste the link to each review you&apos;d like
+                                removed.
                             </p>
 
                             <div style={styles.noticeBox}>
@@ -254,8 +374,10 @@ export default function ReviewRemovalSection() {
                                     <InfoCircleIcon />
                                 </div>
                                 <div style={styles.noticeText}>
-                                    Only reviews with <strong>written text or photos</strong> are
-                                    eligible. Star-only ratings cannot be removed.
+                                    Only reviews with{" "}
+                                    <strong>written text or photos</strong> are
+                                    eligible. Star-only ratings cannot be
+                                    removed.
                                 </div>
                             </div>
 
@@ -267,58 +389,115 @@ export default function ReviewRemovalSection() {
                                             <InputRow
                                                 value={review}
                                                 placeholder="Paste review link (Google, Yelp, etc.)"
-                                                onChange={(e) => updateReview(index, e.target.value)}
+                                                onChange={(e) =>
+                                                    updateReview(
+                                                        index,
+                                                        e.target.value
+                                                    )
+                                                }
                                                 icon={<LinkIcon />}
                                                 hasError={Boolean(error)}
                                                 rightAction={
-                                                    <div style={styles.inputActions}>
+                                                    <div
+                                                        style={
+                                                            styles.inputActions
+                                                        }
+                                                    >
                                                         {reviews.length > 1 ? (
                                                             <button
                                                                 type="button"
-                                                                style={styles.miniRemove}
-                                                                onClick={() => removeReview(index)}
+                                                                style={
+                                                                    styles.miniRemove
+                                                                }
+                                                                onClick={() =>
+                                                                    removeReview(
+                                                                        index
+                                                                    )
+                                                                }
                                                             >
                                                                 ×
                                                             </button>
                                                         ) : null}
                                                         <div
-                                                            style={styles.helpWrap}
-                                                            onMouseEnter={() => setShowHint(true)}
-                                                            onMouseLeave={() => setShowHint(false)}
+                                                            style={
+                                                                styles.helpWrap
+                                                            }
+                                                            onMouseEnter={() =>
+                                                                setHoveredHintIndex(
+                                                                    index
+                                                                )
+                                                            }
+                                                            onMouseLeave={() =>
+                                                                setHoveredHintIndex(
+                                                                    null
+                                                                )
+                                                            }
                                                         >
                                                             <button
                                                                 type="button"
-                                                                style={styles.helpIconButton}
+                                                                style={
+                                                                    styles.helpIconButton
+                                                                }
                                                                 onClick={() => {
-                                                                    setHelpStep(0)
-                                                                    setShowHelp(true)
+                                                                    setHelpStep(
+                                                                        0
+                                                                    )
+                                                                    setShowHelp(
+                                                                        true
+                                                                    )
                                                                 }}
                                                             >
                                                                 <QuestionCircleIcon />
                                                             </button>
-                                                            {showHint && index === 0 ? (
-                                                                <div style={styles.tooltip}>
-                                                                    Only reviews with written text or
-                                                                    photos are eligible. Click for help
-                                                                    finding your link.
+                                                            {hoveredHintIndex ===
+                                                                index ? (
+                                                                <div
+                                                                    style={
+                                                                        styles.tooltip
+                                                                    }
+                                                                >
+                                                                    <div
+                                                                        style={
+                                                                            styles.tooltipArrow
+                                                                        }
+                                                                    />
+                                                                    Only reviews
+                                                                    with written
+                                                                    text or
+                                                                    photos are
+                                                                    eligible.
+                                                                    Click for
+                                                                    help finding
+                                                                    your link.
                                                                 </div>
                                                             ) : null}
                                                         </div>
                                                     </div>
                                                 }
                                             />
-                                            {error ? <div style={styles.fieldError}>{error}</div> : null}
+                                            {error ? (
+                                                <div style={styles.fieldError}>
+                                                    {error}
+                                                </div>
+                                            ) : null}
                                         </div>
                                     )
                                 })}
                             </div>
 
-                            <button type="button" style={styles.addAnotherButton} onClick={addReview}>
-                                <span style={styles.addPlus}>+</span> Add another
+                            <button
+                                type="button"
+                                style={styles.addAnotherButton}
+                                onClick={addReview}
+                            >
+                                <span style={styles.addPlus}>+</span> Add
+                                another
                             </button>
 
                             <div style={styles.bottomRow}>
-                                <div style={styles.priceNote}>${PRICE_PER_REVIEW} per review</div>
+                                <div style={styles.priceNote}>
+                                    ${PRICE_PER_REVIEW} per review
+                                </div>
                                 <button
                                     type="button"
                                     style={{
@@ -340,26 +519,37 @@ export default function ReviewRemovalSection() {
                         <div style={styles.stepFade}>
                             <h2 style={styles.cardTitle}>Your Information</h2>
                             <p style={styles.cardSub}>
-                                Tell us about your business so we can process the removal.
+                                Tell us about your business so we can process
+                                the removal.
                             </p>
 
                             <div style={styles.formStack}>
                                 <FieldLabel label="Business Name" />
                                 <InputRow
                                     value={businessName}
-                                    onChange={(e) => setBusinessName(e.target.value)}
+                                    onChange={(e) =>
+                                        setBusinessName(e.target.value)
+                                    }
                                     placeholder="Acme Inc."
                                     icon={<BusinessIcon />}
-                                    hasError={businessName.length > 0 && !isBusinessNameValid}
+                                    hasError={
+                                        businessName.length > 0 &&
+                                        !isBusinessNameValid
+                                    }
                                 />
 
                                 <FieldLabel label="Contact Name" />
                                 <InputRow
                                     value={contactName}
-                                    onChange={(e) => setContactName(e.target.value)}
+                                    onChange={(e) =>
+                                        setContactName(e.target.value)
+                                    }
                                     placeholder="John Doe"
                                     icon={<PersonIcon />}
-                                    hasError={contactName.length > 0 && !isContactNameValid}
+                                    hasError={
+                                        contactName.length > 0 &&
+                                        !isContactNameValid
+                                    }
                                 />
 
                                 <FieldLabel label="Email" />
@@ -375,7 +565,9 @@ export default function ReviewRemovalSection() {
                                 <FieldLabel label="Phone" />
                                 <InputRow
                                     value={phone}
-                                    onChange={(e) => handlePhoneChange(e.target.value)}
+                                    onChange={(e) =>
+                                        handlePhoneChange(e.target.value)
+                                    }
                                     placeholder="(312) 398-7124"
                                     icon={<PhoneIcon />}
                                     inputMode="tel"
@@ -385,8 +577,13 @@ export default function ReviewRemovalSection() {
                             </div>
 
                             <div style={styles.bottomRow}>
-                                <button type="button" style={styles.backButton} onClick={() => navigateToStep(1)}>
-                                    <ArrowLeftIcon /> <span style={{ marginLeft: 10 }}>Back</span>
+                                <button
+                                    type="button"
+                                    style={styles.backButton}
+                                    onClick={() => navigateToStep(1)}
+                                >
+                                    <ArrowLeftIcon />{" "}
+                                    <span style={{ marginLeft: 10 }}>Back</span>
                                 </button>
                                 <button
                                     type="button"
@@ -409,31 +606,42 @@ export default function ReviewRemovalSection() {
                         <div style={styles.stepFade}>
                             <h2 style={styles.cardTitle}>Authorize Payment</h2>
                             <p style={styles.cardSub}>
-                                A hold will be placed on your card. You&apos;re only charged once the review is
-                                successfully removed.
+                                A hold will be placed on your card. You&apos;re
+                                only charged once the review is successfully
+                                removed.
                             </p>
 
                             <div style={styles.summaryBox}>
                                 <div style={styles.summaryTop}>
-                                    <span style={styles.summaryMuted}>Review removal</span>
-                                    <span style={styles.summaryPrice}>{reviewCount} × ${PRICE_PER_REVIEW}</span>
+                                    <span style={styles.summaryMuted}>
+                                        Review removal
+                                    </span>
+                                    <span style={styles.summaryPrice}>
+                                        {reviewCount} × ${PRICE_PER_REVIEW}
+                                    </span>
                                 </div>
                                 <div style={styles.summaryDivider} />
                                 <div style={styles.summaryBottom}>
                                     <span style={styles.totalLabel}>Total</span>
-                                    <span style={styles.totalPrice}>${total}</span>
+                                    <span style={styles.totalPrice}>
+                                        ${total}
+                                    </span>
                                 </div>
                             </div>
 
                             <div style={styles.checkList}>
                                 <CheckItem
                                     checked={agreements.eligibility}
-                                    onChange={() => toggleAgreement("eligibility")}
+                                    onChange={() =>
+                                        toggleAgreement("eligibility")
+                                    }
                                     text="The review(s) I’ve submitted include written text and/or an image and are not star-only ratings."
                                 />
                                 <CheckItem
                                     checked={agreements.noInteraction}
-                                    onChange={() => toggleAgreement("noInteraction")}
+                                    onChange={() =>
+                                        toggleAgreement("noInteraction")
+                                    }
                                     text="I agree not to interact with the review(s) in any way while Solora is working on the removal."
                                 />
                                 <CheckItem
@@ -443,7 +651,9 @@ export default function ReviewRemovalSection() {
                                 />
                                 <CheckItem
                                     checked={agreements.communications}
-                                    onChange={() => toggleAgreement("communications")}
+                                    onChange={() =>
+                                        toggleAgreement("communications")
+                                    }
                                     text='I agree that Solora may call, text, or email me with updates about my removal process. Msg & data rates may apply. Reply "BYE" to end communications at any time.'
                                 />
                                 <CheckItem
@@ -451,23 +661,64 @@ export default function ReviewRemovalSection() {
                                     onChange={() => toggleAgreement("terms")}
                                     text={
                                         <>
-                                            I have read and agree to the <a href="#" style={styles.inlineLink}>Terms of Service</a>.
+                                            I have read and agree to the{" "}
+                                            <a
+                                                href="#"
+                                                style={styles.inlineLink}
+                                            >
+                                                Terms of Service
+                                            </a>
+                                            .
                                         </>
                                     }
                                 />
                             </div>
 
                             <div style={styles.trustPoints}>
-                                <TrustItem icon={<ShieldIcon />} text={<><strong>No-risk guarantee</strong> — only charged upon successful removal</>} />
-                                <TrustItem icon={<ClockIcon />} text={<><span>Removal typically takes </span><strong>1–3 weeks</strong></>} />
-                                <TrustItem icon={<CardIcon />} text={<>Secure payment processing via Stripe</>} />
+                                <TrustItem
+                                    icon={<ShieldIcon />}
+                                    text={
+                                        <>
+                                            <strong>No-risk guarantee</strong> —
+                                            only charged upon successful removal
+                                        </>
+                                    }
+                                />
+                                <TrustItem
+                                    icon={<ClockIcon />}
+                                    text={
+                                        <>
+                                            <span>
+                                                Removal typically takes{" "}
+                                            </span>
+                                            <strong>1–3 weeks</strong>
+                                        </>
+                                    }
+                                />
+                                <TrustItem
+                                    icon={<CardIcon />}
+                                    text={
+                                        <>
+                                            Secure payment processing via Stripe
+                                        </>
+                                    }
+                                />
                             </div>
 
-                            {submitError ? <div style={styles.submitError}>{submitError}</div> : null}
+                            {submitError ? (
+                                <div style={styles.submitError}>
+                                    {submitError}
+                                </div>
+                            ) : null}
 
                             <div style={styles.bottomRow}>
-                                <button type="button" style={styles.backButton} onClick={() => navigateToStep(2)}>
-                                    <ArrowLeftIcon /> <span style={{ marginLeft: 10 }}>Back</span>
+                                <button
+                                    type="button"
+                                    style={styles.backButton}
+                                    onClick={() => navigateToStep(2)}
+                                >
+                                    <ArrowLeftIcon />{" "}
+                                    <span style={{ marginLeft: 10 }}>Back</span>
                                 </button>
                                 <button
                                     type="button"
@@ -482,7 +733,9 @@ export default function ReviewRemovalSection() {
                                 >
                                     <CardMiniIcon />
                                     <span style={{ marginLeft: 10 }}>
-                                        {isSubmitting ? "Redirecting..." : `Authorize $${total}`}
+                                        {isSubmitting
+                                            ? "Redirecting..."
+                                            : `Authorize $${total}`}
                                     </span>
                                 </button>
                             </div>
@@ -499,7 +752,8 @@ export default function ReviewRemovalSection() {
                     visual={activeHelp.visual}
                     onClose={() => setShowHelp(false)}
                     onNext={() => {
-                        if (helpStep < HELP_STEPS.length - 1) setHelpStep((s) => s + 1)
+                        if (helpStep < HELP_STEPS.length - 1)
+                            setHelpStep((s) => s + 1)
                         else setShowHelp(false)
                     }}
                     onBack={() => setHelpStep((s) => Math.max(0, s - 1))}
@@ -559,28 +813,59 @@ function HelpModal({
         const onKey = (e: KeyboardEvent) => {
             if (e.key === "Escape") onClose()
         }
+
+        const scrollY = window.scrollY
+
+        document.body.style.overflow = "hidden"
+        document.body.style.position = "fixed"
+        document.body.style.top = `-${scrollY}px`
+        document.body.style.left = "0"
+        document.body.style.right = "0"
+        document.body.style.width = "100%"
+
         window.addEventListener("keydown", onKey)
-        return () => window.removeEventListener("keydown", onKey)
+
+        return () => {
+            window.removeEventListener("keydown", onKey)
+
+            document.body.style.overflow = ""
+            document.body.style.position = ""
+            document.body.style.top = ""
+            document.body.style.left = ""
+            document.body.style.right = ""
+            document.body.style.width = ""
+
+            window.scrollTo(0, scrollY)
+        }
     }, [onClose])
 
-    return (
+    if (typeof document === "undefined") return null
+
+    return createPortal(
         <div style={styles.modalOverlay} onClick={onClose}>
             <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
-                <button type="button" style={styles.modalClose} onClick={onClose}>
+                <button
+                    type="button"
+                    style={styles.modalClose}
+                    onClick={onClose}
+                >
                     ×
                 </button>
+
                 <div style={styles.modalTitle}>How to Copy a Review Link</div>
 
                 <div style={styles.modalProgress}>
                     {HELP_STEPS.map((_, i) => (
-                        <div
-                            key={i}
-                            style={{
-                                ...styles.modalProgressBar,
-                                background: i <= step ? "#111111" : "#ECE7EF",
-                                transform: i === step ? "scaleX(1)" : "scaleX(1)",
-                            }}
-                        />
+                        <div key={i} style={styles.modalProgressTrack}>
+                            <div
+                                style={{
+                                    ...styles.modalProgressBar,
+                                    background:
+                                        i <= step ? "#111111" : "#E6DFE8",
+                                    width: i <= step ? "100%" : "0%",
+                                }}
+                            />
+                        </div>
                     ))}
                 </div>
 
@@ -607,28 +892,45 @@ function HelpModal({
                         }}
                         onClick={onBack}
                     >
-                        <ArrowLeftIcon /> <span style={{ marginLeft: 10 }}>Back</span>
+                        ← Back
                     </button>
 
-                    <div style={styles.modalCount}>{step + 1}/6</div>
+                    <div style={styles.modalCounter}>
+                        {step + 1}/{HELP_STEPS.length}
+                    </div>
 
-                    <button type="button" style={styles.modalNext} onClick={onNext}>
-                        {step === HELP_STEPS.length - 1 ? "Got it!" : "Next"}
-                        {step !== HELP_STEPS.length - 1 ? <ArrowRightIcon /> : null}
+                    <button
+                        type="button"
+                        style={styles.modalNext}
+                        onClick={onNext}
+                    >
+                        {step === HELP_STEPS.length - 1 ? "Done" : "Next"} →
                     </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     )
 }
-
 function StepVisual({ visual }: { visual: string }) {
     if (visual === "platforms") {
         return (
             <div style={styles.visualStack}>
-                <VisualPill left="Google Maps" right="maps.google.com" />
-                <VisualPill left="Yelp" right="yelp.com" />
-                <VisualPill left="Trustpilot" right="trustpilot.com" />
+                <AnimatedVisualPill
+                    left="Google Maps"
+                    right="maps.google.com"
+                    delay="0ms"
+                />
+                <AnimatedVisualPill
+                    left="Yelp"
+                    right="yelp.com"
+                    delay="180ms"
+                />
+                <AnimatedVisualPill
+                    left="Trustpilot"
+                    right="trustpilot.com"
+                    delay="360ms"
+                />
             </div>
         )
     }
@@ -636,9 +938,18 @@ function StepVisual({ visual }: { visual: string }) {
     if (visual === "search") {
         return (
             <div style={styles.visualStack}>
-                <div style={styles.visualSearch}>Your Business Name</div>
-                <div style={styles.visualResultCard}>
-                    <div style={styles.visualResultTitle}>Your Business Name</div>
+                <div style={styles.visualSearchAnimated}>
+                    <div style={styles.visualTypingFill} />
+                    <div style={styles.visualSearchPlaceholder}>
+                        Your Business Name
+                    </div>
+                    <div style={styles.visualCaret} />
+                </div>
+
+                <div style={styles.visualResultCardAnimated}>
+                    <div style={styles.visualResultTitle}>
+                        Your Business Name
+                    </div>
                     <div style={styles.visualResultSub}>123 Main St. 4.5 ★</div>
                 </div>
             </div>
@@ -649,12 +960,19 @@ function StepVisual({ visual }: { visual: string }) {
         return (
             <div style={styles.reviewPanel}>
                 <div style={styles.reviewHeader}>Your Business Name</div>
+
                 <div style={styles.reviewTabs}>
                     <span>Overview</span>
-                    <span style={styles.reviewTabActive}>Reviews</span>
+                    <span style={styles.reviewTabActiveAnimated}>Reviews</span>
                     <span>Photos</span>
                 </div>
-                <div style={styles.reviewClickHint}>Click here ↑</div>
+
+                <div style={styles.reviewAreaMock}>
+                    <div style={styles.reviewHighlightRing} />
+                    <div style={styles.reviewClickHint}>
+                        Open the reviews section
+                    </div>
+                </div>
             </div>
         )
     }
@@ -662,11 +980,14 @@ function StepVisual({ visual }: { visual: string }) {
     if (visual === "menu") {
         return (
             <div style={styles.reviewMenuMock}>
-                <div style={styles.reviewMiniCard}>
+                <div style={styles.reviewMiniCardAnimated}>
                     <div style={styles.reviewMiniHeader}>John D. ★</div>
-                    <div style={styles.reviewMiniText}>Terrible experience, would not recommend...</div>
+                    <div style={styles.reviewMiniText}>
+                        Terrible experience, would not recommend...
+                    </div>
                 </div>
-                <div style={styles.reviewDots}>⋮</div>
+
+                <div style={styles.reviewDotsAnimated}>⋮</div>
                 <div style={styles.reviewClickNote}>Click the three dots</div>
             </div>
         )
@@ -679,7 +1000,8 @@ function StepVisual({ visual }: { visual: string }) {
                     <div style={styles.shareTitle}>John D.</div>
                     <div style={styles.shareText}>Terrible experience...</div>
                 </div>
-                <div style={styles.shareMenu}>
+
+                <div style={styles.shareMenuAnimated}>
                     <div style={styles.shareMenuTop}>Flag as inappropriate</div>
                     <div style={styles.shareMenuBottom}>Share review</div>
                 </div>
@@ -688,18 +1010,64 @@ function StepVisual({ visual }: { visual: string }) {
     }
 
     return (
-        <div style={styles.copyCard}>
+        <div style={styles.copyCardAnimated}>
             <div style={styles.copyTitle}>Share this review</div>
             <div style={styles.copyUrl}>https://g.co/kgs/abc123...</div>
-            <div style={styles.copyButton}>Copied!</div>
+            <div style={styles.copyButtonAnimated}>Copied!</div>
         </div>
     )
 }
 
-function VisualPill({ left, right }: { left: string; right: string }) {
+function AnimatedVisualPill({
+    left,
+    right,
+    delay,
+}: {
+    left: string
+    right: string
+    delay: string
+}) {
     return (
-        <div style={styles.visualPill}>
-            <div style={styles.visualPillLeft}>{left}</div>
+        <div
+            style={{
+                ...styles.visualPill,
+                opacity: 0,
+                animation: `pillReveal 0.55s cubic-bezier(.22,1,.36,1) forwards`,
+                animationDelay: delay,
+                position: "relative",
+                overflow: "hidden",
+            }}
+        >
+            <div
+                style={{
+                    position: "absolute",
+                    inset: 0,
+                    overflow: "hidden",
+                    borderRadius: 14,
+                    pointerEvents: "none",
+                }}
+            >
+                <div
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        bottom: 0,
+                        width: "42%",
+                        background:
+                            "linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.65), rgba(255,255,255,0))",
+                        animation: "shimmerMove 1.8s ease-in-out infinite",
+                        animationDelay: delay,
+                    }}
+                />
+            </div>
+
+            <div style={styles.visualPillLeftWrap}>
+                <div style={styles.visualPillIcon}>
+                    <GlobeIcon />
+                </div>
+                <div style={styles.visualPillLeft}>{left}</div>
+            </div>
+
             <div style={styles.visualPillRight}>{right}</div>
         </div>
     )
@@ -737,8 +1105,8 @@ function InputRow({
                 border: hasError
                     ? "1px solid #E87878"
                     : focused && focusedBorder
-                      ? "2px solid #B54DFF"
-                      : "1px solid #D8D2DB",
+                        ? "2px solid #B54DFF"
+                        : "1px solid #D8D2DB",
                 boxShadow:
                     focused && focusedBorder
                         ? "0 0 0 3px rgba(181, 77, 255, 0.18)"
@@ -759,7 +1127,9 @@ function InputRow({
                 spellCheck={false}
                 inputMode={inputMode}
             />
-            {rightAction ? <div style={styles.inputRightAction}>{rightAction}</div> : null}
+            {rightAction ? (
+                <div style={styles.inputRightAction}>{rightAction}</div>
+            ) : null}
         </div>
     )
 }
@@ -775,8 +1145,18 @@ function CheckItem({
 }) {
     return (
         <label style={styles.checkItem}>
-            <input type="checkbox" checked={checked} onChange={onChange} style={styles.hiddenCheckbox} />
-            <div style={{ ...styles.checkboxCircle, borderColor: checked ? "#B54DFF" : "#B54DFF" }}>
+            <input
+                type="checkbox"
+                checked={checked}
+                onChange={onChange}
+                style={styles.hiddenCheckbox}
+            />
+            <div
+                style={{
+                    ...styles.checkboxCircle,
+                    borderColor: checked ? "#B54DFF" : "#B54DFF",
+                }}
+            >
                 {checked ? <div style={styles.checkboxInner} /> : null}
             </div>
             <div style={styles.checkText}>{text}</div>
@@ -784,7 +1164,13 @@ function CheckItem({
     )
 }
 
-function TrustItem({ icon, text }: { icon: React.ReactNode; text: React.ReactNode }) {
+function TrustItem({
+    icon,
+    text,
+}: {
+    icon: React.ReactNode
+    text: React.ReactNode
+}) {
     return (
         <div style={styles.trustItem}>
             <div style={styles.trustIcon}>{icon}</div>
@@ -833,17 +1219,58 @@ function formatPhoneLikeScreenshot(nextValue: string, prevValue: string) {
 function LinkIcon() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M10 13a5 5 0 0 1 0-7l1.5-1.5a5 5 0 0 1 7 7L17 13" stroke="#6F6874" strokeWidth="1.8" strokeLinecap="round" />
-            <path d="M14 11a5 5 0 0 1 0 7L12.5 19.5a5 5 0 0 1-7-7L7 11" stroke="#6F6874" strokeWidth="1.8" strokeLinecap="round" />
+            <path
+                d="M10 13a5 5 0 0 1 0-7l1.5-1.5a5 5 0 0 1 7 7L17 13"
+                stroke="#6F6874"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+            />
+            <path
+                d="M14 11a5 5 0 0 1 0 7L12.5 19.5a5 5 0 0 1-7-7L7 11"
+                stroke="#6F6874"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+            />
         </svg>
     )
 }
+function GlobeIcon() {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            viewBox="0 0 16 16"
+        >
+            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855A8 8 0 0 0 5.145 4H7.5zM4.09 4a9.3 9.3 0 0 1 .64-1.539 7 7 0 0 1 .597-.933A7.03 7.03 0 0 0 2.255 4zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a7 7 0 0 0-.656 2.5zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5zM8.5 5v2.5h2.99a12.5 12.5 0 0 0-.337-2.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5zM5.145 12q.208.58.468 1.068c.552 1.035 1.218 1.65 1.887 1.855V12zm.182 2.472a7 7 0 0 1-.597-.933A9.3 9.3 0 0 1 4.09 12H2.255a7 7 0 0 0 3.072 2.472M3.82 11a13.7 13.7 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5zm6.853 3.472A7 7 0 0 0 13.745 12H11.91a9.3 9.3 0 0 1-.64 1.539 7 7 0 0 1-.597.933M8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855q.26-.487.468-1.068zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.7 13.7 0 0 1-.312 2.5m2.802-3.5a7 7 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7 7 0 0 0-3.072-2.472c.218.284.418.598.597.933M10.855 4a8 8 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4z" />
+        </svg>
+    )
+}
+
 function BusinessIcon() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <rect x="4" y="5" width="10" height="14" rx="2" stroke="#6F6874" strokeWidth="1.6" />
-            <path d="M14 9h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-4" stroke="#6F6874" strokeWidth="1.6" />
-            <path d="M8 9h2M8 12h2M8 15h2" stroke="#6F6874" strokeWidth="1.6" strokeLinecap="round" />
+            <rect
+                x="4"
+                y="5"
+                width="10"
+                height="14"
+                rx="2"
+                stroke="#6F6874"
+                strokeWidth="1.6"
+            />
+            <path
+                d="M14 9h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-4"
+                stroke="#6F6874"
+                strokeWidth="1.6"
+            />
+            <path
+                d="M8 9h2M8 12h2M8 15h2"
+                stroke="#6F6874"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+            />
         </svg>
     )
 }
@@ -851,30 +1278,65 @@ function PersonIcon() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="8" r="3.2" stroke="#6F6874" strokeWidth="1.6" />
-            <path d="M6.5 18.2c1.3-2.8 3.2-4.2 5.5-4.2s4.2 1.4 5.5 4.2" stroke="#6F6874" strokeWidth="1.6" strokeLinecap="round" />
+            <path
+                d="M6.5 18.2c1.3-2.8 3.2-4.2 5.5-4.2s4.2 1.4 5.5 4.2"
+                stroke="#6F6874"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+            />
         </svg>
     )
 }
 function MailIcon() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="#6F6874" strokeWidth="1.6" />
-            <path d="M5 8l7 5 7-5" stroke="#6F6874" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            <rect
+                x="3.5"
+                y="5.5"
+                width="17"
+                height="13"
+                rx="2"
+                stroke="#6F6874"
+                strokeWidth="1.6"
+            />
+            <path
+                d="M5 8l7 5 7-5"
+                stroke="#6F6874"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
         </svg>
     )
 }
 function PhoneIcon() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M8.4 4.8l2.1 3.8c.3.5.2 1.1-.2 1.6l-1.2 1.2a14.7 14.7 0 0 0 3.5 3.5l1.2-1.2c.4-.4 1-.5 1.6-.2l3.8 2.1c.8.4 1 1.5.4 2.2l-1.1 1.4c-.5.6-1.3.9-2.1.8-3.3-.5-6.5-2.1-9.2-4.8-2.7-2.7-4.3-5.9-4.8-9.2-.1-.8.2-1.6.8-2.1L6.2 4.4c.7-.6 1.8-.4 2.2.4Z" stroke="#6F6874" strokeWidth="1.6" strokeLinejoin="round" />
+            <path
+                d="M8.4 4.8l2.1 3.8c.3.5.2 1.1-.2 1.6l-1.2 1.2a14.7 14.7 0 0 0 3.5 3.5l1.2-1.2c.4-.4 1-.5 1.6-.2l3.8 2.1c.8.4 1 1.5.4 2.2l-1.1 1.4c-.5.6-1.3.9-2.1.8-3.3-.5-6.5-2.1-9.2-4.8-2.7-2.7-4.3-5.9-4.8-9.2-.1-.8.2-1.6.8-2.1L6.2 4.4c.7-.6 1.8-.4 2.2.4Z"
+                stroke="#6F6874"
+                strokeWidth="1.6"
+                strokeLinejoin="round"
+            />
         </svg>
     )
 }
 function InfoCircleIcon() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="8.5" stroke="#2E2A2F" strokeWidth="1.8" />
-            <path d="M12 10.3v5.2" stroke="#2E2A2F" strokeWidth="1.8" strokeLinecap="round" />
+            <circle
+                cx="12"
+                cy="12"
+                r="8.5"
+                stroke="#2E2A2F"
+                strokeWidth="1.8"
+            />
+            <path
+                d="M12 10.3v5.2"
+                stroke="#2E2A2F"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+            />
             <circle cx="12" cy="7.2" r="1" fill="#2E2A2F" />
         </svg>
     )
@@ -882,29 +1344,110 @@ function InfoCircleIcon() {
 function QuestionCircleIcon() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="8.5" stroke="#B54DFF" strokeWidth="1.8" />
-            <path d="M9.9 9.4a2.55 2.55 0 0 1 4.8 1.18c0 1.78-1.9 2.1-2.45 3.3" stroke="#B54DFF" strokeWidth="1.8" strokeLinecap="round" />
+            <circle
+                cx="12"
+                cy="12"
+                r="8.5"
+                stroke="#B54DFF"
+                strokeWidth="1.8"
+            />
+            <path
+                d="M9.9 9.4a2.55 2.55 0 0 1 4.8 1.18c0 1.78-1.9 2.1-2.45 3.3"
+                stroke="#B54DFF"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+            />
             <circle cx="12" cy="17.2" r="1" fill="#B54DFF" />
         </svg>
     )
 }
 function ShieldIcon() {
-    return <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v6c0 4.4-2.8 7.7-7 9-4.2-1.3-7-4.6-7-9V6l7-3Z" stroke="#111111" strokeWidth="1.8" /></svg>
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path
+                d="M12 3l7 3v6c0 4.4-2.8 7.7-7 9-4.2-1.3-7-4.6-7-9V6l7-3Z"
+                stroke="#111111"
+                strokeWidth="1.8"
+            />
+        </svg>
+    )
 }
 function ClockIcon() {
-    return <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="#111111" strokeWidth="1.8" /><path d="M12 7.8v4.7l3 1.8" stroke="#111111" strokeWidth="1.8" strokeLinecap="round" /></svg>
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <circle
+                cx="12"
+                cy="12"
+                r="8.5"
+                stroke="#111111"
+                strokeWidth="1.8"
+            />
+            <path
+                d="M12 7.8v4.7l3 1.8"
+                stroke="#111111"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+            />
+        </svg>
+    )
 }
 function CardIcon() {
-    return <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12" rx="2.2" stroke="#111111" strokeWidth="1.8" /><path d="M3 10h18" stroke="#111111" strokeWidth="1.8" /></svg>
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <rect
+                x="3"
+                y="6"
+                width="18"
+                height="12"
+                rx="2.2"
+                stroke="#111111"
+                strokeWidth="1.8"
+            />
+            <path d="M3 10h18" stroke="#111111" strokeWidth="1.8" />
+        </svg>
+    )
 }
 function CardMiniIcon() {
-    return <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12" rx="2.2" stroke="#FFFFFF" strokeWidth="1.8" /><path d="M3 10h18" stroke="#FFFFFF" strokeWidth="1.8" /></svg>
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <rect
+                x="3"
+                y="6"
+                width="18"
+                height="12"
+                rx="2.2"
+                stroke="#FFFFFF"
+                strokeWidth="1.8"
+            />
+            <path d="M3 10h18" stroke="#FFFFFF" strokeWidth="1.8" />
+        </svg>
+    )
 }
 function ArrowRightIcon() {
-    return <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path
+                d="M5 12h14M13 6l6 6-6 6"
+                stroke="currentColor"
+                strokeWidth="1.9"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    )
 }
 function ArrowLeftIcon() {
-    return <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path
+                d="M19 12H5M11 6l-6 6 6 6"
+                stroke="currentColor"
+                strokeWidth="1.9"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    )
 }
 
 const styles: Record<string, React.CSSProperties> = {
@@ -913,7 +1456,7 @@ const styles: Record<string, React.CSSProperties> = {
         maxWidth: 720,
         margin: "0 auto",
         padding: "0 14px 40px",
-        fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        fontFamily: '"Inter", "Poppins", sans-serif',
         color: "#111111",
     },
     progressWrap: {
@@ -950,6 +1493,7 @@ const styles: Record<string, React.CSSProperties> = {
         fontSize: 14,
         color: "#111111",
         fontWeight: 500,
+        fontFamily: '"Poppins", "Inter", sans-serif',
     },
     topLine: {
         width: 96,
@@ -973,9 +1517,10 @@ const styles: Record<string, React.CSSProperties> = {
         margin: 0,
         textAlign: "center",
         fontSize: 26,
-        fontWeight: 700,
+        fontWeight: 600,
         lineHeight: 1.2,
         color: "#111111",
+        fontFamily: '"Poppins", "Inter", sans-serif',
     },
     cardSub: {
         margin: "8px 0 0",
@@ -1082,17 +1627,29 @@ const styles: Record<string, React.CSSProperties> = {
     tooltip: {
         position: "absolute",
         right: -8,
-        top: 32,
-        width: 206,
+        bottom: "calc(100% + 10px)",
+        width: 220,
         padding: "12px 14px",
-        borderRadius: 10,
+        borderRadius: 12,
         background: "#FFFFFF",
         border: "1px solid #DDD7DF",
-        boxShadow: "0 8px 20px rgba(17,17,17,0.14)",
+        boxShadow: "0 16px 30px rgba(17,17,17,0.14)",
         color: "#4F4954",
         fontSize: 14,
-        lineHeight: 1.35,
-        zIndex: 10,
+        lineHeight: 1.4,
+        zIndex: 20,
+        animation: "fadeScaleIn .18s ease",
+    },
+    tooltipArrow: {
+        position: "absolute",
+        right: 14,
+        bottom: -7,
+        width: 12,
+        height: 12,
+        background: "#FFFFFF",
+        borderRight: "1px solid #DDD7DF",
+        borderBottom: "1px solid #DDD7DF",
+        transform: "rotate(45deg)",
     },
     addAnotherButton: {
         margin: "18px auto 0",
@@ -1132,7 +1689,7 @@ const styles: Record<string, React.CSSProperties> = {
         alignItems: "center",
         justifyContent: "center",
         gap: 10,
-        fontWeight: 700,
+        fontWeight: 500,
         fontSize: 15,
         transition: "all .2s ease",
     },
@@ -1169,6 +1726,7 @@ const styles: Record<string, React.CSSProperties> = {
         color: "#111111",
         fontWeight: 600,
         marginTop: 2,
+        fontFamily: '"Poppins", "Inter", sans-serif',
     },
     fieldError: {
         color: "#C24B4B",
@@ -1209,18 +1767,20 @@ const styles: Record<string, React.CSSProperties> = {
     },
     totalLabel: {
         fontSize: 17,
-        fontWeight: 700,
+        fontWeight: 500,
+        fontFamily: '"Poppins", "Inter", sans-serif',
     },
     totalPrice: {
         fontSize: 32,
         fontWeight: 800,
         color: "#D95AF7",
         lineHeight: 1,
+        fontFamily: '"Poppins", "Inter", sans-serif',
     },
     checkList: {
         marginTop: 24,
         display: "flex",
-                flexDirection: "column",
+        flexDirection: "column",
         gap: 14,
     },
     checkItem: {
@@ -1298,23 +1858,32 @@ const styles: Record<string, React.CSSProperties> = {
     },
     modalOverlay: {
         position: "fixed",
-        inset: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        width: "100vw",
+        height: "100dvh",
+        minHeight: "100dvh",
         background: "rgba(17,17,17,0.55)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: 20,
-        zIndex: 9999,
+        boxSizing: "border-box",
+        zIndex: 999999,
+        overscrollBehavior: "contain",
     },
     modalCard: {
         width: "100%",
         maxWidth: 560,
         background: "#F8F5F8",
-        borderRadius: 18,
+        borderRadius: 22,
         border: "1px solid #DDD7DF",
-        boxShadow: "0 20px 60px rgba(0,0,0,0.28)",
+        boxShadow: "0 30px 80px rgba(0,0,0,0.28)",
         position: "relative",
         overflow: "hidden",
+        animation: "fadeScaleIn .22s ease",
     },
     modalClose: {
         position: "absolute",
@@ -1330,15 +1899,22 @@ const styles: Record<string, React.CSSProperties> = {
     },
     modalTitle: {
         fontSize: 18,
-        fontWeight: 700,
+        fontWeight: 500,
         color: "#111111",
         padding: "26px 24px 12px",
+        fontFamily: '"Poppins", "Inter", sans-serif',
     },
     modalProgress: {
         display: "grid",
         gridTemplateColumns: "repeat(6, 1fr)",
         gap: 6,
         padding: "0 24px 10px",
+    },
+    modalProgressTrack: {
+        height: 4,
+        borderRadius: 999,
+        background: "#ECE7EF",
+        overflow: "hidden",
     },
     modalProgressBar: {
         height: 4,
@@ -1367,22 +1943,24 @@ const styles: Record<string, React.CSSProperties> = {
         alignItems: "center",
         justifyContent: "center",
         fontSize: 14,
-        fontWeight: 700,
+        fontWeight: 500,
     },
     modalStepTitle: {
         fontSize: 16,
-        fontWeight: 700,
+        fontWeight: 500,
         color: "#111111",
+        fontFamily: '"Poppins", "Inter", sans-serif',
     },
     modalVisualCard: {
         background: "#F4F1F4",
         border: "1px solid #DED8E1",
-        borderRadius: 14,
+        borderRadius: 16,
         padding: 18,
-        minHeight: 160,
+        minHeight: 168,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
     },
     modalBody: {
         fontSize: 15,
@@ -1424,7 +2002,7 @@ const styles: Record<string, React.CSSProperties> = {
         justifyContent: "center",
         gap: 10,
         fontSize: 15,
-        fontWeight: 700,
+        fontWeight: 500,
         cursor: "pointer",
         boxShadow: "0 8px 18px rgba(0,0,0,0.16)",
     },
@@ -1446,16 +2024,40 @@ const styles: Record<string, React.CSSProperties> = {
         justifyContent: "space-between",
         gap: 12,
     },
+    visualPillLeftWrap: {
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        minWidth: 0,
+        position: "relative",
+        zIndex: 1,
+    },
+
+    visualPillIcon: {
+        width: 18,
+        height: 18,
+        minWidth: 18,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    },
     visualPillLeft: {
         fontSize: 15,
         color: "#111111",
         fontWeight: 500,
+        position: "relative",
+        zIndex: 1,
     },
     visualPillRight: {
         fontSize: 12,
         color: "#7D7781",
+        position: "relative",
+        zIndex: 1,
+        fontFamily:
+            'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+        letterSpacing: "-0.01em",
     },
-    visualSearch: {
+    visualSearchAnimated: {
         width: "100%",
         minHeight: 48,
         borderRadius: 999,
@@ -1466,13 +2068,44 @@ const styles: Record<string, React.CSSProperties> = {
         padding: "0 18px",
         color: "#6B6570",
         fontSize: 15,
+        position: "relative",
+        overflow: "hidden",
     },
-    visualResultCard: {
+    visualTypingFill: {
+        position: "absolute",
+        left: 18,
+        top: "50%",
+        height: 14,
+        width: "72%",
+        borderRadius: 999,
+        background: "rgba(181,77,255,0.14)",
+        transform: "translateY(-50%)",
+        transformOrigin: "left center",
+        animation: "typingBar 1.1s ease forwards",
+    },
+    visualSearchPlaceholder: {
+        position: "relative",
+        zIndex: 1,
+        color: "#6B6570",
+    },
+    visualCaret: {
+        width: 2,
+        height: 18,
+        background: "#B54DFF",
+        marginLeft: 8,
+        position: "relative",
+        zIndex: 1,
+        animation: "blinkCaret 1s step-end infinite",
+    },
+    visualResultCardAnimated: {
         width: "100%",
         borderRadius: 14,
         border: "1px solid #DED8E1",
         background: "#FFFFFF",
         padding: "14px 16px",
+        opacity: 0,
+        animation: "slideInUp .45s ease forwards",
+        animationDelay: "700ms",
     },
     visualResultTitle: {
         fontSize: 15,
@@ -1508,14 +2141,32 @@ const styles: Record<string, React.CSSProperties> = {
         minHeight: 32,
         alignItems: "center",
     },
-    reviewTabActive: {
+    reviewTabActiveAnimated: {
         color: "#111111",
         fontWeight: 600,
         borderBottom: "2px solid #111111",
         paddingBottom: 8,
+        animation: "tabPulse 1.7s ease-in-out infinite",
+    },
+    reviewAreaMock: {
+        position: "relative",
+        minHeight: 82,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+        gap: 12,
+        padding: "16px 14px",
+    },
+    reviewHighlightRing: {
+        width: 124,
+        height: 42,
+        borderRadius: 999,
+        border: "2px solid #B54DFF",
+        boxShadow: "0 0 0 8px rgba(181,77,255,0.10)",
+        animation: "pulseGlow 1.7s ease-in-out infinite",
     },
     reviewClickHint: {
-        padding: "18px 14px",
         fontSize: 12,
         color: "#8A838F",
     },
@@ -1525,12 +2176,13 @@ const styles: Record<string, React.CSSProperties> = {
         position: "relative",
         minHeight: 116,
     },
-    reviewMiniCard: {
+    reviewMiniCardAnimated: {
         width: 220,
         borderRadius: 14,
         border: "1px solid #DED8E1",
         background: "#FFFFFF",
         padding: "14px 14px 10px",
+        animation: "softFloat 2.4s ease-in-out infinite",
     },
     reviewMiniHeader: {
         fontSize: 14,
@@ -1542,12 +2194,12 @@ const styles: Record<string, React.CSSProperties> = {
         fontSize: 13,
         color: "#7B7580",
     },
-    reviewDots: {
+    reviewDotsAnimated: {
         position: "absolute",
         top: 10,
         right: 34,
-        width: 28,
-        height: 28,
+        width: 30,
+        height: 30,
         borderRadius: 999,
         background: "#F1EDF2",
         display: "flex",
@@ -1556,6 +2208,7 @@ const styles: Record<string, React.CSSProperties> = {
         color: "#6B6570",
         fontSize: 18,
         lineHeight: 1,
+        animation: "pulseGlow 1.8s ease-in-out infinite",
     },
     reviewClickNote: {
         position: "absolute",
@@ -1589,13 +2242,16 @@ const styles: Record<string, React.CSSProperties> = {
         fontSize: 13,
         color: "#B8B2BC",
     },
-    shareMenu: {
+    shareMenuAnimated: {
         width: 160,
         borderRadius: 12,
         overflow: "hidden",
         boxShadow: "0 10px 24px rgba(17,17,17,0.14)",
         border: "1px solid #DED8E1",
         background: "#FFFFFF",
+        opacity: 0,
+        animation: "menuDrop .45s ease forwards",
+        animationDelay: "350ms",
     },
     shareMenuTop: {
         padding: "12px 14px",
@@ -1609,7 +2265,7 @@ const styles: Record<string, React.CSSProperties> = {
         color: "#111111",
         fontWeight: 500,
     },
-    copyCard: {
+    copyCardAnimated: {
         width: "100%",
         maxWidth: 280,
         borderRadius: 16,
@@ -1617,6 +2273,7 @@ const styles: Record<string, React.CSSProperties> = {
         background: "#FFFFFF",
         padding: "18px",
         boxShadow: "0 10px 24px rgba(17,17,17,0.08)",
+        animation: "fadeScaleIn .35s ease",
     },
     copyTitle: {
         textAlign: "center",
@@ -1624,6 +2281,7 @@ const styles: Record<string, React.CSSProperties> = {
         fontWeight: 600,
         color: "#111111",
         marginBottom: 14,
+        fontFamily: '"Poppins", "Inter", sans-serif',
     },
     copyUrl: {
         minHeight: 36,
@@ -1635,7 +2293,7 @@ const styles: Record<string, React.CSSProperties> = {
         padding: "0 12px",
         fontSize: 13,
     },
-    copyButton: {
+    copyButtonAnimated: {
         marginTop: 12,
         minHeight: 36,
         borderRadius: 999,
@@ -1645,6 +2303,7 @@ const styles: Record<string, React.CSSProperties> = {
         alignItems: "center",
         justifyContent: "center",
         fontSize: 14,
-        fontWeight: 700,
+        fontWeight: 500,
+        animation: "copyFlash .35s ease",
     },
 }
