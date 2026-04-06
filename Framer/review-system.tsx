@@ -156,9 +156,9 @@ export default function ReviewRemovalSection() {
             confirmationUrl:
                 typeof window !== "undefined"
                     ? new URL(
-                        CONFIRMATION_URL,
-                        window.location.origin
-                    ).toString()
+                          CONFIRMATION_URL,
+                          window.location.origin
+                      ).toString()
                     : CONFIRMATION_URL,
         },
         meta: {
@@ -189,7 +189,7 @@ export default function ReviewRemovalSection() {
             if (!response.ok) {
                 throw new Error(
                     data?.message ||
-                    `Request failed with status ${response.status}`
+                        `Request failed with status ${response.status}`
                 )
             }
 
@@ -210,7 +210,7 @@ export default function ReviewRemovalSection() {
         } catch (error: any) {
             setSubmitError(
                 error?.message ||
-                "Something went wrong while starting checkout. Please try again."
+                    "Something went wrong while starting checkout. Please try again."
             )
         } finally {
             setIsSubmitting(false)
@@ -222,104 +222,108 @@ export default function ReviewRemovalSection() {
     return (
         <>
             <style>{`
-                @keyframes fadeSlideIn {
-                    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap");
+                    @keyframes fadeSlideIn {
+                        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap");
 
-                    from {
-                        opacity: 0;
-                        transform: translateY(10px);
+                        from {
+                            opacity: 0;
+                            transform: translateY(10px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
                     }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
 
-                @keyframes fadeScaleIn {
-                    from {
-                        opacity: 0;
-                        transform: translateY(10px) scale(.96);
+                    @keyframes fadeScaleIn {
+                        from {
+                            opacity: 0;
+                            transform: translateY(10px) scale(.96);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0) scale(1);
+                        }
                     }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0) scale(1);
+
+                    @keyframes pillReveal {
+                        0% {
+                            opacity: 0;
+                            transform: translateY(14px) scale(.96);
+                        }
+                        100% {
+                            opacity: 1;
+                            transform: translateY(0) scale(1);
+                        }
                     }
-                }
 
-                @keyframes pillReveal {
-                    0% {
-                        opacity: 0;
-                        transform: translateY(14px) scale(.96);
+                    @keyframes shimmerMove {
+                        0% { transform: translateX(-140%); }
+                        100% { transform: translateX(160%); }
                     }
-                    100% {
-                        opacity: 1;
-                        transform: translateY(0) scale(1);
+
+                    @keyframes pulseGlow {
+                        0%, 100% {
+                            transform: scale(1);
+                            box-shadow: 0 0 0 0 rgba(181,77,255,.28);
+                        }
+                        50% {
+                            transform: scale(1.08);
+                            box-shadow: 0 0 0 10px rgba(181,77,255,0);
+                        }
                     }
-                }
 
-                @keyframes shimmerMove {
-                    0% { transform: translateX(-140%); }
-                    100% { transform: translateX(160%); }
-                }
-
-                @keyframes pulseGlow {
-                    0%, 100% {
-                        transform: scale(1);
-                        box-shadow: 0 0 0 0 rgba(181,77,255,.28);
+                    @keyframes typingBar {
+                        from { width: 0%; }
+                        to { width: 72%; }
                     }
-                    50% {
-                        transform: scale(1.08);
-                        box-shadow: 0 0 0 10px rgba(181,77,255,0);
+                    @keyframes typingText {
+    from { width: 0ch; }
+    to { width: 18ch; }
+}
+
+                    @keyframes blinkCaret {
+                        0%, 49% { opacity: 1; }
+                        50%, 100% { opacity: 0; }
                     }
-                }
 
-                @keyframes typingBar {
-                    from { width: 0%; }
-                    to { width: 72%; }
-                }
-
-                @keyframes blinkCaret {
-                    0%, 49% { opacity: 1; }
-                    50%, 100% { opacity: 0; }
-                }
-
-                @keyframes slideInUp {
-                    from {
-                        opacity: 0;
-                        transform: translateY(16px);
+                    @keyframes slideInUp {
+                        from {
+                            opacity: 0;
+                            transform: translateY(16px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
                     }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
+
+                    @keyframes menuDrop {
+                        from {
+                            opacity: 0;
+                            transform: translateY(-10px) scale(.96);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0) scale(1);
+                        }
                     }
-                }
 
-                @keyframes menuDrop {
-                    from {
-                        opacity: 0;
-                        transform: translateY(-10px) scale(.96);
+                    @keyframes softFloat {
+                        0%, 100% { transform: translateY(0px); }
+                        50% { transform: translateY(-4px); }
                     }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0) scale(1);
+
+                    @keyframes tabPulse {
+                        0%, 100% { opacity: 1; transform: scale(1); }
+                        50% { opacity: .88; transform: scale(1.04); }
                     }
-                }
 
-                @keyframes softFloat {
-                    0%, 100% { transform: translateY(0px); }
-                    50% { transform: translateY(-4px); }
-                }
-
-                @keyframes tabPulse {
-                    0%, 100% { opacity: 1; transform: scale(1); }
-                    50% { opacity: .88; transform: scale(1.04); }
-                }
-
-                @keyframes copyFlash {
-                    0% { transform: scale(.96); opacity: 0; }
-                    100% { transform: scale(1); opacity: 1; }
-                }
-            `}</style>
+                    @keyframes copyFlash {
+                        0% { transform: scale(.96); opacity: 0; }
+                        100% { transform: scale(1); opacity: 1; }
+                    }
+                `}</style>
 
             <div style={styles.wrapper}>
                 <div style={styles.progressWrap}>
@@ -450,7 +454,7 @@ export default function ReviewRemovalSection() {
                                                                 <QuestionCircleIcon />
                                                             </button>
                                                             {hoveredHintIndex ===
-                                                                index ? (
+                                                            index ? (
                                                                 <div
                                                                     style={
                                                                         styles.tooltip
@@ -939,18 +943,35 @@ function StepVisual({ visual }: { visual: string }) {
         return (
             <div style={styles.visualStack}>
                 <div style={styles.visualSearchAnimated}>
-                    <div style={styles.visualTypingFill} />
-                    <div style={styles.visualSearchPlaceholder}>
-                        Your Business Name
+                    <div style={styles.visualSearchLeftWrap}>
+                        <div style={styles.visualSearchIcon}>
+                            <SearchIcon />
+                        </div>
+
+                        <div style={styles.visualTypingLine}>
+                            <span style={styles.visualTypingInner}>
+                                Your Business Name
+                            </span>
+                            <span style={styles.visualCaretInline} />
+                        </div>
                     </div>
-                    <div style={styles.visualCaret} />
                 </div>
 
                 <div style={styles.visualResultCardAnimated}>
-                    <div style={styles.visualResultTitle}>
-                        Your Business Name
+                    <div style={styles.visualResultTop}>
+                        <div style={styles.visualResultIcon}>
+                            <MapPinIcon />
+                        </div>
+
+                        <div style={styles.visualResultContent}>
+                            <div style={styles.visualResultTitle}>
+                                Your Business Name
+                            </div>
+                            <div style={styles.visualResultSub}>
+                                123 Main St. 4.5 ★
+                            </div>
+                        </div>
                     </div>
-                    <div style={styles.visualResultSub}>123 Main St. 4.5 ★</div>
                 </div>
             </div>
         )
@@ -1105,8 +1126,8 @@ function InputRow({
                 border: hasError
                     ? "1px solid #E87878"
                     : focused && focusedBorder
-                        ? "2px solid #B54DFF"
-                        : "1px solid #D8D2DB",
+                      ? "2px solid #B54DFF"
+                      : "1px solid #D8D2DB",
                 boxShadow:
                     focused && focusedBorder
                         ? "0 0 0 3px rgba(181, 77, 255, 0.18)"
@@ -1244,6 +1265,58 @@ function GlobeIcon() {
             viewBox="0 0 16 16"
         >
             <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855A8 8 0 0 0 5.145 4H7.5zM4.09 4a9.3 9.3 0 0 1 .64-1.539 7 7 0 0 1 .597-.933A7.03 7.03 0 0 0 2.255 4zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a7 7 0 0 0-.656 2.5zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5zM8.5 5v2.5h2.99a12.5 12.5 0 0 0-.337-2.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5zM5.145 12q.208.58.468 1.068c.552 1.035 1.218 1.65 1.887 1.855V12zm.182 2.472a7 7 0 0 1-.597-.933A9.3 9.3 0 0 1 4.09 12H2.255a7 7 0 0 0 3.072 2.472M3.82 11a13.7 13.7 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5zm6.853 3.472A7 7 0 0 0 13.745 12H11.91a9.3 9.3 0 0 1-.64 1.539 7 7 0 0 1-.597.933M8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855q.26-.487.468-1.068zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.7 13.7 0 0 1-.312 2.5m2.802-3.5a7 7 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7 7 0 0 0-3.072-2.472c.218.284.418.598.597.933M10.855 4a8 8 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4z" />
+        </svg>
+    )
+}
+
+function SearchIcon() {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="none"
+            viewBox="0 0 16 16"
+        >
+            <path
+                d="M11.5 11.5L14 14"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+            />
+            <circle
+                cx="7"
+                cy="7"
+                r="4.75"
+                stroke="currentColor"
+                strokeWidth="1.6"
+            />
+        </svg>
+    )
+}
+
+function MapPinIcon() {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="none"
+            viewBox="0 0 16 16"
+        >
+            <path
+                d="M8 14s4-3.72 4-7A4 4 0 1 0 4 7c0 3.28 4 7 4 7Z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+            />
+            <circle
+                cx="8"
+                cy="7"
+                r="1.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+            />
         </svg>
     )
 }
@@ -1467,6 +1540,7 @@ const styles: Record<string, React.CSSProperties> = {
         marginBottom: 22,
         flexWrap: "nowrap",
     },
+
     topStepBtn: {
         border: "none",
         background: "transparent",
@@ -1885,6 +1959,18 @@ const styles: Record<string, React.CSSProperties> = {
         overflow: "hidden",
         animation: "fadeScaleIn .22s ease",
     },
+    visualTypingFill: {
+        position: "absolute",
+        left: 18,
+        top: "50%",
+        height: 14,
+        width: "72%",
+        borderRadius: 999,
+        background: "rgba(181,77,255,0.14)",
+        transform: "translateY(-50%)",
+        transformOrigin: "left center",
+        animation: "typingBar 1.1s ease forwards",
+    },
     modalClose: {
         position: "absolute",
         top: 16,
@@ -2071,6 +2157,71 @@ const styles: Record<string, React.CSSProperties> = {
         position: "relative",
         overflow: "hidden",
     },
+    visualSearchLeftWrap: {
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        minWidth: 0,
+        flex: 1,
+    },
+
+    visualSearchIcon: {
+        width: 16,
+        height: 16,
+        minWidth: 16,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#6B6570",
+        flexShrink: 0,
+    },
+
+    visualTypingInner: {
+        display: "inline-block",
+        overflow: "hidden",
+        whiteSpace: "nowrap",
+        width: "0ch",
+        color: "#6B6570",
+        animation: "typingText 1.15s steps(18, end) 0.15s forwards",
+    },
+
+    visualResultTop: {
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+    },
+
+    visualResultIcon: {
+        width: 18,
+        height: 18,
+        minWidth: 18,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#111111",
+        flexShrink: 0,
+    },
+
+    visualResultContent: {
+        minWidth: 0,
+    },
+    visualTypingLine: {
+        display: "inline-flex",
+        alignItems: "center",
+        minWidth: 0,
+        flexShrink: 1,
+        whiteSpace: "nowrap",
+    },
+
+    visualCaretInline: {
+        width: 2,
+        height: 18,
+        background: "#111111",
+        marginLeft: 2,
+        flexShrink: 0,
+        display: "inline-block",
+        animation: "blinkCaret 1s step-end infinite",
+    },
     visualTypingFill: {
         position: "absolute",
         left: 18,
@@ -2084,15 +2235,14 @@ const styles: Record<string, React.CSSProperties> = {
         animation: "typingBar 1.1s ease forwards",
     },
     visualSearchPlaceholder: {
-        position: "relative",
-        zIndex: 1,
-        color: "#6B6570",
+        display: "none",
     },
     visualCaret: {
         width: 2,
         height: 18,
-        background: "#B54DFF",
-        marginLeft: 8,
+        background: "#111111",
+        marginLeft: 10,
+        flexShrink: 0,
         position: "relative",
         zIndex: 1,
         animation: "blinkCaret 1s step-end infinite",

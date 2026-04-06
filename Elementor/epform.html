@@ -1,0 +1,1177 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<div id="epFormWrap" class="ep-wrap">
+  <div class="ep-card">
+    <div class="ep-progress">
+      <div class="ep-progress-track">
+        <div class="ep-progress-fill" id="epProgressFill"></div>
+      </div>
+      <div class="ep-progress-steps">
+        <div class="ep-step active"><span>1</span></div>
+        <div class="ep-step"><span>2</span></div>
+        <div class="ep-step"><span>3</span></div>
+        <div class="ep-step"><span>4</span></div>
+        <div class="ep-step"><span>5</span></div>
+      </div>
+    </div>
+
+    <form id="epMultiStepForm" novalidate>
+      <!-- STEP 1 -->
+      <section class="ep-screen active" data-step="1">
+        <div class="ep-head">
+          <div class="ep-title-group">
+            <h2 class="ep-title">
+              <span>INTRODUCE</span>
+              <strong>YOURSELF</strong>
+            </h2>
+          </div>
+          <div class="ep-side-copy">
+            Every great journey starts with an introduction. Tell us who you are.
+          </div>
+        </div>
+
+        <div class="ep-panel">
+          <div class="ep-grid ep-grid-2">
+            <div class="ep-field">
+              <label>First Name</label>
+              <input type="text" name="first_name" placeholder="Athlete's First Name" required>
+            </div>
+
+            <div class="ep-field">
+              <label>Last Name</label>
+              <input type="text" name="last_name" placeholder="Athlete's Last Name" required>
+            </div>
+
+            <div class="ep-field">
+              <label>Date of Birth</label>
+              <div class="ep-dob">
+                <select name="dob_month" required>
+                  <option value="">Month</option>
+                  <option>January</option><option>February</option><option>March</option>
+                  <option>April</option><option>May</option><option>June</option>
+                  <option>July</option><option>August</option><option>September</option>
+                  <option>October</option><option>November</option><option>December</option>
+                </select>
+                <select name="dob_day" required>
+                  <option value="">Day</option>
+                </select>
+                <select name="dob_year" required>
+                  <option value="">Year</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="ep-field">
+              <label>Gender</label>
+              <select name="gender" required>
+                <option value="">Select</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+                <option>Prefer not to say</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="ep-footer">
+          <div class="ep-page-note">
+            <span>Page 1 / 5</span>
+            <span class="ep-error-note">• Complete all required fields</span>
+          </div>
+          <div class="ep-actions right-only">
+            <button type="button" class="ep-btn ep-btn-primary" data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 2 -->
+      <section class="ep-screen" data-step="2">
+        <div class="ep-head">
+          <div class="ep-title-group">
+            <h2 class="ep-title">
+              <span>YOUR SPORT</span>
+              <strong>YOUR PASSION</strong>
+            </h2>
+          </div>
+          <div class="ep-side-copy">
+            Every athlete has a story. What's yours? Tell us about the sport that lights your fire and fuels your drive.
+          </div>
+        </div>
+
+        <div class="ep-panel">
+          <div class="ep-grid ep-grid-3">
+            <div class="ep-field">
+              <label>Select your sport</label>
+              <select name="sport" required>
+                <option value="">Select your sport</option>
+                <option>Soccer</option>
+                <option>Basketball</option>
+                <option>Football</option>
+                <option>Baseball</option>
+                <option>Track & Field</option>
+                <option>Volleyball</option>
+                <option>Tennis</option>
+                <option>Golf</option>
+                <option>Wrestling</option>
+                <option>Swimming</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="ep-field">
+              <label>Position(s)</label>
+              <input type="text" name="position" placeholder="Select your sport first" required>
+            </div>
+
+            <div class="ep-field">
+              <label>School / Team</label>
+              <input type="text" name="school_team" placeholder="School / Team" required>
+            </div>
+          </div>
+
+          <div class="ep-field ep-mt">
+            <label>Why do you play your sport, What are your athletic goals?</label>
+            <textarea name="goals" placeholder='"Increase speed," "Get stronger," "Earn a scholarship"' required></textarea>
+          </div>
+        </div>
+
+        <div class="ep-footer">
+          <div class="ep-page-note">
+            <span>Page 2 / 5</span>
+            <span class="ep-error-note">• Complete all required fields</span>
+          </div>
+          <div class="ep-actions">
+            <button type="button" class="ep-btn ep-btn-secondary" data-prev>Previous</button>
+            <button type="button" class="ep-btn ep-btn-primary" data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 3 -->
+      <section class="ep-screen" data-step="3">
+        <div class="ep-head">
+          <div class="ep-title-group">
+            <h2 class="ep-title">
+              <span>YOUR STATS</span>
+              <strong>&amp; HEALTH</strong>
+            </h2>
+          </div>
+          <div class="ep-side-copy">
+            Help us understand where your body is at so we can train you smarter.
+          </div>
+        </div>
+
+        <div class="ep-panel">
+          <div class="ep-grid ep-grid-2">
+            <div class="ep-field">
+              <label>Height</label>
+              <input type="text" name="height" placeholder="5'10" required>
+            </div>
+
+            <div class="ep-field">
+              <label>Weight</label>
+              <input type="text" name="weight" placeholder="175 lbs" required>
+            </div>
+
+            <div class="ep-field">
+              <label>Do you have any previous injuries?</label>
+              <select name="injuries" id="epInjuries" required>
+                <option value="">Yes or No</option>
+                <option>Yes</option>
+                <option>No</option>
+              </select>
+            </div>
+
+            <div class="ep-field">
+              <label>if yes please explain:</label>
+              <input type="text" name="injuries_explain" id="epInjuriesExplain" placeholder="">
+            </div>
+
+            <div class="ep-field">
+              <label>Are you currently under any medical restrictions?</label>
+              <select name="restrictions" id="epRestrictions" required>
+                <option value="">Yes or No</option>
+                <option>Yes</option>
+                <option>No</option>
+              </select>
+            </div>
+
+            <div class="ep-field">
+              <label>if yes please describe:</label>
+              <input type="text" name="restrictions_explain" id="epRestrictionsExplain" placeholder="">
+            </div>
+          </div>
+        </div>
+
+        <div class="ep-footer">
+          <div class="ep-page-note">
+            <span>Page 3 / 5</span>
+            <span class="ep-error-note">• Complete all required fields</span>
+          </div>
+          <div class="ep-actions">
+            <button type="button" class="ep-btn ep-btn-secondary" data-prev>Previous</button>
+            <button type="button" class="ep-btn ep-btn-primary" data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 4 -->
+      <section class="ep-screen" data-step="4">
+        <div class="ep-head">
+          <div class="ep-title-group">
+            <h2 class="ep-title">
+              <span>COMMITMENT</span>
+              <strong>&amp; AVAILABILITY</strong>
+            </h2>
+          </div>
+          <div class="ep-side-copy">
+            Ready to commit? Let's align on how we can make this work for you.
+          </div>
+        </div>
+
+        <div class="ep-panel">
+          <div class="ep-grid ep-grid-2 ep-top-align">
+            <div class="ep-field">
+              <label>How many times per week can you train?</label>
+              <select name="sessions_per_week" required>
+                <option value="">Select</option>
+                <option>1 session per week</option>
+                <option>2 sessions per week</option>
+                <option>3 sessions per week</option>
+                <option>4+ sessions per week</option>
+              </select>
+            </div>
+
+            <div class="ep-field">
+              <label>What days/times are you generally available?</label>
+              <div class="ep-toggle-group" id="epAvailability">
+                <button type="button" data-value="Morning">Morning</button>
+                <button type="button" data-value="Afternoon">Afternoon</button>
+                <button type="button" data-value="Evening">Evening</button>
+              </div>
+              <input type="hidden" name="availability" required>
+            </div>
+          </div>
+
+          <div class="ep-field ep-mt">
+            <label>Is there anything else we should know about you?</label>
+            <textarea name="extra_notes"></textarea>
+          </div>
+        </div>
+
+        <div class="ep-footer">
+          <div class="ep-page-note">
+            <span>Page 4 / 5</span>
+            <span class="ep-error-note">• Complete all required fields</span>
+          </div>
+          <div class="ep-actions">
+            <button type="button" class="ep-btn ep-btn-secondary" data-prev>Previous</button>
+            <button type="button" class="ep-btn ep-btn-primary" data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 5 -->
+      <section class="ep-screen" data-step="5">
+        <div class="ep-head">
+          <div class="ep-title-group">
+            <h2 class="ep-title">
+              <span>CONTACT</span>
+              <strong>INFORMATION</strong>
+            </h2>
+            <p class="ep-subtext">
+              So we know who to reach out to. Your info stays private — we'll only contact you about training.
+            </p>
+          </div>
+          <div class="ep-side-copy">
+            Almost there — just need to know how to reach you.
+          </div>
+        </div>
+
+        <div class="ep-panel">
+          <div class="ep-grid ep-grid-2">
+            <div class="ep-field">
+              <label>Email</label>
+              <input type="email" name="email" id="epEmail" placeholder="Athlete's Email" required>
+            </div>
+
+            <div class="ep-field">
+              <label>Phone Number</label>
+              <input type="tel" name="phone" id="epPhone" placeholder="(123) 456-7890" required>
+            </div>
+
+            <div class="ep-field ep-col-span-2">
+              <label>Instagram Handle (optional)</label>
+              <input type="text" name="instagram" id="epInstagram" placeholder="@handle">
+            </div>
+          </div>
+        </div>
+
+        <div class="ep-footer">
+          <div class="ep-page-note">
+            <span>Page 5 / 5</span>
+            <span class="ep-error-note">• Complete all required fields</span>
+          </div>
+          <div class="ep-actions">
+            <button type="button" class="ep-btn ep-btn-secondary" data-prev>Previous</button>
+            <button type="button" class="ep-btn ep-btn-primary" data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- REVIEW -->
+      <section class="ep-screen" data-step="6">
+        <div class="ep-head">
+          <div class="ep-title-group">
+            <h2 class="ep-title">
+              <span>REVIEW</span>
+              <strong>&amp; SUBMIT</strong>
+            </h2>
+          </div>
+          <div class="ep-side-copy">
+            You're almost there. Review your information and take the final step to join Evolve Performance.
+          </div>
+        </div>
+
+        <div class="ep-panel ep-review-panel">
+          <div class="ep-review-grid" id="epReviewGrid"></div>
+          <div class="ep-review-note">
+            By submitting this application, you confirm that all information provided is accurate and you agree to be contacted by Evolve Performance regarding training opportunities.
+          </div>
+        </div>
+
+        <div class="ep-footer">
+          <div class="ep-page-note">
+            <span>Final Review</span>
+          </div>
+          <div class="ep-actions">
+            <button type="button" class="ep-btn ep-btn-secondary" data-prev>Previous</button>
+            <button type="submit" class="ep-btn ep-btn-primary ep-submit-btn" id="epSubmitBtn">SUBMIT</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUCCESS -->
+      <section class="ep-screen ep-success-screen" data-step="7">
+        <div class="ep-success-icon">
+          <span>✓</span>
+        </div>
+
+        <h2 class="ep-success-title">
+          <span>WELCOME TO</span> <strong>EVOLVE PERFORMANCE</strong>
+        </h2>
+
+        <p class="ep-success-copy">
+          Your application has been received. Our team will review your information and contact you shortly to discuss your training journey.
+        </p>
+
+        <div class="ep-success-actions">
+          <a href="/" class="ep-btn ep-btn-primary">RETURN HOME</a>
+        </div>
+      </section>
+    </form>
+
+    <div class="ep-form-message" id="epFormMessage"></div>
+  </div>
+</div>
+
+<style>
+  #epFormWrap.ep-wrap{
+    --ep-accent:#A6A17F;
+    --ep-accent-dark:rgba(166,161,127,.22);
+    --ep-bg:#0A0A0A;
+    --ep-panel:#101010;
+    --ep-field:#1B1B1B;
+    --ep-border:#2A2A2A;
+    --ep-text:#F5F5F5;
+    --ep-muted:#A7A7A7;
+    --ep-danger:#ff3b30;
+    --ep-radius:22px;
+    --ep-shadow:0 18px 44px rgba(0,0,0,.35);
+    max-width:100%;
+    color:var(--ep-text);
+    font-family:"Inter",sans-serif;
+  }
+
+  #epFormWrap *{box-sizing:border-box}
+
+  #epFormWrap .ep-card{
+    width:100%;
+    max-width:980px;
+    margin:0 auto;
+    padding:28px 20px 10px;
+    background:transparent;
+  }
+
+  #epFormWrap .ep-progress{
+    position:relative;
+    margin-bottom:34px;
+    padding:0 4px;
+  }
+
+  #epFormWrap .ep-progress-track{
+    height:4px;
+    background:#2B2B2B;
+    border-radius:999px;
+    position:absolute;
+    left:4px;
+    right:4px;
+    top:26px;
+    overflow:hidden;
+  }
+
+  #epFormWrap .ep-progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--ep-accent);
+    border-radius:999px;
+    transition:width .35s ease;
+  }
+
+  #epFormWrap .ep-progress-steps{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:relative;
+    z-index:2;
+  }
+
+  #epFormWrap .ep-step{
+    width:44px;
+    height:44px;
+    border-radius:999px;
+    background:#1C1C1C;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#BDBDBD;
+    font-weight:800;
+    font-size:24px;
+    font-family:"Bebas Neue",sans-serif;
+    letter-spacing:.02em;
+    transition:all .25s ease;
+  }
+
+  #epFormWrap .ep-step.active{
+    background:var(--ep-accent);
+    color:#111;
+    box-shadow:0 0 0 10px var(--ep-accent-dark);
+  }
+
+  #epFormWrap .ep-step.done{
+    background:rgba(166,161,127,.45);
+    color:#111;
+  }
+
+  #epFormWrap .ep-screen{
+    display:none;
+    animation:epFade .28s ease;
+  }
+
+  #epFormWrap .ep-screen.active{display:block}
+
+  @keyframes epFade{
+    from{opacity:0;transform:translateY(6px)}
+    to{opacity:1;transform:none}
+  }
+
+  #epFormWrap .ep-head{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 360px;
+    gap:32px;
+    align-items:start;
+    margin-bottom:26px;
+  }
+
+  #epFormWrap .ep-title{
+    margin:0;
+    line-height:.88;
+    text-transform:uppercase;
+    font-family:"Bebas Neue",sans-serif;
+    letter-spacing:.02em;
+  }
+
+  #epFormWrap .ep-title span,
+  #epFormWrap .ep-title strong{
+    display:block;
+    font-size:80px;
+    font-weight:400;
+  }
+
+  #epFormWrap .ep-title strong{
+    color:var(--ep-accent);
+  }
+
+  #epFormWrap .ep-subtext{
+    margin:18px 0 0;
+    max-width:430px;
+    color:#C7C7C7;
+    font-size:16px;
+    line-height:1.55;
+  }
+
+  #epFormWrap .ep-side-copy{
+    color:#C5C5C5;
+    font-size:18px;
+    line-height:1.55;
+    font-style:italic;
+    text-align:right;
+    padding-top:12px;
+    max-width:360px;
+    justify-self:end;
+  }
+
+  #epFormWrap .ep-panel{
+    background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:var(--ep-radius);
+    box-shadow:var(--ep-shadow);
+    padding:34px 36px;
+  }
+
+  #epFormWrap .ep-grid{
+    display:grid;
+    gap:24px 26px;
+  }
+
+  #epFormWrap .ep-grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #epFormWrap .ep-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #epFormWrap .ep-col-span-2{grid-column:span 2}
+  #epFormWrap .ep-top-align{align-items:start}
+  #epFormWrap .ep-mt{margin-top:24px}
+
+  #epFormWrap .ep-field label{
+    display:block;
+    margin:0 0 10px;
+    color:#AFAFAF;
+    font-size:14px;
+    font-weight:600;
+    line-height:1.3;
+  }
+
+  #epFormWrap input,
+  #epFormWrap select,
+  #epFormWrap textarea{
+    width:100%;
+    height:48px;
+    border-radius:0;
+    border:1px solid var(--ep-border);
+    background:linear-gradient(90deg, #1A1A1A 0%, #232323 100%);
+    color:var(--ep-text);
+    padding:0 14px;
+    font-size:16px;
+    outline:none;
+    box-shadow:none;
+    transition:border-color .22s ease, box-shadow .22s ease, background .22s ease;
+    font-family:"Inter",sans-serif;
+  }
+
+  #epFormWrap textarea{
+    height:124px;
+    resize:vertical;
+    padding:14px;
+  }
+
+  #epFormWrap input::placeholder,
+  #epFormWrap textarea::placeholder{
+    color:#878787;
+  }
+
+  #epFormWrap input:focus,
+  #epFormWrap select:focus,
+  #epFormWrap textarea:focus{
+    border-color:var(--ep-accent);
+    box-shadow:0 0 0 1px var(--ep-accent);
+  }
+
+  #epFormWrap select{
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%23B9B9B9' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 14px center;
+    padding-right:42px;
+  }
+
+  #epFormWrap .ep-dob{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:10px;
+  }
+
+  #epFormWrap .ep-toggle-group{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  #epFormWrap .ep-toggle-group button{
+    height:44px;
+    min-width:96px;
+    padding:0 16px;
+    border:1px solid var(--ep-border);
+    background:#202020;
+    color:#C9C9C9;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:600;
+    transition:all .2s ease;
+  }
+
+  #epFormWrap .ep-toggle-group button.active{
+    background:var(--ep-accent);
+    color:#111;
+    border-color:var(--ep-accent);
+  }
+
+  #epFormWrap .ep-footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:18px;
+    padding:26px 4px 0;
+  }
+
+  #epFormWrap .ep-page-note{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    color:#D7D7D7;
+    font-size:15px;
+  }
+
+  #epFormWrap .ep-error-note{
+    color:var(--ep-danger);
+  }
+
+  #epFormWrap .ep-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:14px;
+  }
+
+  #epFormWrap .ep-actions.right-only{
+    width:100%;
+  }
+
+  #epFormWrap .ep-btn{
+    min-width:126px;
+    height:54px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:999px;
+    text-decoration:none;
+    cursor:pointer;
+    border:1px solid transparent;
+    padding:0 24px;
+    font-size:16px;
+    font-weight:800;
+    transition:all .22s ease;
+    letter-spacing:.01em;
+  }
+
+  #epFormWrap .ep-btn-primary{
+    background:var(--ep-accent);
+    color:#111;
+  }
+
+  #epFormWrap .ep-btn-primary:hover{
+    filter:brightness(1.05);
+    transform:translateY(-1px);
+  }
+
+  #epFormWrap .ep-btn-secondary{
+    background:transparent;
+    color:#fff;
+    border-color:#313131;
+  }
+
+  #epFormWrap .ep-btn-secondary:hover{
+    border-color:var(--ep-accent);
+    color:var(--ep-accent);
+  }
+
+  #epFormWrap .ep-btn[disabled]{
+    opacity:.45;
+    cursor:not-allowed;
+    transform:none !important;
+  }
+
+  #epFormWrap .ep-review-panel{
+    padding-bottom:28px;
+  }
+
+  #epFormWrap .ep-review-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:18px 36px;
+  }
+
+  #epFormWrap .ep-review-item{
+    color:#F2F2F2;
+    font-size:18px;
+    line-height:1.5;
+  }
+
+  #epFormWrap .ep-review-item strong{
+    display:block;
+    color:#9D9D9D;
+    margin-bottom:2px;
+    font-weight:500;
+  }
+
+  #epFormWrap .ep-review-note{
+    margin-top:28px;
+    padding-top:24px;
+    border-top:1px solid rgba(255,255,255,.08);
+    color:#BEBEBE;
+    font-size:16px;
+    line-height:1.6;
+  }
+
+  #epFormWrap .ep-success-screen{
+    text-align:center;
+    padding:10px 0 20px;
+  }
+
+  #epFormWrap .ep-success-icon{
+    width:98px;
+    height:98px;
+    margin:12px auto 32px;
+    border-radius:999px;
+    background:var(--ep-accent-dark);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  #epFormWrap .ep-success-icon span{
+    width:42px;
+    height:42px;
+    border:4px solid var(--ep-accent);
+    border-radius:999px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--ep-accent);
+    font-size:22px;
+    font-weight:900;
+  }
+
+  #epFormWrap .ep-success-title{
+    margin:0 0 18px;
+    text-transform:uppercase;
+    font-family:"Bebas Neue",sans-serif;
+    font-size:82px;
+    line-height:.95;
+    letter-spacing:.02em;
+  }
+
+  #epFormWrap .ep-success-title strong{
+    color:var(--ep-accent);
+    text-shadow:0 0 24px rgba(166,161,127,.24);
+    font-weight:400;
+  }
+
+  #epFormWrap .ep-success-copy{
+    max-width:720px;
+    margin:0 auto 34px;
+    color:#D5D5D5;
+    font-size:17px;
+    line-height:1.7;
+  }
+
+  #epFormWrap .ep-form-message{
+    margin-top:18px;
+    font-size:14px;
+    color:#d6d6d6;
+    display:none;
+  }
+
+  #epFormWrap .ep-invalid{
+    border-color:var(--ep-danger) !important;
+    box-shadow:0 0 0 1px var(--ep-danger) !important;
+  }
+
+  #epFormWrap .ep-shake{
+    animation:epShake .25s linear 2;
+  }
+
+  @keyframes epShake{
+    0%{transform:translateX(0)}
+    25%{transform:translateX(-3px)}
+    50%{transform:translateX(3px)}
+    75%{transform:translateX(-2px)}
+    100%{transform:translateX(0)}
+  }
+
+  @media (max-width: 1024px){
+    #epFormWrap .ep-title span,
+    #epFormWrap .ep-title strong{
+      font-size:66px;
+    }
+    #epFormWrap .ep-success-title{
+      font-size:68px;
+    }
+    #epFormWrap .ep-head{
+      grid-template-columns:1fr 300px;
+    }
+  }
+
+  @media (max-width: 767px){
+    #epFormWrap .ep-card{
+      padding:20px 12px 12px;
+    }
+
+    #epFormWrap .ep-progress{
+      margin-bottom:26px;
+    }
+
+    #epFormWrap .ep-progress-track{
+      top:22px;
+    }
+
+    #epFormWrap .ep-step{
+      width:38px;
+      height:38px;
+      font-size:20px;
+    }
+
+    #epFormWrap .ep-head{
+      grid-template-columns:1fr;
+      gap:14px;
+      margin-bottom:20px;
+    }
+
+    #epFormWrap .ep-side-copy{
+      max-width:none;
+      justify-self:start;
+      text-align:left;
+      font-size:16px;
+      padding-top:0;
+    }
+
+    #epFormWrap .ep-title span,
+    #epFormWrap .ep-title strong{
+      font-size:48px;
+    }
+
+    #epFormWrap .ep-subtext{
+      font-size:15px;
+      margin-top:14px;
+    }
+
+    #epFormWrap .ep-panel{
+      padding:20px 16px;
+      border-radius:18px;
+    }
+
+    #epFormWrap .ep-grid-2,
+    #epFormWrap .ep-grid-3{
+      grid-template-columns:1fr;
+    }
+
+    #epFormWrap .ep-col-span-2{
+      grid-column:auto;
+    }
+
+    #epFormWrap .ep-dob{
+      grid-template-columns:1fr 1fr 1fr;
+    }
+
+    #epFormWrap .ep-toggle-group button{
+      min-width:0;
+      flex:1 1 calc(33.333% - 7px);
+      padding:0 10px;
+      font-size:14px;
+    }
+
+    #epFormWrap .ep-footer{
+      flex-direction:column;
+      align-items:stretch;
+      padding-top:18px;
+    }
+
+    #epFormWrap .ep-page-note{
+      justify-content:flex-start;
+      font-size:14px;
+    }
+
+    #epFormWrap .ep-actions,
+    #epFormWrap .ep-actions.right-only{
+      width:100%;
+      justify-content:space-between;
+    }
+
+    #epFormWrap .ep-btn{
+      flex:1 1 0;
+      min-width:0;
+      height:50px;
+      padding:0 18px;
+      font-size:15px;
+    }
+
+    #epFormWrap .ep-review-grid{
+      grid-template-columns:1fr;
+      gap:16px;
+    }
+
+    #epFormWrap .ep-review-item{
+      font-size:16px;
+    }
+
+    #epFormWrap .ep-success-icon{
+      width:82px;
+      height:82px;
+      margin-bottom:24px;
+    }
+
+    #epFormWrap .ep-success-title{
+      font-size:48px;
+    }
+
+    #epFormWrap .ep-success-copy{
+      font-size:15px;
+      line-height:1.65;
+    }
+  }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const wrap = document.getElementById("epFormWrap");
+  if (!wrap) return;
+
+  const form = document.getElementById("epMultiStepForm");
+  const screens = Array.from(form.querySelectorAll(".ep-screen"));
+  const steps = Array.from(wrap.querySelectorAll(".ep-step"));
+  const progressFill = document.getElementById("epProgressFill");
+  const reviewGrid = document.getElementById("epReviewGrid");
+  const messageBox = document.getElementById("epFormMessage");
+  const submitBtn = document.getElementById("epSubmitBtn");
+
+  let currentStep = 1;
+
+  const daySelect = form.querySelector('[name="dob_day"]');
+  const yearSelect = form.querySelector('[name="dob_year"]');
+
+  for (let d = 1; d <= 31; d++) {
+    const opt = document.createElement("option");
+    opt.value = d;
+    opt.textContent = d;
+    daySelect.appendChild(opt);
+  }
+
+  const currentYear = new Date().getFullYear();
+  for (let y = currentYear; y >= currentYear - 60; y--) {
+    const opt = document.createElement("option");
+    opt.value = y;
+    opt.textContent = y;
+    yearSelect.appendChild(opt);
+  }
+
+  function updateProgress(step) {
+    screens.forEach((screen) => {
+      screen.classList.toggle("active", Number(screen.dataset.step) === step);
+    });
+
+    steps.forEach((stepEl, i) => {
+      stepEl.classList.remove("active", "done");
+      if (i + 1 < step) stepEl.classList.add("done");
+      if (i + 1 === Math.min(step, 5)) stepEl.classList.add("active");
+    });
+
+    let fillPercent = 0;
+    if (step <= 5) fillPercent = ((step - 1) / 4) * 100;
+    if (step >= 6) fillPercent = 100;
+    progressFill.style.width = fillPercent + "%";
+  }
+
+  function visibleExplainRules() {
+    const injuries = form.querySelector("#epInjuries").value;
+    const injuriesExplain = form.querySelector("#epInjuriesExplain");
+    injuriesExplain.required = injuries === "Yes";
+
+    const restrictions = form.querySelector("#epRestrictions").value;
+    const restrictionsExplain = form.querySelector("#epRestrictionsExplain");
+    restrictionsExplain.required = restrictions === "Yes";
+  }
+
+  form.querySelector("#epInjuries").addEventListener("change", visibleExplainRules);
+  form.querySelector("#epRestrictions").addEventListener("change", visibleExplainRules);
+
+  function markInvalid(field) {
+    field.classList.add("ep-invalid", "ep-shake");
+    setTimeout(() => field.classList.remove("ep-shake"), 600);
+    field.addEventListener("input", () => field.classList.remove("ep-invalid"), { once: true });
+    field.addEventListener("change", () => field.classList.remove("ep-invalid"), { once: true });
+  }
+
+  function validateStep(step) {
+    const screen = form.querySelector('.ep-screen[data-step="' + step + '"]');
+    if (!screen) return true;
+
+    visibleExplainRules();
+
+    let valid = true;
+    const fields = Array.from(screen.querySelectorAll("input, select, textarea")).filter(el => {
+      if (el.type === "hidden") return el.hasAttribute("required");
+      return true;
+    });
+
+    fields.forEach(field => {
+      field.classList.remove("ep-invalid");
+
+      if (!field.hasAttribute("required")) return;
+
+      const value = (field.value || "").trim();
+      if (!value) {
+        valid = false;
+        markInvalid(field);
+        return;
+      }
+
+      if (field.name === "email") {
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        if (!emailOk) {
+          valid = false;
+          markInvalid(field);
+        }
+      }
+    });
+
+    return valid;
+  }
+
+  function buildReview() {
+    const data = new FormData(form);
+    const fullName = [data.get("first_name"), data.get("last_name")].filter(Boolean).join(" ");
+    const dob = [data.get("dob_month"), data.get("dob_day"), data.get("dob_year")].filter(Boolean).join(" ");
+    const rows = [
+      ["Name", fullName],
+      ["Email", data.get("email") || ""],
+      ["Sport", data.get("sport") || ""],
+      ["Position", data.get("position") || ""],
+      ["School/Team", data.get("school_team") || ""],
+      ["Sessions/Week", data.get("sessions_per_week") || ""],
+      ["Availability", data.get("availability") || ""],
+      ["Height/Weight", `${data.get("height") || ""} / ${data.get("weight") || ""}`],
+      ["Date of Birth", dob],
+      ["Phone", data.get("phone") || ""],
+      ["Instagram", data.get("instagram") || "—"],
+      ["Gender", data.get("gender") || ""]
+    ];
+
+    reviewGrid.innerHTML = rows.map(([label, value]) => `
+      <div class="ep-review-item">
+        <strong>${label}:</strong>
+        <span>${value || "—"}</span>
+      </div>
+    `).join("");
+  }
+
+  function goToStep(step) {
+    currentStep = step;
+    if (step === 6) buildReview();
+    updateProgress(step);
+    wrap.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  form.querySelectorAll("[data-next]").forEach(btn => {
+    btn.addEventListener("click", function () {
+      if (!validateStep(currentStep)) return;
+      goToStep(currentStep + 1);
+    });
+  });
+
+  form.querySelectorAll("[data-prev]").forEach(btn => {
+    btn.addEventListener("click", function () {
+      goToStep(Math.max(1, currentStep - 1));
+    });
+  });
+
+  const availabilityGroup = document.getElementById("epAvailability");
+  const availabilityInput = form.querySelector('[name="availability"]');
+
+  availabilityGroup.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", function () {
+      availabilityGroup.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      availabilityInput.value = btn.dataset.value;
+      availabilityInput.classList.remove("ep-invalid");
+    });
+  });
+
+  const emailInput = document.getElementById("epEmail");
+  emailInput.addEventListener("blur", function () {
+    emailInput.value = emailInput.value.trim().toLowerCase();
+  });
+
+  const instaInput = document.getElementById("epInstagram");
+  instaInput.addEventListener("blur", function () {
+    let v = instaInput.value.trim();
+    if (v && !v.startsWith("@")) v = "@" + v.replace(/^@+/, "");
+    instaInput.value = v;
+  });
+
+  const phoneInput = document.getElementById("epPhone");
+  phoneInput.addEventListener("input", function (e) {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+    let formatted = digits;
+    if (digits.length > 6) {
+      formatted = `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+    } else if (digits.length > 3) {
+      formatted = `(${digits.slice(0,3)}) ${digits.slice(3)}`;
+    } else if (digits.length > 0) {
+      formatted = `(${digits}`;
+    }
+    e.target.value = formatted;
+  });
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    if (submitBtn.disabled) return;
+
+    const formData = new FormData(form);
+    formData.append("action", "ep_submit_application");
+    formData.append("nonce", window.epFormData ? window.epFormData.nonce : "");
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "SUBMITTING...";
+    messageBox.style.display = "none";
+
+    try {
+      const response = await fetch(window.epFormData.ajaxUrl, {
+        method: "POST",
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        goToStep(7);
+        form.reset();
+        availabilityGroup.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+      } else {
+        throw new Error(result.data && result.data.message ? result.data.message : "Something went wrong.");
+      }
+    } catch (error) {
+      messageBox.textContent = error.message || "Something went wrong. Please try again.";
+      messageBox.style.display = "block";
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "SUBMIT";
+    }
+  });
+
+  visibleExplainRules();
+  updateProgress(1);
+});
+</script>
