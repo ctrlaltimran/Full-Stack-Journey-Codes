@@ -1,0 +1,1727 @@
+<div id="fmhero-widget"></div>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
+
+  #fmhero-widget {
+    --fm-bg: white;
+    --fm-fg: #111827;
+    --fm-card: rgba(255, 255, 255, .48);
+    --fm-card-solid: #eef3fb;
+    --fm-muted: #edf2f9;
+    --fm-border: rgba(59, 130, 246, .12);
+    --fm-gold: #3b82f6;
+    --fm-gold-light: #74a9ff;
+    --fm-warm: #6b7280;
+    --fm-shadow: 0 18px 60px rgba(15, 23, 42, .08);
+    --fm-display: "Instrument Serif", serif;
+    --fm-body: 'Outfit', system-ui, sans-serif;
+    position: relative;
+    min-height: 100svh;
+    width: 100%;
+    3 overflow: hidden;
+    background: var(--fm-bg);
+    color: var(--fm-fg);
+    border-radius: 0;
+    isolation: isolate;
+  }
+
+  #fmhero-widget * {
+    box-sizing: border-box
+  }
+
+  #fmhero-widget .fmhero-scene {
+    position: relative;
+    min-height: 100svh;
+    padding: 28px 20px 78px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden
+  }
+
+  #fmhero-widget .fmhero-center {
+    position: relative;
+    z-index: 5;
+    width: min(100%, 1100px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100svh - 106px);
+    padding: 18px
+  }
+
+  #fmhero-widget .fmhero-stage-wrap {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative
+  }
+
+  #fmhero-widget .fmhero-stage {
+    width: 100%;
+    max-width: 760px;
+    opacity: 0;
+    transform: translateY(16px) scale(.985);
+    filter: blur(10px);
+    pointer-events: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: center center;
+    translate: -50% -50%;
+    transition: opacity .8s cubic-bezier(.22, 1, .36, 1), transform .8s cubic-bezier(.22, 1, .36, 1), filter .8s cubic-bezier(.22, 1, .36, 1)
+  }
+
+  #fmhero-widget .fmhero-stage.is-active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+    pointer-events: auto;
+    position: relative;
+    left: auto;
+    top: auto;
+    translate: none
+  }
+
+  #fmhero-widget .fmhero-bg-layer,
+  #fmhero-widget .fmhero-bg-grid,
+  #fmhero-widget .fmhero-float,
+  #fmhero-widget .fmhero-corners,
+  #fmhero-widget .fmhero-marquees {
+    position: absolute;
+    inset: 0;
+    pointer-events: none
+  }
+
+  #fmhero-widget .fmhero-bloom,
+  #fmhero-widget .fmhero-spot {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(6px)
+  }
+
+  #fmhero-widget .fmhero-bloom.main {
+    width: 920px;
+    height: 920px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(59, 130, 246, .14) 0%, rgba(59, 130, 246, 0) 57%);
+    animation: fmheroFloat 16s ease-in-out infinite
+  }
+
+  #fmhero-widget .fmhero-bloom.tr {
+    width: 620px;
+    height: 620px;
+    right: -140px;
+    top: -120px;
+    background: radial-gradient(circle, rgba(116, 169, 255, .16) 0%, rgba(116, 169, 255, 0) 64%);
+    animation: fmheroPulse 9s ease-in-out infinite
+  }
+
+  #fmhero-widget .fmhero-bloom.bl {
+    width: 540px;
+    height: 540px;
+    left: -140px;
+    bottom: -120px;
+    background: radial-gradient(circle, rgba(59, 130, 246, .12) 0%, rgba(59, 130, 246, 0) 67%);
+    animation: fmheroPulse 11s ease-in-out infinite reverse
+  }
+
+
+  #fmhero-widget .fmhero-bg-grid .line-v,
+  #fmhero-widget .fmhero-bg-grid .line-h {
+    position: absolute;
+    background: rgba(59, 130, 246, .07)
+  }
+
+  #fmhero-widget .fmhero-bg-grid .line-v {
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    transform-origin: top center;
+    animation: fmheroGrowY 2.4s cubic-bezier(.22, 1, .36, 1) forwards
+  }
+
+  #fmhero-widget .fmhero-bg-grid .line-h {
+    left: 0;
+    right: 0;
+    height: 1px;
+    transform-origin: left center;
+    animation: fmheroGrowX 2.4s cubic-bezier(.22, 1, .36, 1) forwards
+  }
+
+  #fmhero-widget .fmhero-bg-grid .dot {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(59, 130, 246, .28);
+    transform: scale(0);
+    animation: fmheroPop .8s ease forwards
+  }
+
+  #fmhero-widget .fmhero-particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--fm-gold);
+    opacity: 0;
+    animation: fmheroParticle linear infinite
+  }
+
+  #fmhero-widget .fmhero-side-label {
+    position: absolute;
+    top: 50%;
+    font: 500 10px/1 var(--fm-body);
+    letter-spacing: .5em;
+    text-transform: uppercase;
+    color: rgba(59, 130, 246, .18)
+  }
+
+  #fmhero-widget .fmhero-side-label.left {
+    left: 10px;
+    transform: translateY(-50%) rotate(-90deg)
+  }
+
+  #fmhero-widget .fmhero-side-label.right {
+    right: 10px;
+    transform: translateY(-50%) rotate(90deg)
+  }
+
+  #fmhero-widget .fmhero-corner-line {
+    position: absolute;
+    background: linear-gradient(to bottom, rgba(59, 130, 246, .38), rgba(59, 130, 246, 0))
+  }
+
+  #fmhero-widget .fmhero-typing.reply {
+    flex-direction: row-reverse;
+  }
+
+  #fmhero-widget .fmhero-typing.reply .fmhero-avatar {
+    background: var(--fm-gold);
+    box-shadow: 0 4px 18px rgba(59, 130, 246, .28);
+  }
+
+  #fmhero-widget .fmhero-typing.reply .fmhero-typing-pill {
+    background: var(--fm-gold);
+  }
+
+  #fmhero-widget .fmhero-typing.reply .fmhero-typing-pill i {
+    background: rgba(255, 255, 255, .85);
+  }
+
+  #fmhero-widget .fmhero-corner-line.v1 {
+    left: 32px;
+    top: 0;
+    width: 1px;
+    height: 112px;
+    animation: fmheroGrowY 1.5s cubic-bezier(.22, 1, .36, 1) both
+  }
+
+  #fmhero-widget .fmhero-corner-line.v2 {
+    right: 32px;
+    top: 0;
+    width: 1px;
+    height: 140px;
+    animation: fmheroGrowY 1.5s .3s cubic-bezier(.22, 1, .36, 1) both
+  }
+
+  #fmhero-widget .fmhero-corner-line.h1 {
+    left: 32px;
+    bottom: 32px;
+    height: 1px;
+    width: 98px;
+    text-transform: uppercase;
+    font-weight: 500;
+    background: linear-gradient(to right, rgba(59, 130, 246, .35), rgba(59, 130, 246, 0));
+    animation: fmheroGrowX 1.5s .2s both
+  }
+
+  #fmhero-widget .fmhero-corner-line.h2 {
+    right: 32px;
+    bottom: 32px;
+    height: 1px;
+    width: 84px;
+    background: linear-gradient(to left, rgba(59, 130, 246, .28), rgba(59, 130, 246, 0));
+    animation: fmheroGrowX 1.5s .5s both
+  }
+
+  #fmhero-widget .fmhero-cross {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    opacity: .22
+  }
+
+  #fmhero-widget .fmhero-cross:before,
+  #fmhero-widget .fmhero-cross:after {
+    content: "";
+    position: absolute;
+    background: rgba(59, 130, 246, .6)
+  }
+
+  #fmhero-widget .fmhero-cross:before {
+    left: 0;
+    top: 7px;
+    width: 16px;
+    height: 1px
+  }
+
+  #fmhero-widget .fmhero-cross:after {
+    left: 7px;
+    top: 0;
+    width: 1px;
+    height: 16px
+  }
+
+  #fmhero-widget .fmhero-cross.tl {
+    left: 24px;
+    top: 24px
+  }
+
+  #fmhero-widget .fmhero-cross.tr {
+    right: 24px;
+    top: 24px
+  }
+
+  #fmhero-widget .fmhero-cross.bl {
+    left: 24px;
+    bottom: 24px
+  }
+
+  #fmhero-widget .fmhero-cross.br {
+    right: 24px;
+    bottom: 24px
+  }
+
+  #fmhero-widget .fmhero-marquees {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    overflow: hidden;
+    opacity: 1
+  }
+
+  #fmhero-widget .fmhero-marquee-row {
+    position: relative;
+    height: 11rem;
+    overflow: hidden
+  }
+
+  #fmhero-widget .fmhero-marquee {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    font-family: var(--fm-display);
+    font-size: clamp(64px, 11vw, 180px);
+    line-height: 1;
+    font-weight: 700;
+    color: rgba(59, 130, 246, .035);
+    user-select: none
+  }
+
+  #fmhero-widget .fmhero-marquee.a {
+    animation: fmheroMarqueeA 34s linear infinite
+  }
+
+  #fmhero-widget .fmhero-marquee.b {
+    animation: fmheroMarqueeB 39s linear infinite
+  }
+
+  #fmhero-widget .fmhero-line {
+    height: 1px;
+    margin-inline: auto;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, .55), transparent);
+    width: 120px;
+    transform: scaleX(0);
+    animation: fmheroGrowX 1.1s .2s cubic-bezier(.22, 1, .36, 1) forwards
+  }
+
+  #fmhero-widget .fmhero-mini-label {
+    font: 400 12px/1.6 var(--fm-body);
+    letter-spacing: .36em;
+    text-transform: uppercase;
+    color: var(--fm-warm)
+  }
+
+  #fmhero-widget .fmhero-display {
+    font-family: var(--fm-display);
+    color: var(--fm-fg);
+    margin: 0;
+    letter-spacing: -.03em
+  }
+
+  #fmhero-widget .fmhero-display.gold,
+  #fmhero-widget .fmhero-gold {
+    color: var(--fm-gold)
+  }
+
+  #fmhero-widget .fmhero-body {
+    font: 300 15px/1.75 var(--fm-body);
+    color: var(--fm-warm);
+    margin: 0 auto
+  }
+
+  #fmhero-widget .fmhero-welcome .fmhero-rings {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    width: min(82vw, 450px);
+    height: min(82vw, 450px);
+    pointer-events: none
+  }
+
+  #fmhero-widget .fmhero-ring {
+    position: absolute;
+    inset: 50%;
+    border-radius: 999px;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(59, 130, 246, .08)
+  }
+
+  #fmhero-widget .fmhero-ring.r1 {
+    width: 74%;
+    height: 74%;
+    animation: fmheroSpin 20s linear infinite
+  }
+
+  #fmhero-widget .fmhero-ring.r2 {
+    width: 90%;
+    height: 90%;
+    border-style: dashed;
+    border-color: rgba(59, 130, 246, .06);
+    animation: fmheroSpinReverse 30s linear infinite
+  }
+
+  #fmhero-widget .fmhero-ring.r3 {
+    width: 56%;
+    height: 56%;
+    border-color: rgba(59, 130, 246, .07);
+    animation: fmheroPulse 14s ease-in-out infinite
+  }
+
+
+  #fmhero-widget .fmhero-icon-badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 22px auto;
+    position: relative;
+    background: linear-gradient(135deg, rgba(59, 130, 246, .14), rgba(59, 130, 246, .04));
+    border: 1px solid rgba(59, 130, 246, .22);
+    box-shadow: 0 0 30px rgba(59, 130, 246, .12);
+    overflow: hidden
+  }
+
+  #fmhero-widget .fmhero-icon-badge:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, .46) 50%, transparent 70%);
+    transform: translateX(-160%);
+    animation: fmheroSweep 3.5s ease-in-out infinite
+  }
+
+  #fmhero-widget .fmhero-icon {
+    position: relative;
+    z-index: 1;
+    font-size: 20px;
+    color: var(--fm-gold)
+  }
+
+  #fmhero-widget .fmhero-charwrap {
+    display: inline-block
+  }
+
+  #fmhero-widget .fmhero-char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(24px) rotateX(45deg);
+    filter: blur(8px);
+    animation: fmheroChar .55s cubic-bezier(.22, 1, .36, 1) forwards
+  }
+
+  #fmhero-widget .fmhero-title {
+    font-size: clamp(46px, 8vw, 118px);
+    line-height: .98;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  #fmhero-widget .fmhero-stage-label {
+    margin-bottom: 24px
+  }
+
+  #fmhero-widget .fmhero-stage-label .top {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, .16), rgba(59, 130, 246, .05));
+    box-shadow: 0 0 22px rgba(59, 130, 246, .08)
+  }
+
+  #fmhero-widget .fmhero-stage-label .top span {
+    font-size: 16px;
+    color: var(--fm-gold)
+  }
+
+  #fmhero-widget .fmhero-stage-label p {
+    margin: 0;
+    font: 400 11px/1 var(--fm-body);
+    letter-spacing: .35em;
+    text-transform: uppercase;
+    color: var(--fm-warm)
+  }
+
+  #fmhero-widget .fmhero-glass {
+    position: relative;
+    border-radius: 26px;
+    border: 1px solid rgba(59, 130, 246, .13);
+    background: var(--fm-card);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 12px 40px -12px rgba(15, 23, 42, .08), inset 0 1px 0 rgba(255, 255, 255, .28)
+  }
+
+  #fmhero-widget .fmhero-chat {
+    max-width: 520px;
+    margin: 0 auto
+  }
+
+  #fmhero-widget .fmhero-chatbox {
+    padding: 20px
+  }
+
+  #fmhero-widget .fmhero-chathead {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(59, 130, 246, .12)
+  }
+
+  #fmhero-widget .fmhero-beacon {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--fm-gold);
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, .34);
+    animation: fmheroBeacon 2s infinite
+  }
+
+  #fmhero-widget .fmhero-chathead span {
+    font: 500 10px/1 var(--fm-body);
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--fm-warm)
+  }
+
+  #fmhero-widget .fmhero-chatlist {
+    display: flex;
+    flex-direction: column;
+    gap: 12px
+  }
+
+  #fmhero-widget .fmhero-msg {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    opacity: 0;
+    transform: translateY(24px) scale(.94);
+    filter: blur(8px);
+    transition: all .55s cubic-bezier(.22, 1, .36, 1)
+  }
+
+  #fmhero-widget .fmhero-msg.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0)
+  }
+
+  #fmhero-widget .fmhero-msg.reply {
+    flex-direction: row-reverse
+  }
+
+  #fmhero-widget .fmhero-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 38px;
+    font: 600 12px/1 var(--fm-body);
+    color: #fff;
+    background: #111827;
+    box-shadow: 0 4px 14px rgba(17, 24, 39, .18)
+  }
+
+  #fmhero-widget .fmhero-msg.reply .fmhero-avatar {
+    background: var(--fm-gold);
+    box-shadow: 0 4px 18px rgba(59, 130, 246, .28)
+  }
+
+  #fmhero-widget .fmhero-bubble {
+    max-width: 76%;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: var(--fm-muted);
+    text-align: left;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, .05)
+  }
+
+  #fmhero-widget .fmhero-msg.reply .fmhero-bubble {
+    background: var(--fm-gold);
+    color: #fff;
+    border-bottom-right-radius: 6px;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, .16)
+  }
+
+  #fmhero-widget .fmhero-msg:not(.reply) .fmhero-bubble {
+    border-bottom-left-radius: 6px
+  }
+
+  #fmhero-widget .fmhero-bubble p {
+    margin: 0;
+    font: 400 14px/1.55 var(--fm-body)
+  }
+
+  #fmhero-widget .fmhero-typing {
+    display: none;
+    align-items: flex-end;
+    gap: 12px
+  }
+
+  #fmhero-widget .fmhero-typing.show {
+    display: flex
+  }
+
+  #fmhero-widget .fmhero-typing-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 12px 16px;
+    border-radius: 18px;
+    background: var(--fm-muted)
+  }
+
+  #fmhero-widget .fmhero-typing-pill i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: block;
+    background: #8692a6;
+    animation: fmheroTyping .75s infinite ease-in-out
+  }
+
+  #fmhero-widget .fmhero-typing-pill i:nth-child(2) {
+    animation-delay: .12s
+  }
+
+  #fmhero-widget .fmhero-typing-pill i:nth-child(3) {
+    animation-delay: .24s
+  }
+
+  #fmhero-widget .fmhero-reactions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all .5s ease
+  }
+
+  #fmhero-widget .fmhero-reactions.show {
+    opacity: 1;
+    transform: translateY(0)
+  }
+
+  #fmhero-widget .fmhero-pill {
+    padding: 7px 12px;
+    border-radius: 999px;
+    font: 500 12px/1 var(--fm-body);
+    background: rgba(255, 255, 255, .62);
+    border: 1px solid rgba(59, 130, 246, .12);
+    box-shadow: none
+  }
+
+  #fmhero-widget .fmhero-glow-rings {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    width: min(100%, 620px);
+    height: min(100vw, 620px);
+    pointer-events: none
+  }
+
+  #fmhero-widget .fmhero-glow-ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 999px;
+    border: 1px solid rgba(59, 130, 246, .15);
+    box-shadow: 0 0 40px rgba(59, 130, 246, .05);
+    animation: fmheroGlow 4.2s infinite ease-in-out
+  }
+
+  #fmhero-widget .fmhero-first .fmhero-core {
+    position: relative;
+    width: min(50vw, 220px);
+    height: min(50vw, 220px);
+    margin: 0 auto 34px
+  }
+
+  #fmhero-widget .fmhero-first .fmhero-core-center {
+    position: absolute;
+    inset: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(59, 130, 246, .18), rgba(59, 130, 246, .05));
+    box-shadow: 0 0 80px rgba(59, 130, 246, .16), inset 0 0 30px rgba(59, 130, 246, .06);
+    overflow: hidden
+  }
+
+  #fmhero-widget .fmhero-first .fmhero-core-center:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .42) 50%, transparent 65%);
+    transform: translateX(-160%);
+    animation: fmheroSweep 3.1s ease-in-out infinite
+  }
+
+  #fmhero-widget .fmhero-first .fmhero-core-center span {
+    font-size: 44px;
+    position: relative;
+    z-index: 1;
+    color: var(--fm-gold)
+  }
+
+  #fmhero-widget .fmhero-orbit {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%)
+  }
+
+  #fmhero-widget .fmhero-orbit .node {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 28px;
+    height: 28px;
+    margin: -14px 0 0 -14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(59, 130, 246, .65);
+    font-size: 18px;
+    animation: fmheroHover 3.2s ease-in-out infinite
+  }
+
+  #fmhero-widget .fmhero-orbit-ring {
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    border: 1px dashed rgba(59, 130, 246, .09);
+    animation: fmheroSpin 25s linear infinite
+  }
+
+  #fmhero-widget .fmhero-split-line {
+    overflow: hidden
+  }
+
+  #fmhero-widget .fmhero-split-line h3,
+  #fmhero-widget .fmhero-split-line p {
+    margin: 0;
+    transform: translateY(110%);
+    animation: fmheroRise .85s cubic-bezier(.22, 1, .36, 1) forwards
+  }
+
+  #fmhero-widget .fmhero-split-line h3 {
+    font-family: var(--fm-display);
+    font-size: clamp(32px, 4.6vw, 56px);
+    line-height: 1.12;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: var(--fm-fg)
+  }
+
+  #fmhero-widget .fmhero-split-line h3.gold {
+    font-weight: 500;
+    font-size: 100px;
+    text-transform: uppercase;
+    color: var(--fm-gold)
+  }
+
+  #fmhero-widget .fmhero-craft {
+    max-width: 560px;
+    margin: 0 auto
+  }
+
+  #fmhero-widget .fmhero-stat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px
+  }
+
+  #fmhero-widget .fmhero-stat {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px;
+    overflow: hidden;
+    text-align: left;
+    opacity: 0;
+    transform: translateX(-30px);
+    filter: blur(8px);
+    animation: fmheroStatIn .7s cubic-bezier(.22, 1, .36, 1) forwards
+  }
+
+  #fmhero-widget .fmhero-stat:nth-child(even) {
+    transform: translateX(30px)
+  }
+
+  #fmhero-widget .fmhero-stat:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 35%, rgba(59, 130, 246, .08) 50%, transparent 65%);
+    transform: translateX(-120%);
+    animation: fmheroSweepOnce 1.8s ease-in-out forwards
+  }
+
+  #fmhero-widget .fmhero-stat:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    border-radius: 999px;
+    background: linear-gradient(to bottom, rgba(59, 130, 246, .42), rgba(59, 130, 246, .06));
+    transform: scaleY(0);
+    transform-origin: top center;
+    animation: fmheroGrowY .6s .3s forwards
+  }
+
+  #fmhero-widget .fmhero-stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 56px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, .16), rgba(59, 130, 246, .05));
+    box-shadow: 0 4px 15px rgba(59, 130, 246, .08);
+    font-size: 26px;
+    color: var(--fm-gold)
+  }
+
+  #fmhero-widget .fmhero-stat-number {
+    font: 500 clamp(36px, 4vw, 44px)/1 var(--fm-display);
+    color: var(--fm-fg);
+    text-transform: uppercase;
+    margin: 0 0 2px
+  }
+
+  #fmhero-widget .fmhero-stat-label {
+    font: 400 14px/1.5 var(--fm-body);
+    color: var(--fm-warm);
+    margin: 0
+  }
+
+  #fmhero-widget .fmhero-experience {
+    max-width: 720px;
+    margin: 0 auto
+  }
+
+  #fmhero-widget .fmhero-wordline {
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    font-weight: 500 !important
+  }
+
+  #fmhero-widget .fmhero-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(22px);
+    filter: blur(8px);
+    animation: fmheroWord .55s cubic-bezier(.22, 1, .36, 1) forwards;
+    font-family: var(--fm-display);
+    font-size: clamp(30px, 4.2vw, 48px);
+    line-height: 1.3;
+    font-weight: 300;
+    color: var(--fm-fg);
+    margin-right: .22em
+  }
+
+  #fmhero-widget .fmhero-word.gold {
+    font-weight: 500;
+    color: var(--fm-gold)
+  }
+
+  #fmhero-widget .fmhero-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-radius: 999px;
+    margin-bottom: 26px
+  }
+
+  #fmhero-widget .fmhero-location strong {
+    font: 500 15px/1 var(--fm-body);
+    color: var(--fm-fg)
+  }
+
+  #fmhero-widget .fmhero-location .pin {
+    font-size: 16px;
+    color: var(--fm-gold)
+  }
+
+  #fmhero-widget .fmhero-badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap
+  }
+
+  #fmhero-widget .fmhero-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border-radius: 999px;
+    font: 500 13px/1 var(--fm-body);
+    opacity: 0;
+    transform: translateY(14px) scale(.9);
+    animation: fmheroBadge .5s cubic-bezier(.34, 1.56, .64, 1) forwards
+  }
+
+  #fmhero-widget .fmhero-badge b {
+    font-size: 16px;
+    color: var(--fm-gold);
+    font-weight: 500
+  }
+
+  #fmhero-widget .fmhero-promise {
+    max-width: 780px;
+    margin: 0 auto
+  }
+
+  #fmhero-widget .fmhero-promise .fmhero-icon-badge {
+    width: 58px;
+    height: 58px;
+    margin-bottom: 24px
+  }
+
+  #fmhero-widget .fmhero-promise .fmhero-promise-lines {
+    margin: 0 0 18px
+  }
+
+  #fmhero-widget .fmhero-promise .fmhero-promise-lines .fmhero-split-line h2 {
+    margin: 0;
+    font-family: var(--fm-display);
+    font-size: clamp(42px, 6vw, 80px);
+    line-height: 1.04;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: var(--fm-fg)
+  }
+
+  #fmhero-widget .fmhero-promise .fmhero-promise-lines .fmhero-split-line h2.gold {
+    font-weight: 500;
+    text-transform: uppercase;
+    color: var(--fm-gold)
+  }
+
+  #fmhero-widget .fmhero-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 999px;
+    border: 1px solid rgba(59, 130, 246, .2);
+    box-shadow: 0 10px 40px -10px rgba(59, 130, 246, .18);
+    margin: 8px 0 10px
+  }
+
+  #fmhero-widget .fmhero-stars {
+    display: flex;
+    gap: 8px
+  }
+
+  #fmhero-widget .fmhero-star {
+    font-size: 20px;
+    color: var(--fm-gold);
+    opacity: 0;
+    transform: scale(0) rotate(-45deg);
+    animation: fmheroStar .42s cubic-bezier(.34, 1.56, .64, 1) forwards
+  }
+
+  #fmhero-widget .fmhero-score {
+    font: 600 14px/1 var(--fm-body);
+    color: var(--fm-fg)
+  }
+
+  #fmhero-widget .fmhero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    flex-wrap: wrap;
+    color: var(--fm-warm);
+    margin-top: 14px
+  }
+
+  #fmhero-widget .fmhero-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font: 400 12px/1 var(--fm-body);
+    letter-spacing: .12em;
+    text-transform: uppercase
+  }
+
+  #fmhero-widget .fmhero-meta-item b {
+    font-size: 14px;
+    color: rgba(59, 130, 246, .55);
+    font-weight: 500
+  }
+
+  #fmhero-widget .fmhero-progress {
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 8
+  }
+
+  #fmhero-widget .fmhero-dot {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border: none;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, .15);
+    cursor: pointer;
+    padding: 0;
+    transition: all .45s cubic-bezier(.22, 1, .36, 1)
+  }
+
+  #fmhero-widget .fmhero-dot.active {
+    width: 34px;
+    background: var(--fm-gold)
+  }
+
+  #fmhero-widget .fmhero-dot:hover {
+    background: rgba(59, 130, 246, .4)
+  }
+
+  #fmhero-widget .fmhero-dot.active:after {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, .13);
+    z-index: -1
+  }
+
+  #fmhero-widget .fmhero-hidden {
+    display: none !important
+  }
+
+  @keyframes fmheroGrowX {
+    from {
+      transform: scaleX(0)
+    }
+
+    to {
+      transform: scaleX(1)
+    }
+  }
+
+  @keyframes fmheroGrowY {
+    from {
+      transform: scaleY(0)
+    }
+
+    to {
+      transform: scaleY(1)
+    }
+  }
+
+  @keyframes fmheroPop {
+    to {
+      transform: scale(1)
+    }
+  }
+
+  @keyframes fmheroFloat {
+
+    0%,
+    100% {
+      transform: translate(-50%, -50%) translate3d(0, 0, 0)
+    }
+
+    50% {
+      transform: translate(-50%, -50%) translate3d(0, -10px, 0)
+    }
+  }
+
+  @keyframes fmheroPulse {
+
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: .05
+    }
+
+    50% {
+      transform: scale(1.12);
+      opacity: .08
+    }
+  }
+
+  @keyframes fmheroSpot {
+    0% {
+      transform: translate(90px, 90px)
+    }
+
+    25% {
+      transform: translate(420px, 180px)
+    }
+
+    50% {
+      transform: translate(240px, 420px)
+    }
+
+    75% {
+      transform: translate(160px, 220px)
+    }
+
+    100% {
+      transform: translate(90px, 90px)
+    }
+  }
+
+  @keyframes fmheroParticle {
+    0% {
+      transform: translate3d(0, 0, 0) scale(0);
+      opacity: 0
+    }
+
+    25% {
+      opacity: .32
+    }
+
+    50% {
+      transform: translate3d(var(--tx), calc(var(--ty) * -1), 0) scale(1.4);
+      opacity: .25
+    }
+
+    100% {
+      transform: translate3d(calc(var(--tx) * .2), calc(var(--ty) * -1.5), 0) scale(0);
+      opacity: 0
+    }
+  }
+
+  @keyframes fmheroMarqueeA {
+    from {
+      transform: translateY(-50%) translateX(0)
+    }
+
+    to {
+      transform: translateY(-50%) translateX(-1200px)
+    }
+  }
+
+  @keyframes fmheroMarqueeB {
+    from {
+      transform: translateY(-50%) translateX(-1200px)
+    }
+
+    to {
+      transform: translateY(-50%) translateX(0)
+    }
+  }
+
+  @keyframes fmheroSpin {
+    to {
+      transform: translate(-50%, -50%) rotate(360deg)
+    }
+  }
+
+  @keyframes fmheroSpinReverse {
+    to {
+      transform: translate(-50%, -50%) rotate(-360deg)
+    }
+  }
+
+  @keyframes fmheroSweep {
+
+    0%,
+    25% {
+      transform: translateX(-160%)
+    }
+
+    55%,
+    100% {
+      transform: translateX(250%)
+    }
+  }
+
+  @keyframes fmheroChar {
+    to {
+      opacity: 1;
+      transform: translateY(0) rotateX(0);
+      filter: blur(0)
+    }
+  }
+
+  @keyframes fmheroBeacon {
+    0% {
+      box-shadow: 0 0 0 0 rgba(59, 130, 246, .34)
+    }
+
+    70% {
+      box-shadow: 0 0 0 10px rgba(59, 130, 246, 0)
+    }
+
+    100% {
+      box-shadow: 0 0 0 0 rgba(59, 130, 246, 0)
+    }
+  }
+
+  @keyframes fmheroTyping {
+
+    0%,
+    80%,
+    100% {
+      opacity: .3;
+      transform: scale(.85)
+    }
+
+    40% {
+      opacity: 1;
+      transform: scale(1.2)
+    }
+  }
+
+  @keyframes fmheroGlow {
+
+    0%,
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: .22
+    }
+
+    50% {
+      transform: translate(-50%, -50%) scale(1.14);
+      opacity: .05
+    }
+  }
+
+  @keyframes fmheroHover {
+
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg)
+    }
+
+    50% {
+      transform: translateY(-4px) rotate(5deg)
+    }
+  }
+
+  @keyframes fmheroRise {
+    to {
+      transform: translateY(0)
+    }
+  }
+
+  @keyframes fmheroStatIn {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+      filter: blur(0)
+    }
+  }
+
+  @keyframes fmheroSweepOnce {
+    to {
+      transform: translateX(250%)
+    }
+  }
+
+  @keyframes fmheroWord {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0)
+    }
+  }
+
+  @keyframes fmheroBadge {
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1)
+    }
+  }
+
+  @keyframes fmheroStar {
+    to {
+      opacity: 1;
+      transform: scale(1) rotate(0)
+    }
+  }
+
+  @media (max-width: 767px) {
+    #fmhero-widget .fmhero-scene {
+      padding: 22px 14px 74px
+    }
+
+    #fmhero-widget .fmhero-center {
+      padding: 6px
+    }
+
+    #fmhero-widget .fmhero-marquee-row {
+      height: 7.2rem
+    }
+
+    #fmhero-widget .fmhero-chatbox {
+      padding: 16px
+    }
+
+    #fmhero-widget .fmhero-bubble {
+      max-width: 80%;
+      padding: 12px 14px
+    }
+
+    #fmhero-widget .fmhero-bubble p {
+      font-size: 13px
+    }
+
+    #fmhero-widget .fmhero-first .fmhero-core {
+      width: 180px;
+      height: 180px
+    }
+
+    #fmhero-widget .fmhero-first .fmhero-core-center {
+      width: 100px;
+      height: 100px
+    }
+
+    #fmhero-widget .fmhero-first .fmhero-core-center span {
+      font-size: 34px
+    }
+
+    #fmhero-widget .fmhero-wordline {
+      margin-bottom: 22px
+    }
+
+    #fmhero-widget .fmhero-badge-row {
+      gap: 10px
+    }
+
+    #fmhero-widget .fmhero-badge {
+      padding: 10px 13px;
+      font-size: 12px
+    }
+
+    #fmhero-widget .fmhero-meta {
+      gap: 12px
+    }
+
+    #fmhero-widget .fmhero-corner-line.v1,
+    #fmhero-widget .fmhero-corner-line.v2,
+    #fmhero-widget .fmhero-corner-line.h1,
+    #fmhero-widget .fmhero-corner-line.h2,
+    #fmhero-widget .fmhero-side-label {
+      display: none
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+
+    #fmhero-widget *,
+    #fmhero-widget *:before,
+    #fmhero-widget *:after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+      scroll-behavior: auto !important
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const root = document.getElementById('fmhero-widget');
+    if (!root || root.dataset.fmheroMounted === 'true') return;
+    root.dataset.fmheroMounted = 'true';
+
+    const stageOrder = ['welcome', 'chat', 'firstImpression', 'craft', 'experience', 'promise'];
+    const timings = {
+      welcome: 3400,
+      chat: 8000,
+      firstImpression: 5500,
+      craft: 5500,
+      experience: 5500,
+      promise: 0,
+    };
+
+    const chatMessages = [
+      { name: 'Alex', avatar: 'A', text: 'Bro, you need to check out Fred Masimo.' },
+      { name: 'Marcus', avatar: 'M', text: 'The barbershop? I\'ve heard people talking about it.', reply: true },
+      { name: 'Alex', avatar: 'A', text: 'Best fade I\'ve ever gotten. Clean, premium, and the vibe is unreal.' },
+      { name: 'Marcus', avatar: 'M', text: 'Say less. Booking now 🔥', reply: true },
+    ];
+
+    const particles = Array.from({ length: 30 }).map((_, i) => {
+      const size = Math.random() > .7 ? 2 : 1;
+      const left = Math.random() * 100;
+      const top = Math.random() * 100;
+      const tx = Math.round(Math.random() * 32 - 16) + 'px';
+      const ty = Math.round(20 + Math.random() * 42) + 'px';
+      const dur = (3 + Math.random() * 5).toFixed(2) + 's';
+      const delay = (Math.random() * 6).toFixed(2) + 's';
+      return `<span class="fmhero-particle" style="width:${size}px;height:${size}px;left:${left}%;top:${top}%;--tx:${tx};--ty:${ty};animation-duration:${dur};animation-delay:${delay}"></span>`;
+    }).join('');
+
+    const gridV = Array.from({ length: 8 }).map((_, i) => `<span class="line-v" style="left:${10 + i * 11.5}%;animation-delay:${(i * .1).toFixed(2)}s"></span>`).join('');
+    const gridH = Array.from({ length: 5 }).map((_, i) => `<span class="line-h" style="top:${15 + i * 17.5}%;animation-delay:${(0.4 + i * .1).toFixed(2)}s"></span>`).join('');
+    const gridDots = [0, 1, 2].flatMap(row => [0, 1, 2].map(col => `<span class="dot" style="left:${21.5 + col * 23}%;top:${15 + row * 35}%;animation-delay:${(1.5 + (row + col) * .15).toFixed(2)}s"></span>`)).join('');
+
+    const titleChars = (txt, startDelay = 0.7) => txt.split('').map((char, i) => {
+      const safe = char === ' ' ? '&nbsp;' : char;
+      return `<span class="fmhero-char" style="animation-delay:${(startDelay + i * .035).toFixed(3)}s">${safe}</span>`;
+    }).join('');
+
+    const orbitNodes = [
+      { icon: '♛', angle: -60, radius: 82, delay: .5 },
+      { icon: '✦', angle: 20, radius: 80, delay: .65 },
+      { icon: '◈', angle: 100, radius: 85, delay: .8 },
+      { icon: '★', angle: 180, radius: 78, delay: .95 },
+      { icon: '⚡', angle: -110, radius: 88, delay: 1.1 },
+      { icon: '♥', angle: 145, radius: 83, delay: 1.25 },
+      { icon: '●', angle: -20, radius: 92, delay: 1.4 },
+    ].map(n => {
+      const rad = n.angle * Math.PI / 180;
+      const x = Math.cos(rad) * n.radius;
+      const y = Math.sin(rad) * n.radius;
+      return `<span class="node" style="transform:translate(${x}px, ${y}px);animation-delay:${n.delay}s">${n.icon}</span>`;
+    }).join('');
+
+    const badges = [
+      { icon: '✂', label: 'Skilled Craftsmen', delay: 2.5 },
+      { icon: '🛡', label: 'Quality Always', delay: 2.65 },
+      { icon: '◈', label: 'Fair Pricing', delay: 2.8 },
+      { icon: '🕒', label: 'Your Time Matters', delay: 2.95 },
+    ].map(b => `<div class="fmhero-glass fmhero-badge" style="animation-delay:${b.delay}s"><b>${b.icon}</b><span>${b.label}</span></div>`).join('');
+
+    root.innerHTML = `
+    <section class="fmhero-scene">
+      <div class="fmhero-bg-layer">
+        <div class="fmhero-bloom main"></div>
+        <div class="fmhero-bloom tr"></div>
+        <div class="fmhero-bloom bl"></div>
+        <div class="fmhero-spot"></div>
+      </div>
+     
+      <div class="fmhero-float">${particles}</div>
+      <div class="fmhero-corners">
+        <div class="fmhero-corner-line v1"></div>
+        <div class="fmhero-corner-line v2"></div>
+        <div class="fmhero-corner-line h1"></div>
+        <div class="fmhero-corner-line h2"></div>
+        <div class="fmhero-cross tl"></div>
+        <div class="fmhero-cross tr"></div>
+        <div class="fmhero-cross bl"></div>
+        <div class="fmhero-cross br"></div>
+        <div class="fmhero-side-label left">Fred Masimo</div>
+        <div class="fmhero-side-label right">Barbershop</div>
+      </div>
+      <div class="fmhero-marquees">
+        <div class="fmhero-marquee-row"><div class="fmhero-marquee a">FRED MASIMO · FRED MASIMO · FRED MASIMO · FRED MASIMO · FRED MASIMO · FRED MASIMO</div></div>
+        <div class="fmhero-marquee-row"><div class="fmhero-marquee b">BARBERSHOP · WARSAW · BARBERSHOP · WARSAW · BARBERSHOP · WARSAW · BARBERSHOP · WARSAW</div></div>
+      </div>
+
+      <div class="fmhero-center">
+        <div class="fmhero-stage-wrap">
+
+          <div class="fmhero-stage fmhero-welcome is-active" data-stage="welcome">
+            <div class="fmhero-rings">
+              <div class="fmhero-ring r1"></div>
+              <div class="fmhero-ring r2"></div>
+              <div class="fmhero-ring r3"></div>
+            </div>
+            <div class="fmhero-line"></div>
+            <div class="fmhero-icon-badge"><span class="fmhero-icon">♛</span></div>
+            <p class="fmhero-mini-label" style="margin:0 0 16px;opacity:.95">Established · Warsaw</p>
+            <h1 class="fmhero-display fmhero-title">${titleChars('Fred Masimo')}</h1>
+            <p class="fmhero-mini-label" style="margin:18px 0 0;opacity:.7">The Gentleman's Experience</p>
+            <div style="margin-top:28px"><div class="fmhero-line" style="animation-delay:1.8s"></div></div>
+          </div>
+
+          <div class="fmhero-stage fmhero-chat" data-stage="chat">
+            <div class="fmhero-stage-label"><div class="top"><span>🔥</span></div><p>What people are saying</p></div>
+            <div class="fmhero-glass fmhero-chatbox">
+              <div class="fmhero-chathead"><span class="fmhero-beacon"></span><span>Live conversation</span></div>
+              <div class="fmhero-chatlist"></div>
+              <div class="fmhero-typing"><div class="fmhero-avatar"></div><div class="fmhero-typing-pill"><i></i><i></i><i></i></div></div>
+            </div>
+            <div class="fmhero-reactions">
+              <div class="fmhero-pill">🔥 Fire</div>
+              <div class="fmhero-pill">💯 Facts</div>
+              <div class="fmhero-pill">✂️ Clean</div>
+              <div class="fmhero-pill">💎 Premium</div>
+            </div>
+          </div>
+
+          <div class="fmhero-stage fmhero-first" data-stage="firstImpression">
+            <div class="fmhero-glow-rings">
+              <div class="fmhero-glow-ring" style="width:180px;height:180px;animation-delay:0s"></div>
+              <div class="fmhero-glow-ring" style="width:280px;height:280px;animation-delay:.8s"></div>
+              <div class="fmhero-glow-ring" style="width:380px;height:380px;animation-delay:1.6s"></div>
+              <div class="fmhero-glow-ring" style="width:480px;height:480px;animation-delay:2.4s"></div>
+            </div>
+            <div class="fmhero-core">
+              <div class="fmhero-core-center"><span>◉</span></div>
+              <div class="fmhero-orbit"></div>
+              <div class="fmhero-orbit-ring"></div>
+            </div>
+            <div class="fmhero-split-line"><h3 style="animation-delay:.8s">Every first impression</h3></div>
+            <div class="fmhero-split-line"><h3 class="gold" style="animation-delay:1.2s">should be great.</h3></div>
+            <div style="margin:26px 0 18px"><div class="fmhero-line" style="width:70px;animation-delay:2s"></div></div>
+            <p class="fmhero-body" style="max-width:340px;opacity:0;animation:fmheroWord .7s 2.35s forwards">We don't just cut hair. We craft the confidence you walk out with.</p>
+          </div>
+
+          <div class="fmhero-stage fmhero-craft" data-stage="craft">
+            <div class="fmhero-stage-label"><div class="top"><span>⚡</span></div><p>Why it matters</p></div>
+            <div class="fmhero-stat-list">
+              <div class="fmhero-glass fmhero-stat" style="animation-delay:.3s">
+                <div class="fmhero-stat-icon">👥</div>
+                <div>
+                  <p class="fmhero-stat-number" data-count="2400" data-suffix="+">0+</p>
+                  <p class="fmhero-stat-label">Gentlemen trust us with their look</p>
+                </div>
+              </div>
+              <div class="fmhero-glass fmhero-stat" style="animation-delay:.6s">
+                <div class="fmhero-stat-icon">✂</div>
+                <div>
+                  <p class="fmhero-stat-number" data-count="6" data-suffix=" yrs">0 yrs</p>
+                  <p class="fmhero-stat-label">Perfecting our craft every day</p>
+                </div>
+              </div>
+              <div class="fmhero-glass fmhero-stat" style="animation-delay:.9s">
+                <div class="fmhero-stat-icon">♥</div>
+                <div>
+                  <p class="fmhero-stat-number" data-count="98" data-suffix="%">0%</p>
+                  <p class="fmhero-stat-label">Come back for more</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fmhero-stage fmhero-experience" data-stage="experience">
+            <div class="fmhero-stage-label"><div class="top"><span>📍</span></div><p>More than a barbershop</p></div>
+            <div class="fmhero-wordline">
+              <span class="fmhero-word" style="animation-delay:.3s">A</span>
+              <span class="fmhero-word" style="animation-delay:.4s">place</span>
+              <span class="fmhero-word" style="animation-delay:.5s">where</span>
+              <span class="fmhero-word" style="animation-delay:.6s">you</span><br>
+              <span class="fmhero-word gold" style="animation-delay:.9s">have a good time</span><br>
+              <span class="fmhero-word" style="animation-delay:1.3s">and</span>
+              <span class="fmhero-word gold" style="animation-delay:1.6s">improve your image.</span>
+            </div>
+            <div class="fmhero-glass fmhero-location" style="opacity:0;animation:fmheroBadge .6s 2.2s forwards">
+              <span class="fmhero-beacon"></span><span class="pin">📍</span><strong>Dzielna 72, Warsaw</strong>
+            </div>
+            <div class="fmhero-badge-row">${badges}</div>
+          </div>
+
+          <div class="fmhero-stage fmhero-promise" data-stage="promise">
+            <div class="fmhero-glow-rings">
+              <div class="fmhero-glow-ring" style="width:300px;height:300px;animation-delay:0s"></div>
+              <div class="fmhero-glow-ring" style="width:420px;height:420px;animation-delay:1.5s"></div>
+            </div>
+            <div class="fmhero-icon-badge"><span class="fmhero-icon">♛</span></div>
+            <p class="fmhero-mini-label" style="margin:0 0 20px">Our promise</p>
+            <div class="fmhero-promise-lines">
+              <div class="fmhero-split-line"><h2 style="animation-delay:.6s">Walk in sharp.</h2></div>
+              <div class="fmhero-split-line"><h2 class="gold" style="animation-delay:1s">Walk out sharper.</h2></div>
+            </div>
+            <p class="fmhero-body" style="max-width:430px;opacity:0;animation:fmheroWord .7s 1.6s forwards">We help you stand out from the crowd — with craft, care, and a vibe that keeps you coming back.</p>
+            <div class="fmhero-glass fmhero-rating">
+              <div class="fmhero-stars">
+                <span class="fmhero-star" style="animation-delay:2.1s">★</span>
+                <span class="fmhero-star" style="animation-delay:2.2s">★</span>
+                <span class="fmhero-star" style="animation-delay:2.3s">★</span>
+                <span class="fmhero-star" style="animation-delay:2.4s">★</span>
+                <span class="fmhero-star" style="animation-delay:2.5s">★</span>
+              </div>
+              <span class="fmhero-score" style="opacity:0;animation:fmheroBadge .4s 2.7s forwards">5.0</span>
+            </div>
+            <div class="fmhero-meta" style="opacity:0;animation:fmheroBadge .6s 3s forwards">
+              <div class="fmhero-meta-item"><b>🕒</b><span>Mon – Sat</span></div>
+              <div class="fmhero-meta-item"><b>📍</b><span>Dzielna 72</span></div>
+            </div>
+            <div style="margin-top:24px"><div class="fmhero-line" style="width:90px;animation-delay:3.4s"></div></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="fmhero-progress">
+        ${stageOrder.map((s, i) => `<button class="fmhero-dot ${i === 0 ? 'active' : ''}" type="button" data-goto="${s}" aria-label="Show ${s} stage"></button>`).join('')}
+      </div>
+    </section>
+  `;
+
+    const stageEls = Array.from(root.querySelectorAll('.fmhero-stage'));
+    const dots = Array.from(root.querySelectorAll('.fmhero-dot'));
+    const chatList = root.querySelector('.fmhero-chatlist');
+    const typing = root.querySelector('.fmhero-typing');
+    const reactions = root.querySelector('.fmhero-reactions');
+    let activeStage = 'welcome';
+    let stageTimer = null;
+    let chatTimers = [];
+    let hasCounted = false;
+    let rafId = null;
+
+    function clearTimers() {
+      if (stageTimer) clearTimeout(stageTimer);
+      chatTimers.forEach(t => clearTimeout(t));
+      chatTimers = [];
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+
+    function resetChat() {
+      if (chatList) chatList.innerHTML = '';
+      if (typing) typing.classList.remove('show');
+      if (reactions) reactions.classList.remove('show');
+    }
+
+    function showChatSequence() {
+      resetChat();
+      let totalDelay = 0;
+
+      chatMessages.forEach((msg, idx) => {
+        const showTypingDelay = totalDelay;
+        const showMsgDelay = totalDelay + 800;
+
+        chatTimers.push(setTimeout(() => {
+          if (typing) {
+            const typingAvatar = typing.querySelector('.fmhero-avatar');
+            if (typingAvatar) typingAvatar.textContent = msg.avatar;
+
+            typing.classList.toggle('reply', !!msg.reply);
+            typing.classList.add('show');
+          }
+        }, showTypingDelay));
+
+        chatTimers.push(setTimeout(() => {
+          typing && typing.classList.remove('show', 'reply');
+          if (chatList) {
+            const item = document.createElement('div');
+            item.className = 'fmhero-msg' + (msg.reply ? ' reply' : '');
+            item.innerHTML = `<div class="fmhero-avatar">${msg.avatar}</div><div class="fmhero-bubble"><p>${msg.text}</p></div>`;
+            chatList.appendChild(item);
+            requestAnimationFrame(() => item.classList.add('show'));
+          }
+
+          if (idx === chatMessages.length - 1) {
+            chatTimers.push(setTimeout(() => reactions && reactions.classList.add('show'), 1200));
+          }
+        }, showMsgDelay));
+
+        totalDelay += idx === 0 ? 1400 : idx === 1 ? 1600 : idx === 2 ? 1800 : 1800;
+      });
+    }
+
+    function animateCount(el, target, suffix = '') {
+      const duration = 1800;
+      const start = performance.now();
+      function step(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 4);
+        el.textContent = Math.floor(eased * target).toLocaleString() + suffix;
+        if (progress < 1) { rafId = requestAnimationFrame(step); }
+      }
+      rafId = requestAnimationFrame(step);
+    }
+
+    function triggerCraftCounters() {
+      const stage = root.querySelector('[data-stage="craft"]');
+      if (!stage) return;
+      const nums = stage.querySelectorAll('[data-count]');
+      nums.forEach((el, i) => {
+        setTimeout(() => animateCount(el, Number(el.dataset.count || 0), el.dataset.suffix || ''), i * 170);
+      });
+    }
+
+    function setStage(name, manual = false) {
+      clearTimers();
+      activeStage = name;
+      stageEls.forEach(el => el.classList.toggle('is-active', el.dataset.stage === name));
+      dots.forEach(dot => dot.classList.toggle('active', dot.dataset.goto === name));
+      resetChat();
+
+      if (name === 'chat') showChatSequence();
+      if (name === 'craft') triggerCraftCounters();
+
+
+      const timing = timings[name];
+      if (timing && stageOrder.indexOf(name) < stageOrder.length - 1) {
+        stageTimer = setTimeout(() => {
+          const next = stageOrder[stageOrder.indexOf(name) + 1];
+          setStage(next);
+        }, timing);
+      }
+    }
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => setStage(dot.dataset.goto, true));
+    });
+
+    const onMove = (e) => {
+      const x = (e.clientX / window.innerWidth - .5) * 10;
+      const y = (e.clientY / window.innerHeight - .5) * 10;
+      const bg = root.querySelector('.fmhero-bg-layer');
+      const center = root.querySelector('.fmhero-center');
+      if (bg) bg.style.transform = `translate(${x}px, ${y}px)`;
+      if (center) center.style.transform = `translate(${-x * .32}px, ${-y * .32}px)`;
+    };
+    window.addEventListener('mousemove', onMove, { passive: true });
+
+    setStage('welcome');
+  })();
+</script>
