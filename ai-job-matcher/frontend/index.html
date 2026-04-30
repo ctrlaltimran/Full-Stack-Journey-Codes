@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Synapse — Resume to Career, Decoded</title>
+  <meta name="description" content="Upload your resume. Get matched to real jobs. Discover adjacent skills." />
+
+  <!-- Fonts: distinctive serif display + clean grotesque body + mono accent -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <!-- Decorative grain overlay for atmosphere -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Top nav strip -->
+  <header class="topbar">
+    <div class="topbar__brand">
+      <span class="topbar__mark">◐</span>
+      <span class="topbar__name">Synapse</span>
+    </div>
+    <nav class="topbar__nav">
+      <span class="topbar__pill">v1.0</span>
+      <span class="topbar__meta">AI&nbsp;Lab&nbsp;Project</span>
+    </nav>
+  </header>
+
+  <main class="stage">
+
+    <!-- ================================================================ -->
+    <!-- STATE 1: UPLOAD                                                  -->
+    <!-- ================================================================ -->
+    <section id="state-upload" class="screen screen--upload is-active">
+
+      <div class="hero">
+        <div class="hero__eyebrow">
+          <span class="hero__dot"></span>
+          A resume parser, an NLP engine, and a graph search — talking to each other.
+        </div>
+
+        <h1 class="hero__title">
+          Your resume,<br />
+          <span class="hero__title-italic">decoded</span> into
+          <span class="hero__title-accent">opportunity</span>.
+        </h1>
+
+        <p class="hero__sub">
+          Drop a resume. Our Python engine extracts your skills, runs a graph
+          search for adjacent roles, and ranks live job listings from three
+          remote-job APIs. No accounts. No tracking.
+        </p>
+      </div>
+
+      <!-- Drag-drop zone -->
+      <div id="drop-zone" class="dropzone" tabindex="0" role="button"
+           aria-label="Upload resume by clicking or dragging a file here">
+        <input id="file-input" type="file"
+               accept=".pdf,.docx,.doc,.txt,.png,.jpg,.jpeg" hidden />
+
+        <div class="dropzone__icon">
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="none"
+               stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+            <path d="M12 16V4M12 4l-4 4M12 4l4 4" />
+            <path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
+          </svg>
+        </div>
+        <div class="dropzone__primary">
+          Drop your resume here, or
+          <span class="dropzone__browse">browse</span>
+        </div>
+        <div class="dropzone__hint">
+          PDF · DOCX · TXT · PNG/JPG&nbsp; ·&nbsp; max 10MB
+        </div>
+        <div id="file-chip" class="filechip" hidden>
+          <span class="filechip__name"></span>
+          <button class="filechip__remove" type="button" aria-label="Remove file">&times;</button>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <details class="filters">
+        <summary class="filters__summary">
+          <span>Optional filters</span>
+          <span class="filters__chevron">›</span>
+        </summary>
+        <div class="filters__grid">
+          <label class="field">
+            <span class="field__label">Location keyword</span>
+            <input id="filter-location" type="text" placeholder="e.g. Europe, USA, remote" />
+          </label>
+          <label class="field">
+            <span class="field__label">Job type</span>
+            <select id="filter-job-type">
+              <option value="">Any</option>
+              <option value="full-time">Full-time</option>
+              <option value="contract">Contract</option>
+              <option value="part-time">Part-time</option>
+              <option value="internship">Internship</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="field__label">Minimum match %</span>
+            <input id="filter-min-score" type="range" min="0" max="80" step="5" value="0" />
+            <span id="filter-min-score-display" class="field__readout">0%</span>
+          </label>
+          <label class="field">
+            <span class="field__label">Max results</span>
+            <select id="filter-limit">
+              <option value="15">15</option>
+              <option value="25" selected>25</option>
+              <option value="50">50</option>
+            </select>
+          </label>
+        </div>
+      </details>
+
+      <button id="analyze-btn" class="cta" disabled>
+        <span class="cta__label">Analyze resume</span>
+        <span class="cta__arrow">→</span>
+      </button>
+
+      <!-- Trust strip -->
+      <div class="strip">
+        <div class="strip__item">
+          <div class="strip__num">3</div>
+          <div class="strip__lbl">live job sources</div>
+        </div>
+        <div class="strip__divider"></div>
+        <div class="strip__item">
+          <div class="strip__num">200+</div>
+          <div class="strip__lbl">tracked skills</div>
+        </div>
+        <div class="strip__divider"></div>
+        <div class="strip__item">
+          <div class="strip__num">BFS</div>
+          <div class="strip__lbl">graph engine</div>
+        </div>
+        <div class="strip__divider"></div>
+        <div class="strip__item">
+          <div class="strip__num">0</div>
+          <div class="strip__lbl">data stored</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- STATE 2: PROCESSING                                              -->
+    <!-- ================================================================ -->
+    <section id="state-processing" class="screen screen--processing">
+      <div class="thinking">
+        <div class="thinking__rings" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <h2 class="thinking__title">Thinking<span class="dots"><span>.</span><span>.</span><span>.</span></span></h2>
+
+        <ol class="stages">
+          <li id="stage-parse" class="stage-item">
+            <span class="stage-item__bullet"></span>
+            <span class="stage-item__label">Parsing resume</span>
+            <span class="stage-item__sub">Extracting text from your file</span>
+          </li>
+          <li id="stage-nlp" class="stage-item">
+            <span class="stage-item__bullet"></span>
+            <span class="stage-item__label">Extracting skills</span>
+            <span class="stage-item__sub">NLP &amp; named-entity recognition</span>
+          </li>
+          <li id="stage-graph" class="stage-item">
+            <span class="stage-item__bullet"></span>
+            <span class="stage-item__label">Walking the skill graph</span>
+            <span class="stage-item__sub">BFS from your current skills</span>
+          </li>
+          <li id="stage-fetch" class="stage-item">
+            <span class="stage-item__bullet"></span>
+            <span class="stage-item__label">Fetching live jobs</span>
+            <span class="stage-item__sub">Remotive · RemoteOK · Arbeitnow</span>
+          </li>
+          <li id="stage-rank" class="stage-item">
+            <span class="stage-item__bullet"></span>
+            <span class="stage-item__label">Ranking matches</span>
+            <span class="stage-item__sub">TF-IDF + skill overlap scoring</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- STATE 3: RESULTS                                                 -->
+    <!-- ================================================================ -->
+    <section id="state-results" class="screen screen--results">
+
+      <button id="back-btn" class="back">← Analyze a different resume</button>
+
+      <!-- Summary panel -->
+      <div class="summary">
+        <div class="summary__col summary__col--lead">
+          <div class="summary__eyebrow">Resume profile</div>
+          <h2 class="summary__title" id="summary-headline">—</h2>
+          <p class="summary__meta" id="summary-meta">—</p>
+        </div>
+
+        <div class="summary__col">
+          <div class="summary__stat">
+            <div class="summary__stat-num" id="stat-skills">0</div>
+            <div class="summary__stat-lbl">skills detected</div>
+          </div>
+        </div>
+
+        <div class="summary__col">
+          <div class="summary__stat">
+            <div class="summary__stat-num" id="stat-matches">0</div>
+            <div class="summary__stat-lbl">jobs ranked</div>
+          </div>
+        </div>
+
+        <div class="summary__col">
+          <div class="summary__stat">
+            <div class="summary__stat-num" id="stat-elapsed">0s</div>
+            <div class="summary__stat-lbl">to compute</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detected skills + adjacent skills row -->
+      <div class="grid-two">
+        <div class="panel">
+          <div class="panel__header">
+            <h3 class="panel__title">Detected skills</h3>
+            <span class="panel__caption" id="skills-caption">—</span>
+          </div>
+          <div id="skills-cloud" class="skills-cloud"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__header">
+            <h3 class="panel__title">Skills nearby <span class="panel__hint">(BFS)</span></h3>
+            <span class="panel__caption">Skills 1–2 hops from yours — natural next moves</span>
+          </div>
+          <div id="adjacent-list" class="adjacent-list"></div>
+        </div>
+      </div>
+
+      <!-- Tips panel (only renders if backend returns any) -->
+      <div id="tips-panel" class="panel panel--tips" hidden>
+        <div class="panel__header">
+          <h3 class="panel__title">Resume quality notes</h3>
+          <span class="panel__caption">Quick wins to make your CV stronger</span>
+        </div>
+        <ul id="tips-list" class="tips"></ul>
+      </div>
+
+      <!-- Job matches -->
+      <div class="panel panel--matches">
+        <div class="panel__header">
+          <h3 class="panel__title">Top matches</h3>
+          <span class="panel__caption" id="matches-caption">—</span>
+        </div>
+        <div id="matches-list" class="matches"></div>
+      </div>
+
+      <footer class="endnote">
+        <p>
+          Built with FastAPI · spaCy · scikit-learn · NetworkX · vanilla CSS.
+          Live job data via Remotive, RemoteOK, and Arbeitnow public APIs.
+        </p>
+      </footer>
+    </section>
+
+    <!-- Error toast -->
+    <div id="toast" class="toast" hidden>
+      <span id="toast-message"></span>
+    </div>
+  </main>
+
+  <script src="/js/main.js" defer></script>
+</body>
+</html>

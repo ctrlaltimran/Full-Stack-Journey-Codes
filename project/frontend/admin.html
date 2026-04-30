@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Synapse Admin — Manage Jobs</title>
+  <meta name="description" content="Synapse job administrator panel for project-owned CS jobs." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="topbar__brand topbar__brand--link" href="/">
+      <span class="topbar__mark">◐</span>
+      <span class="topbar__name">Synapse</span>
+    </a>
+    <nav class="topbar__nav">
+      <a class="topbar__login" href="/">Back to app</a>
+      <span class="topbar__pill">Admin</span>
+      <span class="topbar__meta">Job&nbsp;Administrator</span>
+    </nav>
+  </header>
+
+  <main class="admin-page">
+    <section class="admin-hero">
+      <div>
+        <div class="summary__eyebrow">Secure job administrator</div>
+        <h1 class="admin-hero__title">Post and manage CS jobs</h1>
+        <p class="admin-hero__sub">This dashboard is separate from the student resume matcher. Jobs are stored in the project-owned JSON dataset only. The apply link is locked to ctrlaltimran.com.</p>
+      </div>
+      <div class="admin-hero__stats">
+        <div><strong id="admin-total-stat">400</strong><span>jobs loaded</span></div>
+        <div><strong>Local</strong><span>owned dataset</span></div>
+      </div>
+    </section>
+
+    <section class="admin-card" id="login-card">
+      <div class="admin-card__head">
+        <div>
+          <h2>Admin login</h2>
+          <p>Use the demo credentials for class presentation.</p>
+        </div>
+      </div>
+      <form id="admin-login-form" class="admin-login-form admin-login-form--page">
+        <label class="field"><span class="field__label">Username</span><input id="admin-username" type="text" value="admin" autocomplete="username" required /></label>
+        <label class="field"><span class="field__label">Password</span><input id="admin-password" type="password" placeholder="Default: admin123" autocomplete="current-password" required /></label>
+        <button class="cta admin-login-submit" type="submit">Login to admin</button>
+        <p id="admin-login-status" class="admin-status"></p>
+      </form>
+    </section>
+
+    <section id="admin-panel" class="admin-panel admin-panel--page" hidden>
+      <div class="admin-card admin-card--toolbar">
+        <div>
+          <div class="summary__eyebrow">Dashboard</div>
+          <h2>Current job dataset</h2>
+          <p>Review existing CS jobs and add new roles for matching.</p>
+        </div>
+        <button id="admin-logout-btn" class="mini-btn mini-btn--ghost" type="button">Logout</button>
+      </div>
+
+      <div class="admin-grid">
+        <form id="custom-job-form" class="custom-job-grid admin-post-form admin-card">
+          <div class="field--wide admin-card__head">
+            <div>
+              <h2>Post a new job</h2>
+              <p>New jobs instantly become available for resume matching.</p>
+            </div>
+            <span id="custom-job-status" class="admin-status">Ready</span>
+          </div>
+          <label class="field"><span class="field__label">Job title</span><input id="custom-title" type="text" placeholder="e.g. Senior React Developer" required /></label>
+          <label class="field"><span class="field__label">Company</span><input id="custom-company" type="text" placeholder="e.g. CtrlAlt Labs" /></label>
+          <label class="field"><span class="field__label">Location</span><input id="custom-location" type="text" value="Karachi, Pakistan" /></label>
+          <label class="field"><span class="field__label">Job type</span><select id="custom-job-type"><option>Full-Time</option><option>Part-Time</option><option>Contract</option><option>Internship</option></select></label>
+          <label class="field"><span class="field__label">Salary</span><input id="custom-salary" type="text" placeholder="e.g. PKR 120,000 - 180,000" /></label>
+          <label class="field field--wide"><span class="field__label">Skills / tags</span><input id="custom-tags" type="text" placeholder="python, react, leadership, sql" /></label>
+          <label class="field field--wide"><span class="field__label">Short description</span><textarea id="custom-description" rows="4" placeholder="Write the job responsibilities and requirements..."></textarea></label>
+          <div class="custom-job-actions"><button class="mini-btn" type="submit">Post job</button><span class="admin-status">Apply URL will be saved as https://ctrlaltimran.com</span></div>
+        </form>
+
+        <section class="admin-card admin-current-card">
+          <div class="admin-table-head">
+            <div>
+              <h2>Current jobs</h2>
+              <p class="panel__caption">The latest 120 jobs are shown here.</p>
+            </div>
+            <span id="admin-jobs-count" class="panel__caption">—</span>
+          </div>
+          <div id="admin-jobs-list" class="admin-jobs-list"></div>
+        </section>
+      </div>
+    </section>
+
+    <div id="toast" class="toast" hidden><span id="toast-message"></span></div>
+  </main>
+  <script src="/js/admin.js" defer></script>
+</body>
+</html>
