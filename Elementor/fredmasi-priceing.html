@@ -1,0 +1,792 @@
+<!-- FRED MASIMO — CONTACT PAGE | Paste into Elementor HTML Widget -->
+<link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0
+    }
+
+    .fmc {
+        font-family: 'Jost', sans-serif;
+        background: #fff;
+        color: #0a0f2c
+    }
+
+    .fmc-hero {
+        background: #0a0f2c;
+        padding: 90px 24px 80px;
+        text-align: center;
+        position: relative;
+        overflow: hidden
+    }
+
+    .fmc-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(201, 168, 76, .04) 60px, rgba(201, 168, 76, .04) 61px), repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(201, 168, 76, .04) 60px, rgba(201, 168, 76, .04) 61px)
+    }
+
+    .fmc-hero-eye {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        margin-bottom: 20px
+    }
+
+    .fmc-hero-line {
+        width: 44px;
+        height: 1px;
+        background: #c9a84c
+    }
+
+    .fmc-hero-tag {
+        font-size: 11px;
+        letter-spacing: .22em;
+        color: #c9a84c;
+        text-transform: uppercase;
+        font-weight: 400
+    }
+
+    .fmc-hero h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(42px, 7vw, 72px);
+        color: #fff;
+        font-weight: 300;
+        letter-spacing: .06em;
+        line-height: 1.05;
+        margin-bottom: 16px
+    }
+
+    .fmc-hero h1 em {
+        color: #c9a84c;
+        font-style: normal
+    }
+
+    .fmc-hero-sub {
+        font-size: 15px;
+        color: rgba(255, 255, 255, .45);
+        font-weight: 300;
+        letter-spacing: .04em;
+        max-width: 480px;
+        margin: 0 auto
+    }
+
+    /* ── MAIN FORM SECTION ── */
+    .fmc-main {
+        display: block;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 80px 24px
+    }
+
+    .fmc-form-side {
+        padding-right: 60px
+    }
+
+    .fmc-sec-label {
+        font-size: 11px;
+        letter-spacing: .2em;
+        text-transform: uppercase;
+        color: #c9a84c;
+        margin-bottom: 10px;
+        font-weight: 500
+    }
+
+    .fmc-sec-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(26px, 3.5vw, 36px);
+        color: #0a0f2c;
+        font-weight: 400;
+        margin-bottom: 32px;
+        line-height: 1.2
+    }
+
+    .fmc-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 16px
+    }
+
+    .fmc-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 16px
+    }
+
+    .fmc-field label {
+        font-size: 12px;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: #888;
+        font-weight: 500
+    }
+
+    .fmc-field input,
+    .fmc-field select,
+    .fmc-field textarea {
+        width: 100%;
+        background: #f7f5f1;
+        border: 1px solid #e8e2d8;
+        border-radius: 6px;
+        padding: 13px 16px;
+        font-size: 14px;
+        font-family: 'Jost', sans-serif;
+        color: #0a0f2c;
+        outline: none;
+        transition: border-color .2s
+    }
+
+    .fmc-field input:focus,
+    .fmc-field select:focus,
+    .fmc-field textarea:focus {
+        border-color: #c9a84c;
+        background: #fff
+    }
+
+    .fmc-field textarea {
+        resize: vertical;
+        min-height: 130px
+    }
+
+    .fmc-field select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c9a84c' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        cursor: pointer
+    }
+
+    .fmc-submit {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 8px
+    }
+
+    .fmc-btn {
+        background: #0a0f2c;
+        color: #fff;
+        border: none;
+        padding: 14px 36px;
+        font-family: 'Jost', sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background .2s
+    }
+
+    .fmc-btn:hover {
+        background: #c9a84c;
+        color: #0a0f2c
+    }
+
+    .fmc-btn-note {
+        font-size: 12px;
+        color: #aaa
+    }
+
+    .fmc-success {
+        display: none;
+        background: #f0f7f0;
+        border: 1px solid #b6d9b6;
+        border-radius: 8px;
+        padding: 16px 20px;
+        font-size: 14px;
+        color: #2d6a4f;
+        margin-top: 16px
+    }
+
+    /* ── INFO SIDEBAR ── */
+    .fmc-info-side {
+        background: #0a0f2c;
+        border-radius: 12px;
+        padding: 36px 30px;
+    }
+
+    .fmc-info-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 22px;
+        color: #fff;
+        font-weight: 400;
+        margin-bottom: 24px;
+        letter-spacing: .04em
+    }
+
+    .fmc-info-block {
+        margin-bottom: 24px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, .08)
+    }
+
+    .fmc-info-block:last-of-type {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0
+    }
+
+    .fmc-info-block-label {
+        font-size: 14px;
+        letter-spacing: .18em;
+        text-transform: uppercase;
+        color: #c9a84c;
+        margin-bottom: 10px;
+        font-weight: 500
+    }
+
+    .fmc-info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 8px;
+        font-size: 18px;
+        color: rgba(255, 255, 255, .7);
+        line-height: 1.5
+    }
+
+    .fmc-info-icon {
+        width: 24px;
+        flex-shrink: 0;
+        margin-top: 1px;
+        font-size: 20px;
+        color: #c9a84c
+    }
+
+    .fmc-hours-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 18px;
+        color: rgba(255, 255, 255, .6);
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, .06)
+    }
+
+    .fmc-hours-row:last-child {
+        border-bottom: none
+    }
+
+    .fmc-hours-row span:first-child {
+        color: rgba(255, 255, 255, .4)
+    }
+
+    .fmc-socials {
+        display: flex;
+        gap: 10px;
+        margin-top: 4px
+    }
+
+    .fmc-soc {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid rgba(201, 168, 76, .3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #c9a84c;
+        font-size: 15px;
+        text-decoration: none;
+        transition: all .2s
+    }
+
+    .fmc-soc:hover {
+        background: #c9a84c;
+        color: #0a0f2c;
+        border-color: #c9a84c
+    }
+
+    /* ── BRANCH CARDS ── */
+    .fmc-branches {
+        background: #f7f5f1;
+        padding: 72px 24px
+    }
+
+    .fmc-branches-inner {
+        max-width: 1100px;
+        margin: 0 auto
+    }
+
+    .fmc-sec-head {
+        text-align: center;
+        margin-bottom: 48px
+    }
+
+    .fmc-branches-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px
+    }
+
+    .fmc-branch {
+        background: #fff;
+        border: 1px solid #e8e2d8;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: border-color .25s
+    }
+
+    .fmc-branch:hover {
+        border-color: #c9a84c
+    }
+
+    .fmc-branch-top {
+        background: #0a0f2c;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px
+    }
+
+    .fmc-branch-num {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid rgba(201, 168, 76, .4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 18px;
+        color: #c9a84c;
+        flex-shrink: 0
+    }
+
+    .fmc-branch-name {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 20px;
+        color: #fff;
+        font-weight: 400;
+        letter-spacing: .04em;
+        text-transform: uppercase
+    }
+
+    .fmc-branch-district {
+        font-size: 11px;
+        color: rgba(255, 255, 255, .4);
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        margin-top: 2px
+    }
+
+    .fmc-branch-badge {
+        margin-left: auto;
+        background: rgba(201, 168, 76, .15);
+        color: #c9a84c;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        padding: 3px 10px;
+        border-radius: 20px;
+        white-space: nowrap
+    }
+
+    .fmc-branch-body {
+        padding: 20px
+    }
+
+    .fmc-branch-detail {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        font-size: 13px;
+        color: #555;
+        margin-bottom: 10px;
+        line-height: 1.4
+    }
+
+    .fmc-branch-detail-icon {
+        font-size: 14px;
+        color: #c9a84c;
+        flex-shrink: 0;
+        margin-top: 1px
+    }
+
+    .fmc-branch-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 18px
+    }
+
+    .fmc-branch-book {
+        flex: 1;
+        background: #0a0f2c;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        font-family: 'Jost', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background .2s;
+        text-align: center;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center
+    }
+
+    .fmc-branch-book:hover {
+        background: #c9a84c;
+        color: #0a0f2c
+    }
+
+    .fmc-branch-map {
+        padding: 10px 14px;
+        border: 1px solid #e8e2d8;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #555;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all .2s
+    }
+
+    .fmc-branch-map:hover {
+        border-color: #0a0f2c;
+        color: #0a0f2c
+    }
+
+    .fmc-soon-overlay {
+        opacity: .65
+    }
+
+    /* ── FAQ ── */
+    .fmc-faq {
+        padding: 72px 24px;
+        max-width: 800px;
+        margin: 0 auto
+    }
+
+    .fmc-faq-item {
+        border-bottom: 1px solid #e8e2d8
+    }
+
+    .fmc-faq-q {
+        width: 100%;
+        background: none;
+        border: none;
+        padding: 20px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        font-family: 'Jost', sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        color: #0a0f2c;
+        text-align: left;
+        gap: 16px
+    }
+
+    .fmc-faq-q:hover {
+        color: #c9a84c
+    }
+
+    .fmc-faq-icon {
+        font-size: 20px;
+        color: #c9a84c;
+        flex-shrink: 0;
+        transition: transform .3s;
+        line-height: 1
+    }
+
+    .fmc-faq-icon.open {
+        transform: rotate(45deg)
+    }
+
+    .fmc-faq-a {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height .35s ease, padding .3s
+    }
+
+    .fmc-faq-a.open {
+        max-height: 300px;
+        padding-bottom: 20px
+    }
+
+    .fmc-faq-a p {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.75
+    }
+
+    /* ── CTA ── */
+    .fmc-cta {
+        background: #0a0f2c;
+        padding: 72px 24px;
+        text-align: center;
+        position: relative;
+        overflow: hidden
+    }
+
+    .fmc-cta::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(201, 168, 76, .03) 60px, rgba(201, 168, 76, .03) 61px), repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(201, 168, 76, .03) 60px, rgba(201, 168, 76, .03) 61px)
+    }
+
+    .fmc-cta-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 600px;
+        margin: 0 auto
+    }
+
+    .fmc-cta h2 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(32px, 5vw, 52px);
+        color: #fff;
+        font-weight: 300;
+        margin-bottom: 14px;
+        letter-spacing: .04em;
+        line-height: 1.1
+    }
+
+    .fmc-cta h2 em {
+        color: #c9a84c;
+        font-style: normal
+    }
+
+    .fmc-cta p {
+        font-size: 14px;
+        color: rgba(255, 255, 255, .4);
+        margin-bottom: 32px;
+        letter-spacing: .03em
+    }
+
+    .fmc-cta-btn {
+        display: inline-block;
+        background: #c9a84c;
+        color: #0a0f2c;
+        font-family: 'Jost', sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        padding: 15px 40px;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background .2s
+    }
+
+    .fmc-cta-btn:hover {
+        background: #e0bc67
+    }
+
+    .fmc-cta-note {
+        margin-top: 16px;
+        font-size: 12px;
+        color: rgba(255, 255, 255, .25);
+        letter-spacing: .04em
+    }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px) {
+        .fmc-main {
+            grid-template-columns: 1fr;
+            padding: 56px 20px
+        }
+
+        .fmc-form-side {
+            padding-right: 0;
+            margin-bottom: 40px
+        }
+
+        .fmc-info-side {
+            position: static
+        }
+
+        .fmc-branches-grid {
+            grid-template-columns: 1fr
+        }
+    }
+
+    @media(max-width:600px) {
+        .fmc-row {
+            grid-template-columns: 1fr
+        }
+
+        .fmc-hero {
+            padding: 70px 20px 60px
+        }
+    }
+</style>
+
+<!-- ═══ HERO ═══ -->
+<div class="fmc">
+    <section class="fmc-hero">
+        <div class="fmc-hero-eye">
+            <div class="fmc-hero-line"></div>
+            <span class="fmc-hero-tag">Fred Masimo Barbershop · Warsaw</span>
+            <div class="fmc-hero-line"></div>
+        </div>
+        <h1>Get In <em>Touch</em></h1>
+        <p class="fmc-hero-sub">We'd love to hear from you — questions, bookings, or just a hello.</p>
+    </section>
+
+    <!-- ═══ FORM + SIDEBAR ═══ -->
+    <section class="fmc-main">
+
+
+
+        <div class="fmc-info-side">
+            <div class="fmc-info-title">Contact Details</div>
+
+            <div class="fmc-info-block">
+                <div class="fmc-info-block-label">Email & Phone</div>
+                <div class="fmc-info-row">
+                    <span class="fmc-info-icon">✉</span>
+                    <span>info@fredmasimo.pl</span>
+                </div>
+                <div class="fmc-info-row">
+                    <span class="fmc-info-icon">☎</span>
+                    <span>+48 507-894-519 <span style="color:rgba(255,255,255,.35)">(Dzielna)</span></span>
+                </div>
+                <div class="fmc-info-row">
+                    <span class="fmc-info-icon">☎</span>
+                    <span>+48 571-273-219 <span style="color:rgba(255,255,255,.35)">(Ostrobramska)</span></span>
+                </div>
+                <div class="fmc-info-row">
+                    <span class="fmc-info-icon">☎</span>
+                    <span>+48 572-489-162 <span style="color:rgba(255,255,255,.35)">(Mińska)</span></span>
+                </div>
+            </div>
+
+            <div class="fmc-info-block">
+                <div class="fmc-info-block-label">General Opening Hours</div>
+                <div class="fmc-hours-row"><span>Monday – Friday</span><span>10:00 – 21:00</span></div>
+                <div class="fmc-hours-row"><span>Saturday</span><span>10:00 – 19:00</span></div>
+                <div class="fmc-hours-row"><span>Sunday</span><span>11:00 – 18:00</span></div>
+                <div style="font-size:14px;color:rgba(255,255,255,.3);margin-top:10px;font-style:italic">Hours may vary
+                    by branch</div>
+            </div>
+
+            <div class="fmc-info-block">
+                <div class="fmc-info-block-label">Follow Us</div>
+                <div class="fmc-socials">
+                    <a href="#" class="fmc-soc" title="Instagram">ig</a>
+                    <a href="#" class="fmc-soc" title="Facebook">fb</a>
+                    <a href="#" class="fmc-soc" title="Google">G</a>
+                    <a href="#" class="fmc-soc" title="TikTok">tt</a>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ═══ BRANCH QUICK CARDS ═══ -->
+    <section class="fmc-branches">
+        <div class="fmc-branches-inner">
+            <div class="fmc-sec-head">
+                <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:12px">
+                    <div style="width:40px;height:1px;background:#c9a84c"></div>
+                    <span
+                        style="font-size:11px;letter-spacing:.2em;color:#c9a84c;text-transform:uppercase;font-family:'Jost',sans-serif">Find
+                        Us</span>
+                    <div style="width:40px;height:1px;background:#c9a84c"></div>
+                </div>
+                <h2
+                    style="font-family:'Cormorant Garamond',serif;font-size:clamp(26px,4vw,40px);color:#0a0f2c;font-weight:400;letter-spacing:.04em;margin-bottom:10px">
+                    Our 3 Locations</h2>
+                <p style="font-size:14px;color:#999;font-family:'Jost',sans-serif">Quick details — visit our <a
+                        href="/our-salon" style="color:#c9a84c;text-decoration:none">Salon page</a> for photos, full
+                    hours & more</p>
+            </div>
+
+            <div class="fmc-branches-grid">
+
+                <div class="fmc-branch">
+                    <div class="fmc-branch-top">
+                        <div class="fmc-branch-num">I</div>
+                        <div>
+                            <div class="fmc-branch-name">Dzielna</div>
+                            <div class="fmc-branch-district">Wola District</div>
+                        </div>
+                        <div class="fmc-branch-badge">Flagship</div>
+                    </div>
+                    <div class="fmc-branch-body">
+                        <div class="fmc-branch-detail"><span class="fmc-branch-detail-icon">◎</span><span>Dzielna 72,
+                                Warsaw</span></div>
+                        <div class="fmc-branch-detail"><span class="fmc-branch-detail-icon">☎</span><span>+48
+                                507-894-519</span></div>
+                        <div class="fmc-branch-detail"><span class="fmc-branch-detail-icon">◷</span><span>Mon–Fri 10–21
+                                · Sat 10–19 · Sun 11–18</span></div>
+                        <div class="fmc-branch-actions">
+                            <a href="https://booksy.com/widget/index.html?id=79738&country=pl&lang=en" target="_blank" class="fmc-branch-book">Book Now</a>
+                            <a href="https://maps.google.com/?q=Dzielna+72+Warsaw" target="_blank"
+                                class="fmc-branch-map">◎ Map</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fmc-branch">
+                    <div class="fmc-branch-top">
+                        <div class="fmc-branch-num">II</div>
+                        <div>
+                            <div class="fmc-branch-name">Ostrobramska</div>
+                            <div class="fmc-branch-district">Praga District</div>
+                        </div>
+                    </div>
+                    <div class="fmc-branch-body">
+                        <div class="fmc-branch-detail"><span class="fmc-branch-detail-icon">◎</span><span>Ostrobramska
+                                126, Warsaw</span></div>
+                        <div class="fmc-branch-detail"><span class="fmc-branch-detail-icon">☎</span><span>+48
+                                571-273-219</span></div>
+                        <div class="fmc-branch-detail"><span class="fmc-branch-detail-icon">◷</span><span>Mon–Fri 10–21
+                                · Sat 10–19 · Sun 12–18</span></div>
+                        <div class="fmc-branch-actions">
+                            <a href="https://booksy.com/widget/index.html?id=114345&country=pl&lang=en" target="_blank" class="fmc-branch-book">Book Now</a>
+                            <a href="https://maps.google.com/?q=Ostrobramska+126+Warsaw" target="_blank"
+                                class="fmc-branch-map">◎ Map</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fmc-branch">
+                    <div class="fmc-branch-top">
+                        <div class="fmc-branch-num">III</div>
+                        <div>
+                            <div class="fmc-branch-name">Mińska</div>
+                            <div class="fmc-branch-district">Praga District</div>
+                        </div>
+                    </div>
+                    <div class="fmc-branch-body">
+                        <div class="fmc-branch-detail"><span class="fmc-branch-detail-icon">◎</span><span>Podskarbińska
+                                32, Warsaw</span></div>
+                        <div class="fmc-branch-detail"><span class="fmc-branch-detail-icon">☎</span><span>+48
+                                572-489-162</span></div>
+                        <div class="fmc-branch-detail"><span class="fmc-branch-detail-icon">◷</span><span>Mon–Fri 9–21 ·
+                                Sat 9–19 · Sun 11–19</span></div>
+                        <div class="fmc-branch-actions">
+                            <a href="https://booksy.com/widget/index.html?id=245721&country=pl&lang=en" target="_blank" class="fmc-branch-book">Book Now</a>
+                            <a href="https://maps.google.com/?q=Podskarbinska+32+Warsaw" target="_blank"
+                                class="fmc-branch-map">◎ Map</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+
+</div>
