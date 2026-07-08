@@ -1,0 +1,1526 @@
+<!-- ============================================================
+     ISLAMIC INSTITUTE OF AMERICA — Homepage (Elementor HTML Widget)
+     Paste this entire block into ONE Elementor HTML widget.
+     Everything is scoped with .iia-home so it won't fight your theme.
+     ============================================================ -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Habibi&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<style>
+/* ============ SCOPED RESET & TOKENS ============ */
+.iia-home, .iia-home *, .iia-home *::before, .iia-home *::after { box-sizing: border-box; }
+.iia-home {
+  --iia-gold: #dd9e30;
+  --iia-gold-dark: #b88424;
+  --iia-gold-light: #f4d78a;
+  --iia-navy: #1a2332;
+  --iia-charcoal: #2b3340;
+  --iia-text: #1b1f24;
+  --iia-muted: #6b7280;
+  --iia-cream: #faf7f0;
+  --iia-beige: #f5efe3;
+  --iia-border: #e7eaee;
+  --iia-shadow-sm: 0 4px 14px rgba(0,0,0,.06);
+  --iia-shadow-md: 0 10px 30px rgba(0,0,0,.08);
+  --iia-shadow-lg: 0 20px 50px rgba(0,0,0,.12);
+  --iia-radius: 16px;
+  --iia-radius-lg: 24px;
+
+  font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--iia-text);
+  line-height: 1.6;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ============ BUTTONS ============ */
+.iia-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 30px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 15px;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: box-shadow .3s ease, filter .3s ease; /* NO transform — stops blinking */
+  text-decoration: none !important;
+  white-space: nowrap;
+  position: relative; /* keeps stacking context clean */
+}
+
+/* — Primary (Gold) — */
+.iia-home .iia-btn-primary {
+  background: var(--iia-gold) !important;
+  color: #fff !important;
+  box-shadow: 0 10px 25px rgba(221,158,48,.4);
+}
+.iia-home .iia-btn-primary:hover {
+  background: var(--iia-gold-dark) !important;
+  color: #fff !important;
+  box-shadow: 0 15px 35px rgba(221,158,48,.6);
+  filter: brightness(1.08);
+}
+
+/* — Ghost (transparent / white border) — */
+.iia-home .iia-btn-ghost {
+  background: rgba(255,255,255,.1) !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,.4);
+  backdrop-filter: blur(8px);
+}
+.iia-home .iia-btn-ghost:hover {
+  background: rgba(255,255,255,.25) !important;
+  color: #fff !important;
+  border-color: #fff;
+}
+
+/* — Outline (gold border) — */
+.iia-home .iia-btn-outline {
+  background: transparent !important;
+  color: var(--iia-gold) !important;
+  border-color: var(--iia-gold);
+}
+.iia-home .iia-btn-outline:hover {
+  background: var(--iia-gold) !important;
+  color: #fff !important;
+}
+
+/* — White (donate section) — */
+.iia-home .iia-btn-white {
+  background: #fff !important;
+  color: var(--iia-gold-dark) !important;
+  padding: 16px 40px;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0 15px 35px rgba(0,0,0,.2);
+}
+.iia-home .iia-btn-white:hover {
+  background: #fff !important;
+  color: var(--iia-navy) !important;
+  box-shadow: 0 20px 45px rgba(0,0,0,.3);
+}
+
+.iia-home h1, .iia-home h2, .iia-home h3, .iia-home h4 {
+  font-family: 'Habibi', 'Poppins', serif;
+  font-weight: 400;
+  letter-spacing: .3px;
+  line-height: 1.15;
+  margin: 0;
+  color: var(--iia-navy);
+}
+.iia-home p { margin: 0; }
+.iia-home a { color: var(--iia-gold); text-decoration: none; transition: color .2s ease; }
+.iia-home a:hover { color: var(--iia-gold-dark); }
+.iia-home img { max-width: 100%; height: auto; display: block; }
+
+/* ============ CONTAINER ============ */
+.iia-section { padding: 80px 24px; position: relative; }
+.iia-container { max-width: 1200px; margin: 0 auto; }
+
+/* ============ HERO ============ */
+.iia-hero {
+  position: relative;
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 100px 24px 120px;
+  margin: 0 -24px;
+}
+.iia-hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+.iia-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, rgba(26,35,50,.55) 0%, rgba(26,35,50,.82) 100%),
+    linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,.65) 100%);
+  z-index: 2;
+}
+.iia-hero-content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  color: #fff;
+  max-width: 900px;
+  animation: iiaFadeUp 1s ease forwards;
+}
+.iia-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(221,158,48,.18);
+  border: 1px solid rgba(221,158,48,.5);
+  color: var(--iia-gold-light);
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  backdrop-filter: blur(8px);
+}
+.iia-hero-eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--iia-gold);
+  box-shadow: 0 0 12px var(--iia-gold);
+}
+.iia-hero h1 {
+  font-size: clamp(2.4rem, 6vw, 5rem);
+  color: #fff;
+  margin-bottom: 16px;
+  text-shadow: 0 4px 30px rgba(0,0,0,.4);
+}
+.iia-hero h1 .gold { color: var(--iia-gold); }
+.iia-hero-sub {
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  color: rgba(255,255,255,.9);
+  max-width: 720px;
+  margin: 0 auto 36px;
+  line-height: 1.7;
+}
+.iia-hero-cta {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.iia-hero-wave {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  z-index: 3;
+  line-height: 0;
+}
+.iia-hero-wave svg { width: 100%; height: 80px; display: block; }
+
+/* ============ SECTION HEADER ============ */
+.iia-sec-head { text-align: center; margin-bottom: 56px; }
+.iia-sec-head.left { text-align: left; }
+.iia-eyebrow {
+  display: inline-block;
+  color: var(--iia-gold);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  position: relative;
+}
+.iia-sec-head.center .iia-eyebrow::before,
+.iia-sec-head.center .iia-eyebrow::after {
+  content: "";
+  display: inline-block;
+  width: 30px;
+  height: 1px;
+  background: var(--iia-gold);
+  vertical-align: middle;
+  margin: 0 14px;
+}
+.iia-sec-head h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  margin-bottom: 14px;
+}
+.iia-sec-head p {
+  color: var(--iia-muted);
+  max-width: 640px;
+  margin: 0 auto;
+  font-size: 1rem;
+}
+.iia-sec-head.left p { margin: 0; }
+
+/* ============ ABOUT + PRAYER COMBO ============ */
+.iia-welcome {
+  background: linear-gradient(180deg, #fff 0%, var(--iia-cream) 100%);
+}
+.iia-about-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.iia-about-img {
+  position: relative;
+  border-radius: var(--iia-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--iia-shadow-lg);
+}
+.iia-about-img img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  transition: transform .6s ease;
+}
+.iia-about-img:hover img { transform: scale(1.05); }
+.iia-about-img::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 60%, rgba(221,158,48,.15) 100%);
+  pointer-events: none;
+}
+.iia-about-badge {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(255,255,255,.95);
+  backdrop-filter: blur(10px);
+  padding: 14px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--iia-shadow-md);
+}
+.iia-about-badge i {
+  color: var(--iia-gold);
+  font-size: 22px;
+}
+.iia-about-badge .num {
+  font-family: 'Habibi', serif;
+  font-size: 22px;
+  color: var(--iia-navy);
+  line-height: 1;
+}
+.iia-about-badge .lbl {
+  font-size: 11px;
+  color: var(--iia-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.iia-about-text h2 { margin-bottom: 20px; font-size: clamp(1.7rem, 3vw, 2.4rem); }
+.iia-about-text p { color: var(--iia-muted); margin-bottom: 20px; }
+.iia-about-text strong { color: var(--iia-text); }
+.iia-feature-list { list-style: none; padding: 0; margin: 24px 0 32px; }
+.iia-feature-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  color: var(--iia-text);
+  font-weight: 500;
+}
+.iia-feature-list i {
+  color: var(--iia-gold);
+  background: rgba(221,158,48,.12);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+/* ============ PRAYER TIMES ============ */
+.iia-prayer {
+  background: var(--iia-beige);
+  position: relative;
+  overflow: hidden;
+}
+.iia-prayer::before {
+  content: "";
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(221,158,48,.15), transparent 70%);
+  border-radius: 50%;
+}
+.iia-prayer-card {
+  background: #fff;
+  border-radius: var(--iia-radius-lg);
+  box-shadow: var(--iia-shadow-lg);
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+.iia-prayer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 24px 32px;
+  background: linear-gradient(135deg, var(--iia-navy) 0%, var(--iia-charcoal) 100%);
+  color: #fff;
+}
+.iia-prayer-header-left { display: flex; align-items: center; gap: 14px; }
+.iia-prayer-header i { font-size: 28px; color: var(--iia-gold); }
+.iia-prayer-header h3 { color: #fff; font-size: 1.4rem; margin: 0; }
+.iia-prayer-header .iia-date {
+  color: var(--iia-gold-light);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: right;
+}
+.iia-prayer-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0;
+}
+.iia-prayer-cell {
+  padding: 28px 16px;
+  text-align: center;
+  border-right: 1px solid var(--iia-border);
+  border-bottom: 1px solid var(--iia-border);
+  transition: all .3s ease;
+  position: relative;
+}
+.iia-prayer-cell:last-child { border-right: none; }
+.iia-prayer-cell:hover { background: var(--iia-cream); }
+.iia-prayer-cell.iia-next {
+  background: linear-gradient(180deg, #fff 0%, rgba(221,158,48,.1) 100%);
+  border-bottom: 3px solid var(--iia-gold);
+}
+.iia-prayer-cell.iia-next::before {
+  content: "NEXT";
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--iia-gold);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  letter-spacing: 1px;
+}
+.iia-prayer-icon {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  background: rgba(221,158,48,.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--iia-gold);
+  font-size: 18px;
+}
+.iia-prayer-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--iia-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+.iia-prayer-time {
+  font-family: 'Habibi', serif;
+  font-size: 1.5rem;
+  color: var(--iia-navy);
+  font-weight: 400;
+}
+.iia-prayer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 22px 32px;
+  background: var(--iia-cream);
+}
+.iia-countdown {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--iia-text);
+  font-weight: 500;
+}
+.iia-countdown .iia-pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--iia-gold);
+  position: relative;
+}
+.iia-countdown .iia-pulse::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: var(--iia-gold);
+  opacity: .4;
+  animation: iiaPulse 2s ease infinite;
+}
+.iia-countdown strong { color: var(--iia-navy); font-family: 'Habibi', serif; font-size: 1.1rem; }
+
+/* ============ SERVICES ============ */
+.iia-services { background: #fff; }
+.iia-services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.iia-service-card {
+  background: #fff;
+  border: 1px solid var(--iia-border);
+  border-radius: var(--iia-radius-lg);
+  padding: 36px 28px;
+  text-align: center;
+  transition: all .4s cubic-bezier(.4,0,.2,1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+.iia-service-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--iia-gold), var(--iia-gold-light));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .4s ease;
+}
+.iia-service-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--iia-gold);
+  box-shadow: var(--iia-shadow-lg);
+}
+.iia-service-card:hover::before { transform: scaleX(1); }
+.iia-service-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(221,158,48,.12), rgba(221,158,48,.04));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--iia-gold);
+  font-size: 32px;
+  transition: all .4s ease;
+}
+.iia-service-card:hover .iia-service-icon {
+  background: linear-gradient(135deg, var(--iia-gold), var(--iia-gold-dark));
+  color: #fff;
+  transform: rotate(-6deg) scale(1.08);
+}
+.iia-service-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 14px;
+}
+.iia-service-card p {
+  color: var(--iia-muted);
+  font-size: 14.5px;
+  margin-bottom: 24px;
+  flex-grow: 1;
+}
+.iia-service-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--iia-gold);
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: gap .3s ease;
+}
+.iia-service-link:hover { gap: 14px; color: var(--iia-gold-dark); }
+
+/* ============ EDUCATION SCHEDULE ============ */
+.iia-edu {
+  background: linear-gradient(180deg, var(--iia-cream) 0%, #fff 100%);
+}
+.iia-edu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 60px;
+  align-items: center;
+}
+.iia-edu-content h2 { margin-bottom: 18px; }
+.iia-edu-content p { color: var(--iia-muted); margin-bottom: 28px; }
+.iia-schedule {
+  background: #fff;
+  border-radius: var(--iia-radius);
+  box-shadow: var(--iia-shadow-md);
+  overflow: hidden;
+  border: 1px solid var(--iia-border);
+}
+.iia-schedule-head {
+  background: var(--iia-navy);
+  color: #fff;
+  padding: 18px 24px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.iia-schedule-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--iia-border);
+  align-items: center;
+  transition: background .2s ease;
+}
+.iia-schedule-row:last-child { border-bottom: none; }
+.iia-schedule-row:hover { background: var(--iia-cream); }
+.iia-schedule-row .iia-prog {
+  font-weight: 600;
+  color: var(--iia-navy);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.iia-schedule-row .iia-prog i {
+  color: var(--iia-gold);
+  background: rgba(221,158,48,.12);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+.iia-schedule-row .iia-time { color: var(--iia-muted); font-weight: 500; }
+
+/* ============ COMMUNITY STATS ============ */
+.iia-stats {
+  background:
+    linear-gradient(135deg, rgba(26,35,50,.97) 0%, rgba(43,51,64,.97) 100%),
+    radial-gradient(circle at 20% 50%, rgba(221,158,48,.3), transparent 50%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.iia-stats::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 90% 10%, rgba(221,158,48,.15), transparent 40%),
+    radial-gradient(circle at 10% 90%, rgba(221,158,48,.1), transparent 40%);
+  pointer-events: none;
+}
+.iia-stats-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 60px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+.iia-stats-left .iia-eyebrow { color: var(--iia-gold-light); }
+.iia-stats-left h2 {
+  color: #fff;
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin-bottom: 18px;
+}
+.iia-stats-left h2 .gold { color: var(--iia-gold); }
+.iia-stats-left p { color: rgba(255,255,255,.75); font-size: 1.05rem; }
+.iia-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.iia-stat {
+  background: rgba(255,255,255,.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--iia-radius);
+  padding: 32px 22px;
+  text-align: center;
+  transition: all .4s ease;
+}
+.iia-stat:hover {
+  transform: translateY(-6px);
+  border-color: var(--iia-gold);
+  background: rgba(221,158,48,.1);
+}
+.iia-stat-num {
+  font-family: 'Habibi', serif;
+  font-size: clamp(2.4rem, 5vw, 3.4rem);
+  color: var(--iia-gold);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.iia-stat-num .iia-plus { font-size: .7em; }
+.iia-stat-title {
+  font-family: 'Habibi', serif;
+  font-size: 1.2rem;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.iia-stat p { color: rgba(255,255,255,.7); font-size: 13.5px; line-height: 1.5; }
+
+/* ============ DONATE CTA ============ */
+.iia-donate {
+  background: linear-gradient(135deg, var(--iia-gold) 0%, var(--iia-gold-dark) 100%);
+  color: #fff;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.iia-donate::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,.15), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(255,255,255,.1), transparent 40%);
+}
+.iia-donate-inner { position: relative; z-index: 2; }
+.iia-donate i {
+  font-size: 56px;
+  margin-bottom: 20px;
+  opacity: .9;
+}
+.iia-donate h2 {
+  color: #fff;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  margin-bottom: 14px;
+}
+.iia-donate p {
+  font-size: 1.05rem;
+  max-width: 580px;
+  margin: 0 auto 30px;
+  opacity: .92;
+}
+.iia-donate .iia-btn-white {
+  background: #fff;
+  color: var(--iia-gold-dark);
+  padding: 16px 40px;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0 15px 35px rgba(0,0,0,.2);
+}
+.iia-donate .iia-btn-white:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 45px rgba(0,0,0,.25);
+  color: var(--iia-navy);
+}
+
+/* ============ VOLUNTEER ============ */
+.iia-volunteer { background: #fff; }
+.iia-volunteer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.iia-volunteer-img {
+  border-radius: var(--iia-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--iia-shadow-lg);
+  position: relative;
+}
+.iia-volunteer-img img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  transition: transform .6s ease;
+}
+.iia-volunteer-img:hover img { transform: scale(1.05); }
+.iia-volunteer-text h2 { margin-bottom: 20px; }
+.iia-volunteer-text h2 .gold { color: var(--iia-gold); }
+.iia-volunteer-text p { color: var(--iia-muted); margin-bottom: 14px; }
+
+/* ============ LOCATION ============ */
+.iia-location {
+  background: linear-gradient(180deg, var(--iia-cream) 0%, #fff 100%);
+}
+.iia-location-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 50px;
+  align-items: stretch;
+}
+.iia-info-card {
+  background: #fff;
+  border-radius: var(--iia-radius-lg);
+  padding: 40px;
+  box-shadow: var(--iia-shadow-md);
+  border: 1px solid var(--iia-border);
+}
+.iia-info-card h2 { margin-bottom: 14px; font-size: 2rem; }
+.iia-info-card > p { color: var(--iia-muted); margin-bottom: 28px; }
+.iia-info-list { list-style: none; padding: 0; margin: 0; }
+.iia-info-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px dashed var(--iia-border);
+}
+.iia-info-list li:last-child { border-bottom: none; }
+.iia-info-list .iia-info-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(221,158,48,.15), rgba(221,158,48,.05));
+  color: var(--iia-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.iia-info-list .iia-info-label {
+  font-size: 11.5px;
+  letter-spacing: 1.5px;
+  color: var(--iia-muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+.iia-info-list .iia-info-value {
+  color: var(--iia-navy);
+  font-weight: 600;
+  font-size: 15px;
+}
+.iia-info-list a { color: var(--iia-navy); }
+.iia-info-list a:hover { color: var(--iia-gold); }
+.iia-map {
+  border-radius: var(--iia-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--iia-shadow-md);
+  min-height: 460px;
+  position: relative;
+}
+.iia-map iframe { width: 100%; height: 100%; min-height: 460px; border: 0; display: block; }
+
+/* ============ ANIMATIONS ============ */
+@keyframes iiaFadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes iiaPulse {
+  0% { transform: scale(1); opacity: .5; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+.iia-reveal { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s ease; }
+.iia-reveal.iia-in { opacity: 1; transform: translateY(0); }
+
+/* ============ RESPONSIVE: TABLET ============ */
+@media (max-width: 1024px) {
+  .iia-section { padding: 64px 24px; }
+  .iia-about-grid,
+  .iia-edu-grid,
+  .iia-stats-inner,
+  .iia-volunteer-grid,
+  .iia-location-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .iia-services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .iia-prayer-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .iia-prayer-cell:nth-child(3n) { border-right: none; }
+  .iia-prayer-cell:nth-child(4),
+  .iia-prayer-cell:nth-child(5),
+  .iia-prayer-cell:nth-child(6) { border-bottom: none; }
+}
+
+/* ============ RESPONSIVE: MOBILE ============ */
+@media (max-width: 640px) {
+  .iia-section { padding: 56px 20px; }
+  .iia-hero {
+    min-height: 88vh;
+    padding: 90px 20px 100px;
+    margin: 0 -20px;
+  }
+  .iia-hero-eyebrow { font-size: 10.5px; padding: 6px 14px; }
+  .iia-hero h1 { font-size: 2.2rem; }
+  .iia-hero-sub { font-size: .95rem; }
+  .iia-hero-cta { flex-direction: column; align-items: stretch; }
+  .iia-btn { width: 100%; justify-content: center; padding: 14px 24px; }
+  .iia-hero-wave svg { height: 50px; }
+
+  .iia-sec-head { margin-bottom: 40px; }
+  .iia-sec-head h2 { font-size: 1.7rem; }
+
+  .iia-services-grid { grid-template-columns: 1fr; gap: 20px; }
+  .iia-service-card { padding: 30px 24px; }
+
+  .iia-prayer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .iia-prayer-cell {
+    border-right: 1px solid var(--iia-border) !important;
+    border-bottom: 1px solid var(--iia-border) !important;
+    padding: 20px 12px;
+  }
+  .iia-prayer-cell:nth-child(2n) { border-right: none !important; }
+  .iia-prayer-cell:nth-last-child(-n+2) { border-bottom: none !important; }
+  .iia-prayer-header { padding: 18px 20px; }
+  .iia-prayer-header h3 { font-size: 1.1rem; }
+  .iia-prayer-header .iia-date { font-size: 11.5px; }
+  .iia-prayer-footer { padding: 18px 20px; flex-direction: column; align-items: flex-start; }
+  .iia-prayer-time { font-size: 1.25rem; }
+  .iia-prayer-icon { width: 38px; height: 38px; font-size: 15px; margin-bottom: 8px; }
+
+  .iia-stats-grid { grid-template-columns: 1fr; }
+
+  .iia-schedule-head, .iia-schedule-row {
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 8px;
+    padding: 14px 16px;
+    font-size: 12.5px;
+  }
+  .iia-schedule-row .iia-prog { font-size: 13px; gap: 8px; }
+  .iia-schedule-row .iia-prog i { width: 26px; height: 26px; font-size: 11px; }
+
+  .iia-info-card { padding: 28px 22px; }
+  .iia-info-card h2 { font-size: 1.6rem; }
+  .iia-map, .iia-map iframe { min-height: 340px; }
+
+  .iia-about-badge { padding: 10px 14px; bottom: 14px; left: 14px; }
+  .iia-about-badge .num { font-size: 18px; }
+  .iia-about-badge .lbl { font-size: 9.5px; }
+}
+
+@media (max-width: 380px) {
+  .iia-prayer-grid { grid-template-columns: 1fr; }
+  .iia-prayer-cell { border-right: none !important; }
+}
+</style>
+
+<!-- ============ MARKUP ============ -->
+<div class="iia-home">
+
+
+
+  <!-- ===== ABOUT ===== -->
+  <section class="iia-section iia-welcome">
+    <div class="iia-container">
+      <div class="iia-about-grid">
+        <div class="iia-about-img iia-reveal">
+          <img src="https://www.iiofa.org/wp-content/uploads/2025/10/WhatsApp-Image-2025-10-20-at-00.40.29_24acb71b-1024x379.jpg" alt="Islamic Institute of America">
+          <div class="iia-about-badge">
+            <i class="fa-solid fa-mosque"></i>
+            <div>
+              <div class="num">10+</div>
+              <div class="lbl">Years Serving</div>
+            </div>
+          </div>
+        </div>
+        <div class="iia-about-text iia-reveal">
+          <div class="iia-sec-head left" style="margin-bottom:0;">
+            <span class="iia-eyebrow">Welcome to IIofA</span>
+            <h2>A Home for Faith, Family & Community</h2>
+          </div>
+          <p>The Islamic Institute of America, founded in 2015, is located in Dearborn Heights, Michigan. Established by <strong>Imam Sayed Hassan Qazwini</strong> and funded by community donations, the institute is made up of over <strong>1,000 families</strong> with diverse ethnicities.</p>
+          <ul class="iia-feature-list">
+            <li><i class="fa-solid fa-check"></i> Daily prayers & Jumma services</li>
+            <li><i class="fa-solid fa-check"></i> Quran & Islamic education for all ages</li>
+            <li><i class="fa-solid fa-check"></i> Youth programs and community events</li>
+            <li><i class="fa-solid fa-check"></i> Interfaith outreach and dialogue</li>
+          </ul>
+          <a href="https://www.iiofa.org/about-iioa/" class="iia-btn iia-btn-primary">
+            Read More <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- ===== SERVICES / PROGRAMS ===== -->
+  <section class="iia-section iia-services">
+    <div class="iia-container">
+      <div class="iia-sec-head iia-reveal">
+        <span class="iia-eyebrow">What We Offer</span>
+        <h2>Programs & Services</h2>
+        <p>From spiritual guidance to youth empowerment — find your place at IIofA.</p>
+      </div>
+
+      <div class="iia-services-grid">
+        <div class="iia-service-card iia-reveal">
+          <div class="iia-service-icon"><i class="fa-solid fa-users"></i></div>
+          <h3>Muslim Youth Connection</h3>
+          <p>A vibrant organization dedicated to empowering young Muslims through faith-based initiatives, community service, and educational programs.</p>
+          <a href="https://www.iiofa.org/about-myc/" target="_blank" class="iia-service-link">Read More <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="iia-service-card iia-reveal">
+          <div class="iia-service-icon"><i class="fa-solid fa-book-quran"></i></div>
+          <h3>Al-Hujjah Islamic Seminary</h3>
+          <p>Advanced courses for students seeking deeper knowledge of Quran, Hadith, Jurisprudence, Philosophy, Islamic Ethics, and more.</p>
+          <a href="https://hujjahseminary.com/" target="_blank" class="iia-service-link">Read More <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="iia-service-card iia-reveal">
+          <div class="iia-service-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+          <h3>Islamic School</h3>
+          <p>Weekend Islamic education with Saturday School, Sunday School, and Quran Academy — nurturing the next generation in faith and knowledge.</p>
+          <a href="https://www.iiofa.org/education/" target="_blank" class="iia-service-link">Read More <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="iia-service-card iia-reveal">
+          <div class="iia-service-icon"><i class="fa-regular fa-calendar-days"></i></div>
+          <h3>Events & Full Calendar</h3>
+          <p>Stay connected with all community events, religious gatherings, programs, and special occasions throughout the year.</p>
+          <a href="https://www.iiofa.org/events/" target="_blank" class="iia-service-link">View Calendar <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="iia-service-card iia-reveal">
+          <div class="iia-service-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+          <h3>Friday Sermons</h3>
+          <p>Weekly Jumma lectures from Imam Sayed Hassan Qazwini and guest scholars — wisdom, reflection, and guidance for daily life.</p>
+          <a href="https://www.iiofa.org/multimedia/" target="_blank" class="iia-service-link">Watch Lectures <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="iia-service-card iia-reveal">
+          <div class="iia-service-icon"><i class="fa-solid fa-handshake-angle"></i></div>
+          <h3>Volunteer & Outreach</h3>
+          <p>Join our volunteer family. Be part of something bigger — uplift our community through service, dedication, and meaningful contribution.</p>
+          <a href="https://www.iiofa.org/volunteer/" target="_blank" class="iia-service-link">Get Involved <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== OUR SCHOOL (FFA) ===== -->
+  <style>
+  /* ============ CSS VARIABLES & RESET ============ */
+  .ffa-school-wrap, .ffa-school-wrap * {
+    box-sizing: border-box;
+  }
+  .ffa-school-wrap {
+    --ffa-gold: #dd9e30;
+    --ffa-gold-hover: #b88424;
+    --ffa-navy: #1c2b45;
+    --ffa-bg: #fdfbf7;
+    --ffa-text: #4a5568;
+    --ffa-radius: 16px;
+    
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--ffa-bg);
+    padding: 80px 20px;
+    overflow: hidden;
+  }
+  
+  /* ============ LAYOUT ============ */
+  .ffa-school-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+  }
+  
+  .ffa-school-left {
+    flex: 1;
+    position: relative;
+  }
+  
+  .ffa-school-right {
+    flex: 1;
+  }
+  
+  /* ============ LEFT: IMAGE & BADGE ============ */
+  .ffa-img-wrapper {
+    position: relative;
+    border-radius: var(--ffa-radius);
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(28, 43, 69, 0.08);
+  }
+  
+  .ffa-img-wrapper img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  
+  .ffa-img-wrapper:hover img {
+    transform: scale(1.05);
+  }
+  
+  /* Decorative Gold Accent */
+  .ffa-school-left::before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    width: 100px;
+    height: 100px;
+    background: var(--ffa-gold);
+    border-radius: var(--ffa-radius);
+    z-index: 0;
+    opacity: 0.2;
+  }
+  
+  .ffa-badge {
+    position: absolute;
+    bottom: 30px;
+    right: -20px;
+    background: #fff;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 2;
+  }
+  .ffa-badge i {
+    font-size: 28px;
+    color: var(--ffa-gold);
+    background: rgba(221, 158, 48, 0.1);
+    padding: 12px;
+    border-radius: 50%;
+  }
+  .ffa-badge-text {
+    display: flex;
+    flex-direction: column;
+  }
+  .ffa-badge-text strong {
+    color: var(--ffa-navy);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .ffa-badge-text span {
+    color: var(--ffa-text);
+    font-size: 13px;
+  }
+  
+  /* ============ RIGHT: CONTENT ============ */
+  .ffa-eyebrow {
+    color: var(--ffa-gold);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+  
+  .ffa-school-right h2 {
+    color: var(--ffa-navy);
+    font-size: clamp(32px, 4vw, 42px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 20px 0;
+  }
+  
+  .ffa-school-right p {
+    color: var(--ffa-text);
+    font-size: 16px;
+    line-height: 1.7;
+    margin: 0 0 30px 0;
+  }
+  
+  /* Feature List */
+  .ffa-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 40px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  
+  .ffa-features li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ffa-navy);
+    font-weight: 500;
+    font-size: 15px;
+  }
+  
+  .ffa-features li i {
+    color: #fff;
+    background: var(--ffa-gold);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 11px;
+  }
+
+  /* ============ FFA BUTTON — override theme hover ============ */
+  .ffa-school-wrap .iia-btn.iia-btn-primary,
+  .ffa-school-wrap .iia-btn.iia-btn-primary:hover,
+  .ffa-school-wrap .iia-btn.iia-btn-primary:focus,
+  .ffa-school-wrap .iia-btn.iia-btn-primary:active,
+  .ffa-school-wrap .iia-btn.iia-btn-primary:visited {
+    background: #dd9e30 !important;
+    color: #fff !important;
+    box-shadow: 0 10px 25px rgba(221,158,48,.4) !important;
+    transform: none !important;
+    filter: none !important;
+    border-color: transparent !important;
+    text-decoration: none !important;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 992px) {
+    .ffa-school-container {
+      flex-direction: column;
+      gap: 50px;
+    }
+    .ffa-badge {
+      right: 20px;
+      bottom: -20px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .ffa-school-wrap {
+      padding: 60px 20px;
+    }
+    .ffa-features {
+      grid-template-columns: 1fr;
+    }
+  }
+  </style>
+
+  <section class="ffa-school-wrap iia-reveal">
+    <div class="ffa-school-container">
+      
+      <!-- LEFT SIDE: IMAGE -->
+      <div class="ffa-school-left">
+        <div class="ffa-img-wrapper">
+          <img src="https://www.ffaedu.org/wp-content/uploads/2026/05/2026-04-10.webp" alt="Faithful Foundations Academy Students">
+        </div>
+        <div class="ffa-badge">
+          <i class="fas fa-graduation-cap"></i>
+          <div class="ffa-badge-text">
+            <strong>Preschool & Elementary</strong>
+            <span>Opening Sept 2026</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- RIGHT SIDE: TEXT CONTENT -->
+      <div class="ffa-school-right">
+        <span class="ffa-eyebrow">Our School</span>
+        <h2>Faithful Foundations Academy</h2>
+        <p>Providing a nurturing, faith-centered environment where children grow academically, spiritually, and emotionally. We are dedicated to shaping conscious, creative, and responsible future leaders grounded in strong Islamic character.</p>
+        
+        <ul class="ffa-features">
+          <li><i class="fas fa-check"></i> Rigorous Curriculum</li>
+          <li><i class="fas fa-check"></i> Islamic Environment</li>
+          <li><i class="fas fa-check"></i> Dedicated Teachers</li>
+          <li><i class="fas fa-check"></i> Holistic Child Growth</li>
+        </ul>
+        
+        <a href="https://ffaedu.org" target="_blank" class="iia-btn iia-btn-primary">
+          Visit School Website <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== EDUCATION SCHEDULE ===== -->
+  <section class="iia-section iia-edu">
+    <div class="iia-container">
+      <div class="iia-edu-grid">
+        <div class="iia-edu-content iia-reveal">
+          <span class="iia-eyebrow">Weekend & Quran Programs</span>
+          <h2>Islamic School Schedule</h2>
+          <p>Quality Islamic education for children and youth — Quran memorization, Arabic, Islamic studies, and character building.</p>
+          <a href="https://www.iiofa.org/education/" target="_blank" class="iia-btn iia-btn-primary">
+            <i class="fa-solid fa-pen-to-square"></i> Enroll Now
+          </a>
+        </div>
+        <div class="iia-schedule iia-reveal">
+          <div class="iia-schedule-head">
+            <div>Program</div>
+            <div>Starts</div>
+            <div>Ends</div>
+          </div>
+          <div class="iia-schedule-row">
+            <div class="iia-prog"><i class="fa-solid fa-school"></i> Saturday School</div>
+            <div class="iia-time">10:00 AM</div>
+            <div class="iia-time">3:00 PM</div>
+          </div>
+          <div class="iia-schedule-row">
+            <div class="iia-prog"><i class="fa-solid fa-school"></i> Sunday School</div>
+            <div class="iia-time">10:00 AM</div>
+            <div class="iia-time">12:00 PM</div>
+          </div>
+          <div class="iia-schedule-row">
+            <div class="iia-prog"><i class="fa-solid fa-book-quran"></i> Quran Academy<br><small style="font-weight:400;color:var(--iia-muted);font-size:11px;">Mon · Wed · Fri</small></div>
+            <div class="iia-time">5:00 PM</div>
+            <div class="iia-time">7:00 PM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STATS ===== -->
+  <section class="iia-section iia-stats">
+    <div class="iia-container">
+      <div class="iia-stats-inner">
+        <div class="iia-stats-left iia-reveal">
+          <span class="iia-eyebrow">Our Community</span>
+          <h2>A Thriving,<br><span class="gold">United Community</span></h2>
+          <p>Join a community where cultures unite, youth thrive, and faith leads the way.</p>
+        </div>
+        <div class="iia-stats-grid">
+          <div class="iia-stat iia-reveal">
+            <div class="iia-stat-num" data-target="62"><span class="iia-num">0</span><span class="iia-plus">+</span></div>
+            <div class="iia-stat-title">Diverse</div>
+            <p>Community with over 62 different nationalities represented.</p>
+          </div>
+          <div class="iia-stat iia-reveal">
+            <div class="iia-stat-num" data-target="1200"><span class="iia-num">0</span><span class="iia-plus">+</span></div>
+            <div class="iia-stat-title">Growing</div>
+            <p>Over 1,200 men and women attend the weekly Jumma prayer service.</p>
+          </div>
+          <div class="iia-stat iia-reveal">
+            <div class="iia-stat-num" data-target="60"><span class="iia-num">0</span><span class="iia-plus">%</span></div>
+            <div class="iia-stat-title">Young</div>
+            <p>60 percent of our community is under the age of 34.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== VOLUNTEER ===== -->
+  <section class="iia-section iia-volunteer">
+    <div class="iia-container">
+      <div class="iia-volunteer-grid">
+        <div class="iia-volunteer-img iia-reveal">
+          <img src="https://www.iiofa.org/wp-content/uploads/2026/01/WhatsApp-Image-2026-01-28-at-12.05.59-PM.jpeg" alt="Volunteer Family">
+        </div>
+        <div class="iia-volunteer-text iia-reveal">
+          <span class="iia-eyebrow">Get Involved</span>
+          <h2>Join Our <span class="gold">Volunteer Family!</span></h2>
+          <p>Be part of something bigger. Dedicate your time to uplifting our community and creating positive change.</p>
+          <p>Whether you can give an hour, a day, or a few hours each month, your support makes a lasting impact.</p>
+          <p><strong>Together, we grow. Join us today.</strong></p>
+          <br>
+          <a href="https://www.iiofa.org/volunteer/" target="_blank" class="iia-btn iia-btn-primary">
+            <i class="fa-solid fa-hands-helping"></i> Learn More & Apply
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+
+</div>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+(function(){
+  'use strict';
+
+  /* ===== Scroll reveal ===== */
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          e.target.classList.add('iia-in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.iia-home .iia-reveal').forEach(function(el){ io.observe(el); });
+  } else {
+    document.querySelectorAll('.iia-home .iia-reveal').forEach(function(el){ el.classList.add('iia-in'); });
+  }
+
+  /* ===== Animated counters ===== */
+  function animateCounter(el) {
+    var target = parseInt(el.getAttribute('data-target'), 10) || 0;
+    var span = el.querySelector('.iia-num');
+    var duration = 1800;
+    var start = null;
+    function step(ts){
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      span.textContent = Math.floor(eased * target).toLocaleString();
+      if (p < 1) requestAnimationFrame(step);
+      else span.textContent = target.toLocaleString();
+    }
+    requestAnimationFrame(step);
+  }
+  if ('IntersectionObserver' in window) {
+    var co = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { animateCounter(e.target); co.unobserve(e.target); }
+      });
+    }, { threshold: 0.4 });
+    document.querySelectorAll('.iia-home .iia-stat-num').forEach(function(el){ co.observe(el); });
+  }
+
+  /* ===== Prayer Times (via AlAdhan API — free, no key) =====
+     Location: Dearborn Heights, MI (42.337, -83.273)
+     Method 2 = ISNA (commonly used in North America)            */
+  var IIA_LAT = 42.337;
+  var IIA_LNG = -83.273;
+  var IIA_METHOD = 2;
+
+  var prayerIcons = {
+    Fajr:    'fa-cloud-moon',
+    Sunrise: 'fa-sun',
+    Dhuhr:   'fa-sun',
+    Asr:     'fa-cloud-sun',
+    Maghrib: 'fa-mountain-sun',
+    Isha:    'fa-moon'
+  };
+  var prayerOrder = ['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'];
+
+  function to12h(t24) {
+    if (!t24) return '--:--';
+    var parts = t24.split(':');
+    var h = parseInt(parts[0], 10);
+    var m = parts[1];
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return h + ':' + m + ' ' + ampm;
+  }
+
+  function renderFallback() {
+    var grid = document.getElementById('iia-pt-grid');
+    if (!grid) return;
+    grid.innerHTML = prayerOrder.map(function(name){
+      return ''
+        + '<div class="iia-prayer-cell">'
+        +   '<div class="iia-prayer-icon"><i class="fa-solid ' + (prayerIcons[name]||'fa-clock') + '"></i></div>'
+        +   '<div class="iia-prayer-name">' + name + '</div>'
+        +   '<div class="iia-prayer-time">--:--</div>'
+        + '</div>';
+    }).join('');
+    var d = document.getElementById('iia-pt-date');
+    if (d) d.textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  }
+
+  function startCountdown(timings) {
+    var cd = document.getElementById('iia-pt-countdown');
+    if (!cd) return;
+
+    function tick(){
+      var now = new Date();
+      var todayStr = now.toISOString().slice(0,10);
+      var upcoming = null;
+      var nextName = null;
+      for (var i=0; i<prayerOrder.length; i++) {
+        var name = prayerOrder[i];
+        if (!timings[name]) continue;
+        var hm = timings[name].split(':');
+        var t = new Date(todayStr + 'T' + hm[0].padStart(2,'0') + ':' + hm[1].padStart(2,'0') + ':00');
+        if (t > now) { upcoming = t; nextName = name; break; }
+      }
+      if (!upcoming) {
+        // After Isha — next is tomorrow's Fajr
+        var hm2 = timings.Fajr.split(':');
+        upcoming = new Date(todayStr + 'T' + hm2[0].padStart(2,'0') + ':' + hm2[1].padStart(2,'0') + ':00');
+        upcoming.setDate(upcoming.getDate() + 1);
+        nextName = 'Fajr';
+      }
+
+      // Highlight next cell
+      document.querySelectorAll('.iia-home .iia-prayer-cell').forEach(function(c){
+        c.classList.toggle('iia-next', c.getAttribute('data-name') === nextName);
+      });
+
+      var diff = upcoming - now;
+      if (diff < 0) diff = 0;
+      var h = Math.floor(diff / 3.6e6);
+      var m = Math.floor((diff % 3.6e6) / 6e4);
+      var s = Math.floor((diff % 6e4) / 1000);
+      cd.textContent = (h<10?'0':'') + h + ':' + (m<10?'0':'') + m + ':' + (s<10?'0':'') + s + ' · ' + nextName;
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  function loadPrayerTimes() {
+    var today = new Date();
+    var dateStr = today.getDate() + '-' + (today.getMonth()+1) + '-' + today.getFullYear();
+    var url = 'https://api.aladhan.com/v1/timings/' + dateStr +
+              '?latitude=' + IIA_LAT + '&longitude=' + IIA_LNG +
+              '&method=' + IIA_METHOD;
+
+    fetch(url)
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (!data || !data.data || !data.data.timings) throw new Error('bad data');
+        var t = data.data.timings;
+        // Trim "(EST)" etc.
+        Object.keys(t).forEach(function(k){ t[k] = (t[k]||'').split(' ')[0]; });
+
+        var grid = document.getElementById('iia-pt-grid');
+        grid.innerHTML = prayerOrder.map(function(name){
+          return ''
+            + '<div class="iia-prayer-cell" data-name="' + name + '">'
+            +   '<div class="iia-prayer-icon"><i class="fa-solid ' + (prayerIcons[name]||'fa-clock') + '"></i></div>'
+            +   '<div class="iia-prayer-name">' + name + '</div>'
+            +   '<div class="iia-prayer-time">' + to12h(t[name]) + '</div>'
+            + '</div>';
+        }).join('');
+
+        var dateEl = document.getElementById('iia-pt-date');
+        if (dateEl && data.data.date) {
+          var hijri = data.data.date.hijri;
+          var greg  = data.data.date.gregorian;
+          dateEl.innerHTML = greg.weekday.en + ', ' + greg.day + ' ' + greg.month.en + ' ' + greg.year +
+                             '<br><span style="opacity:.8;font-size:12px;">' +
+                             hijri.day + ' ' + hijri.month.en + ' ' + hijri.year + ' AH</span>';
+        }
+
+        startCountdown(t);
+      })
+      .catch(function(){ renderFallback(); });
+  }
+
+  // Initial empty render so the grid has layout while fetching
+  renderFallback();
+  loadPrayerTimes();
+
+  /* ===== Force video play (some mobile browsers block autoplay) ===== */
+  var video = document.querySelector('.iia-home .iia-hero-video');
+  if (video) {
+    video.play().catch(function(){
+      // Try again on first user interaction
+      var tryPlay = function(){ video.play().catch(function(){}); document.removeEventListener('touchstart', tryPlay); document.removeEventListener('click', tryPlay); };
+      document.addEventListener('touchstart', tryPlay, { once:true, passive:true });
+      document.addEventListener('click', tryPlay, { once:true });
+    });
+  }
+})();
+</script>

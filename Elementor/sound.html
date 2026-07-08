@@ -1507,24 +1507,8 @@
     }
 
     function playMessageSound(isReply = false) {
-      if (!audioReady || !audioCtx) return;
-
-      const now = audioCtx.currentTime;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.value = isReply ? 720 : 620;
-
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.06, now + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start(now);
-      osc.stop(now + 0.12);
+      // Sound removed
+      return;
     }
 
     ['click', 'touchstart', 'keydown', 'scroll'].forEach(eventName => {
@@ -1840,7 +1824,7 @@
       entries.forEach(entry => {
         if (entry.isIntersecting && !hasStartedSequence) {
           hasStartedSequence = true;
-          setStage('welcome');
+          setStage('welcome');p
           observer.unobserve(root);
         }
       });

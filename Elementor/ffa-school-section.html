@@ -1,0 +1,251 @@
+<!-- ============================================================
+     FFA - Our School Section (Left/Right Layout)
+     Elementor Custom HTML Widget
+     ============================================================ -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<style>
+/* ============ CSS VARIABLES & RESET ============ */
+.ffa-school-wrap, .ffa-school-wrap * {
+  box-sizing: border-box;
+}
+.ffa-school-wrap {
+  --ffa-gold: #dd9e30;
+  --ffa-gold-hover: #b88424;
+  --ffa-navy: #1c2b45;
+  --ffa-bg: #fdfbf7;
+  --ffa-text: #4a5568;
+  --ffa-radius: 16px;
+  
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--ffa-bg);
+  padding: 80px 20px;
+  overflow: hidden;
+}
+
+/* ============ LAYOUT ============ */
+.ffa-school-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+
+.ffa-school-left {
+  flex: 1;
+  position: relative;
+}
+
+.ffa-school-right {
+  flex: 1;
+}
+
+/* ============ LEFT: IMAGE & BADGE ============ */
+.ffa-img-wrapper {
+  position: relative;
+  border-radius: var(--ffa-radius);
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(28, 43, 69, 0.08);
+}
+
+.ffa-img-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.ffa-img-wrapper:hover img {
+  transform: scale(1.05);
+}
+
+/* Decorative Gold Accent */
+.ffa-school-left::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 100px;
+  height: 100px;
+  background: var(--ffa-gold);
+  border-radius: var(--ffa-radius);
+  z-index: 0;
+  opacity: 0.2;
+}
+
+.ffa-badge {
+  position: absolute;
+  bottom: 30px;
+  right: -20px;
+  background: #fff;
+  padding: 16px 24px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  z-index: 2;
+}
+.ffa-badge i {
+  font-size: 28px;
+  color: var(--ffa-gold);
+  background: rgba(221, 158, 48, 0.1);
+  padding: 12px;
+  border-radius: 50%;
+}
+.ffa-badge-text {
+  display: flex;
+  flex-direction: column;
+}
+.ffa-badge-text strong {
+  color: var(--ffa-navy);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.ffa-badge-text span {
+  color: var(--ffa-text);
+  font-size: 13px;
+}
+
+/* ============ RIGHT: CONTENT ============ */
+.ffa-eyebrow {
+  color: var(--ffa-gold);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  display: inline-block;
+}
+
+.ffa-school-right h2 {
+  color: var(--ffa-navy);
+  font-size: clamp(32px, 4vw, 42px);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 20px 0;
+}
+
+.ffa-school-right p {
+  color: var(--ffa-text);
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 0 0 30px 0;
+}
+
+/* Feature List */
+.ffa-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 40px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.ffa-features li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ffa-navy);
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.ffa-features li i {
+  color: #fff;
+  background: var(--ffa-gold);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 11px;
+}
+
+/* ============ BUTTON ============ */
+.ffa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ffa-gold);
+  color: #fff !important;
+  padding: 16px 36px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px rgba(221, 158, 48, 0.3);
+}
+
+/* Hover animations removed */
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 992px) {
+  .ffa-school-container {
+    flex-direction: column;
+    gap: 50px;
+  }
+  .ffa-badge {
+    right: 20px;
+    bottom: -20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ffa-school-wrap {
+    padding: 60px 20px;
+  }
+  .ffa-features {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<!-- ============ HTML MARKUP ============ -->
+<div class="ffa-school-wrap">
+  <div class="ffa-school-container">
+    
+    <!-- LEFT SIDE: IMAGE -->
+    <div class="ffa-school-left">
+      <div class="ffa-img-wrapper">
+        <img src="https://www.ffaedu.org/wp-content/uploads/2026/05/2026-04-10.webp" alt="Faithful Foundations Academy Students">
+      </div>
+      <div class="ffa-badge">
+        <i class="fas fa-graduation-cap"></i>
+        <div class="ffa-badge-text">
+          <strong>Preschool & Elementary</strong>
+          <span>Opening Sept 2026</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- RIGHT SIDE: TEXT CONTENT -->
+    <div class="ffa-school-right">
+      <span class="ffa-eyebrow">Our School</span>
+      <h2>Faithful Foundations Academy</h2>
+      <p>Providing a nurturing, faith-centered environment where children grow academically, spiritually, and emotionally. We are dedicated to shaping conscious, creative, and responsible future leaders grounded in strong Islamic character.</p>
+      
+      <ul class="ffa-features">
+        <li><i class="fas fa-check"></i> Rigorous Curriculum</li>
+        <li><i class="fas fa-check"></i> Islamic Environment</li>
+        <li><i class="fas fa-check"></i> Dedicated Teachers</li>
+        <li><i class="fas fa-check"></i> Holistic Child Growth</li>
+      </ul>
+      
+      <a href="https://ffaedu.org" target="_blank" class="ffa-btn">
+        Visit School Website <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+
+  </div>
+</div>
